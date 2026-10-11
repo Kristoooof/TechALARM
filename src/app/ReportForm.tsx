@@ -15,6 +15,28 @@ declare global {
   }
 }
 
+const MAX_UPLOAD_BYTES = 4 * 1024 * 1024; // a Vercel 4,5 MB-nál nagyobb kérést nem enged át
+const MAX_DIMENSION = 1600;
+
+/** A telefonos fényképet feltöltés előtt lekicsinyíti (max. 1600 px, JPEG), hogy elférjen a méretkorlátban. */
+async function shrinkPhoto(file: File): Promise<File> {
+  if (file.size <= 1024 * 1024 && file.type === "image/jpeg") return file;
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/jpeg", 0.82));
+    if (blob && blob.size < file.size) return new File([blob], "foto.jpg", { type: "image/jpeg" });
+  } catch {
+    // ha a böngésző nem tudja feldolgozni, marad az eredeti
+  }
+  return file;
+}
+
 export default function ReportForm({
   rooms,
   devices,
@@ -38,7 +60,22 @@ export default function ReportForm({
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     startTransition(async () => {
-      const res = await submitReport(fd);
+      let res: SubmitResult;
+      try {
+        const photo = fd.get("photo");
+        if (photo instanceof File && photo.size > 0) {
+          const small = await shrinkPhoto(photo);
+          if (small.size > MAX_UPLOAD_BYTES) {
+            setResult({ ok: false, error: "A fénykép túl nagy. Válassz kisebb képet, vagy küldd fénykép nélkül." });
+            window.turnstile?.reset();
+            return;
+          }
+          fd.set("photo", small);
+        }
+        res = await submitReport(fd);
+      } catch {
+        res = { ok: false, error: "A bejelentés elküldése nem sikerült (hálózati hiba). Próbáld újra." };
+      }
       setResult(res);
       // A Turnstile token egyszer használatos
       if (!res.ok) window.turnstile?.reset();
@@ -107,7 +144,7 @@ export default function ReportForm({
       </div>
 
       <div className="field">
-        <label htmlFor="photo">Fénykép <span className="hint">(nem kötelező, max. 5 MB)</span></label>
+        <label htmlFor="photo">Fénykép <span className="hint">(nem kötelező, automatikusan lekicsinyítjük)</span></label>
         <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" />
       </div>
 
