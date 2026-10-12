@@ -5,15 +5,10 @@ import Script from "next/script";
 import { useMemo, useRef, useState, useTransition } from "react";
 import { CATEGORIES } from "@/lib/constants";
 import { submitReport, type SubmitResult } from "./actions";
+import Turnstile from "./Turnstile";
 
 type Room = { id: string; name: string };
 type Device = { id: string; room_id: string; name: string; inventory_code: string | null };
-
-declare global {
-  interface Window {
-    turnstile?: { reset: () => void };
-  }
-}
 
 const MAX_UPLOAD_BYTES = 4 * 1024 * 1024; // a Vercel 4,5 MB-nál nagyobb kérést nem enged át
 const MAX_DIMENSION = 1600;
@@ -53,12 +48,15 @@ export default function ReportForm({
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [pending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [resetKey, setResetKey] = useState(0);
 
   const roomDevices = useMemo(() => devices.filter((d) => d.room_id === roomId), [devices, roomId]);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    if (token) fd.set("cf-turnstile-response", token);
     startTransition(async () => {
       let res: SubmitResult;
       try {
@@ -67,7 +65,7 @@ export default function ReportForm({
           const small = await shrinkPhoto(photo);
           if (small.size > MAX_UPLOAD_BYTES) {
             setResult({ ok: false, error: "A fénykép túl nagy. Válassz kisebb képet, vagy küldd fénykép nélkül." });
-            window.turnstile?.reset();
+            setResetKey((k) => k + 1);
             return;
           }
           fd.set("photo", small);
@@ -78,7 +76,7 @@ export default function ReportForm({
       }
       setResult(res);
       // A Turnstile token egyszer használatos
-      if (!res.ok) window.turnstile?.reset();
+      if (!res.ok) setResetKey((k) => k + 1);
       if (res.ok) window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
@@ -156,13 +154,15 @@ export default function ReportForm({
 
       {turnstileSiteKey && (
         <>
-          <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" />
-          <div className="cf-turnstile field" data-sitekey={turnstileSiteKey} data-language="hu" />
+          <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" strategy="afterInteractive" />
+          <div className="field">
+            <Turnstile siteKey={turnstileSiteKey} onToken={setToken} resetKey={resetKey} />
+          </div>
         </>
       )}
 
-      <button className="btn block" type="submit" disabled={pending}>
-        {pending ? "Küldés…" : "Bejelentés elküldése"}
+      <button className="btn block" type="submit" disabled={pending || (!!turnstileSiteKey && !token)}>
+        {pending ? "Küldés…" : turnstileSiteKey && !token ? "Spamvédelmi ellenőrzés…" : "Bejelentés elküldése"}
       </button>
     </form>
   );
