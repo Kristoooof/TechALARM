@@ -240,7 +240,7 @@ const Tap: React.FC<{ f: number }> = ({ f }) => {
   );
 };
 
-const Phone: React.FC<{ f: number }> = ({ f }) => (
+export const Phone: React.FC<{ f: number }> = ({ f }) => (
   <div
     style={{
       width: SCREEN_W * SCALE + BEZEL * 2,
