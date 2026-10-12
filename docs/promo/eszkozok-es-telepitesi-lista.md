@@ -10,6 +10,9 @@ Készült: 2026-10-12. A szövegben jelölve van, mi ellenőrzött, és mi nem.
 | `addyosmani/agent-skills` telepítése | **Nincs telepítve.** A repót átnéztem (25 skill, MIT), de az `npx skills add` futtatását a biztonsági szabály blokkolta (harmadik féltől származó kód beemelése). Lásd az 1. pontot. |
 | `vercel-labs/skills` telepítése | **Nincs telepítve**, ugyanezért. Ez a `skills` CLI, benne a `find-skills` skill-lel. |
 | Skillek, pluginok, connectorok keresése | **Kész**, lásd lent. |
+| **Döntés (2026-10-12):** a videóhoz **Remotion**, nem HyperFrames | A HyperFrames lekerült a javaslatokról. |
+| Engedélyezett pluginok (nálam látszanak) | **Remotion** (12 skill), **Codesign**, **brand-md**, **Make Poster**, **Superdesign**, **video-shotcraft**. |
+| Csatlakozás alatt álló connectorok | Canva, ElevenLabs, Figma, Unsplash, Codesign. Ha nem mennek, a claude.ai-n kell újra hitelesíteni. |
 
 ## 1. A két kért skill-repó telepítése
 
@@ -30,8 +33,7 @@ Az alábbi repók léteznek (ellenőrizve `git ls-remote`-tal). A tartalmukat te
 
 | Mire | Skill-repó | Megjegyzés |
 |---|---|---|
-| Videó kódból (React) | `remotion-dev/skills` → `remotion-best-practices` | Hivatalos Remotion skill: animáció, hang, felirat, 3D, diagram. Legjobb választás a promo videóhoz. |
-| Videó HTML-ből | `heygen-com/hyperframes` | HTML + GSAP + Three.js → MP4. Apache-2.0, Node 22+ és FFmpeg kell. |
+| Videó kódból (React) | `remotion-dev/skills` → `remotion-best-practices` | **Ez van kiválasztva.** Hivatalos Remotion skill: animáció, hang, felirat, 3D, diagram. A Remotion plugin már engedélyezve van, külön telepítés nem kell. |
 | Design minőség | `pbakaus/impeccable` | Az „AI-sablonos" kinézet elkerülésére; 23 design parancs (harmadik fél írása szerint). |
 | Design rendszer | `nextlevelbuilder/ui-ux-pro-max-skill` | Stílusok, színpaletták, betűpárosítások. |
 | Plakát / kép | `anthropics/skills` → `canvas-design`, `theme-factory`, `brand-guidelines` | A `canvas-design` PNG/PDF plakátot készít. |
@@ -61,7 +63,6 @@ A csatlakoztatást a claude.ai-n (Settings → Connectors) te végzed. Jelenleg 
 |---|---|---|---|
 | **1.** | **Canva** | Plakát, roll-up, matrica sablonok; exportálás PDF/PNG-be | Széles körben ismert, sablonok, nyomdai export. |
 | **1.** | **Adobe** | Professzionális szerkesztés, animálás (`animate_design`), márka-színtémák | Akkor éri meg, ha van Adobe-fiókod. |
-| **1.** | **HyperFrames by HeyGen** | Mozgóképes grafika és animált diák HTML-ből, `compose` + `render_video` | A promo videó fő motorja lehet, a Remotion alternatívája. |
 | 2. | **Figma** | Design-rendszer, komponensek, képernyőképek; a weboldal és az anyagok egységesítése | A `plugin:design:figma` már konfigurálva van, de most nem csatlakozott (proxy hiba). Újrapróbálásra szorul. |
 | 2. | **ElevenLabs** | Hangalámondás (magyar nyelv támogatott) | A connector jelenleg ElevenAgents-fókuszú (hangügynökök); a sima TTS-hez az API-kulcsos használat is kell lehet. |
 | 2. | **Tella** | Képernyőfelvétel szerkesztése, felirat, hangeffekt – a **felhasználói útmutató videóhoz** | Nincs ingyenes csomag (7 napos próba). |
@@ -118,14 +119,14 @@ Az alábbi értékek a talált nyomdák adatai. **Mindig a megrendelendő nyomda
 1. **Márka:** `brand-md` + Figma → színek, betű, hangnem, logó egy helyen.
 2. **Forgatókönyv:** a videókhoz 30–45 másodperces promo és 2–3 perces útmutató, jelenetenként 1 mondat.
 3. **Nyomtatott anyagok:** Codesign vagy Canva → plakát, roll-up, matrica, kitűző; nyomdai sablonokra méretezve.
-4. **Promo videó:** Remotion vagy HyperFrames, valódi oldal-képernyőképekből és animált tipográfiából; magyar hang + halk zene.
+4. **Promo videó:** Remotion (a `video-shotcraft` jelenet-receptjeivel), valódi oldal-képernyőképekből és animált tipográfiából; magyar hang + halk zene.
 5. **Útmutató videó:** Screen Studio/Tella felvétel a valódi oldalról, felirattal és hanggal.
 6. **Ellenőrzés:** a magyar ő/ű, a kiejtés, a hangerő, a nyomdai próbanyomat.
 
 ## 8. Mit kérek tőled
 
 1. Engedélyezd az `npx skills add` futtatását (vagy futtasd te az 1. pont parancsait).
-2. Köss be legalább: **Canva**, **HyperFrames**, és a **Codesign** plugint. Ha van Adobe- vagy Figma-fiókod, azokat is.
+2. A **Canva**, **ElevenLabs**, **Figma** connectorok csatlakozása folyamatban van; ha hibát látsz, hitelesítsd újra a claude.ai-n. Adobe csak akkor kell, ha van fiókod.
 3. Mondd meg a márka irányát: színek (az oldal most narancs `#c2410c`), a logó, a hangnem (komoly vagy játékos).
 4. Magyar hangból melyik tetszik a próba alapján?
 5. Kiválasztottad a nyomdát? (Sablonokat onnan kell kérni.)
