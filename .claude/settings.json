@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "bash": {
+      "allow": ["npm test"],
+      "ask": ["npm install"],
+    }
+  }
+}
