@@ -94,11 +94,11 @@ const WorldScene: React.FC = () => {
       </div>
 
       {/* „nem történt semmi változás” */}
-      <div style={{ ...base, position: "absolute", right: 56, top: 150, textAlign: "right", opacity: msgA.opacity * (1 - msgOut), translate: `${msgA.x}px 0`, rotate: "3deg" }}>
-        <div style={{ fontSize: 112, fontWeight: 900, lineHeight: 0.94, letterSpacing: "-0.04em", transform: "skewX(-10deg)", textShadow: `7px 7px 0 ${D.blue}, 14px 14px 0 ${D.void}` }}>
+      <div style={{ ...base, position: "absolute", right: 56, bottom: 110, textAlign: "right", opacity: msgA.opacity * (1 - msgOut), translate: `${msgA.x}px 0`, rotate: "3deg" }}>
+        <div style={{ fontSize: 104, fontWeight: 900, lineHeight: 0.94, letterSpacing: "-0.04em", transform: "skewX(-10deg)", textShadow: `7px 7px 0 ${D.blue}, 14px 14px 0 ${D.void}` }}>
           NEM TÖRTÉNT
         </div>
-        <div style={{ fontSize: 112, fontWeight: 900, lineHeight: 0.94, letterSpacing: "-0.04em", transform: "skewX(-10deg)", color: D.cyan, textShadow: `7px 7px 0 ${D.blue}, 14px 14px 0 ${D.void}` }}>
+        <div style={{ fontSize: 104, fontWeight: 900, lineHeight: 0.94, letterSpacing: "-0.04em", transform: "skewX(-10deg)", color: D.cyan, textShadow: `7px 7px 0 ${D.blue}, 14px 14px 0 ${D.void}` }}>
           SEMMI VÁLTOZÁS.
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 34, opacity: msgB.opacity, translate: `${msgB.x - msgA.x}px 0` }}>

@@ -11,15 +11,16 @@ import { type Env, envAt, smooth, T } from "./time";
 
 // ---------- Kamera-pálya ----------
 export const camAt = (f: number) => {
-  const zMove = interpolate(f, [0, 175], [8, -19.25], { ...clamp, easing: Easing.bezier(0.25, 0.05, 0.2, 1) });
+  // egyenletes séta (~1,8 m/s): lineáris szakasz, csak a legvégén lassul
+  const zMove = interpolate(f, [0, 175], [-8.5, -19.25], { ...clamp, easing: Easing.bezier(0.3, 0.3, 0.8, 0.9) });
   const z = zMove - 0.25 * smooth(f, 230, 340);
   const x = interpolate(f, [0, 150, 205, 330, 520, 880], [0.0, 0.0, -0.4, -2.15, -2.5, -3.1], { ...clamp, easing: easeIO });
   const yaw = interpolate(f, [118, 178], [0, Math.PI / 2], { ...clamp, easing: easeIO }) - 0.13 * smooth(f, 230, 340);
   const pitch = interpolate(f, [230, 340, 880], [0, 0.08, 0.07], { ...clamp, easing: easeIO });
-  const walking = f < 175 ? 1 : f < 300 ? 0.55 : 0.1;
-  const y = 1.62 + Math.sin(f * 0.34) * 0.035 * walking;
-  const sway = Math.sin(f * 0.17) * 0.012 * walking + Math.sin(f * 0.05) * 0.004;
-  return { x, y, z, yaw: yaw + sway, pitch: pitch + Math.sin(f * 0.21) * 0.004 * (walking > 0.3 ? 1 : 0.4) };
+  const walking = f < 175 ? 1 : f < 300 ? 0.5 : 0.1;
+  const y = 1.62 + Math.sin(f * 0.22) * 0.012 * walking;
+  const sway = Math.sin(f * 0.11) * 0.004 * walking;
+  return { x, y, z, yaw: yaw + sway, pitch: pitch };
 };
 
 const CameraRig: FC<{ f: number }> = ({ f }) => {
@@ -35,6 +36,18 @@ const Box: FC<{ p: [number, number, number]; s: [number, number, number]; c: str
     <boxGeometry args={s} />
     {basic ? <meshBasicMaterial color={c} /> : <meshLambertMaterial color={c} />}
   </mesh>
+);
+
+// ---------- Ajtókeret: minden ajtó ugyanakkora, pontosan beleillik ----------
+const DOOR_W = 1.2;
+const DOOR_H = 2.1;
+const TRIM = 0.08;
+const DoorFrame: FC<{ z: number }> = ({ z }) => (
+  <group>
+    <Box p={[-1.475, (DOOR_H + TRIM) / 2, z - DOOR_W / 2 - TRIM / 2]} s={[0.07, DOOR_H + TRIM, TRIM]} c="#9fc0ff" />
+    <Box p={[-1.475, (DOOR_H + TRIM) / 2, z + DOOR_W / 2 + TRIM / 2]} s={[0.07, DOOR_H + TRIM, TRIM]} c="#9fc0ff" />
+    <Box p={[-1.475, DOOR_H + TRIM / 2, z]} s={[0.07, TRIM, DOOR_W + 2 * TRIM]} c="#9fc0ff" />
+  </group>
 );
 
 // ---------- Folyosó ----------
@@ -53,16 +66,18 @@ const Corridor: FC<{ f: number }> = ({ f }) => {
     panels.push(<Box key={i} p={[0, 3.09, z]} s={[0.9, 0.03, 1.5]} c={new THREE.Color(0.55 * b, 0.82 * b, 1.0 * b).getStyle()} basic />);
   }
   const doors: React.ReactElement[] = [];
-  [-4.6, -9.8, -14.4, -24.6].forEach((z, i) => {
-    doors.push(<Box key={`d${i}`} p={[-1.38, 1.05, z]} s={[0.06, 2.1, 1.05]} c="#0a1a78" />);
-    doors.push(<Box key={`w${i}`} p={[-1.34, 1.55, z]} s={[0.04, 0.6, 0.55]} c="#7fb5ff" basic />);
+  [-4.6, -9.8, -14.4].forEach((z, i) => {
+    doors.push(<DoorFrame key={`df${i}`} z={z} />);
+    doors.push(<Box key={`d${i}`} p={[-1.485, DOOR_H / 2, z]} s={[0.04, DOOR_H, DOOR_W]} c="#0a1a78" />);
+    doors.push(<Box key={`w${i}`} p={[-1.463, 1.45, z]} s={[0.02, 0.6, 0.5]} c="#4f7fe0" />);
+    doors.push(<Box key={`k${i}`} p={[-1.462, 1.0, z - 0.45]} s={[0.02, 0.05, 0.12]} c="#ffd98a" />);
   });
   return (
     <group>
       {/* padló és mennyezet */}
       <Box p={[0, -0.05, -9]} s={[3, 0.1, 40]} c="#0c1a73" />
-      <Box p={[-0.9, 0.001, -9]} s={[0.05, 0.002, 40]} c="#5aa0ff" basic />
-      <Box p={[0.9, 0.001, -9]} s={[0.05, 0.002, 40]} c="#5aa0ff" basic />
+      <Box p={[-0.9, 0.01, -9]} s={[0.05, 0.02, 40]} c="#5aa0ff" basic />
+      <Box p={[0.9, 0.01, -9]} s={[0.05, 0.02, 40]} c="#5aa0ff" basic />
       <Box p={[0, 3.2, -9]} s={[3, 0.1, 40]} c="#0a1660" basic />
       {/* jobb fal + szekrények */}
       <Box p={[1.52, 1.6, -9]} s={[0.04, 3.2, 40]} c="#0a1a78" />
@@ -70,7 +85,8 @@ const Corridor: FC<{ f: number }> = ({ f }) => {
       {/* bal fal: szakaszok az ajtó körül (rés: -18.6 … -19.8) */}
       <Box p={[-1.55, 1.6, -4.8]} s={[0.1, 3.2, 27.6]} c="#0f2a8f" />
       <Box p={[-1.55, 1.6, -23.4]} s={[0.1, 3.2, 7.2]} c="#0f2a8f" />
-      <Box p={[-1.55, 2.7, -19.2]} s={[0.1, 1.0, 1.2]} c="#0f2a8f" />
+      <Box p={[-1.55, (DOOR_H + 3.2) / 2, -19.2]} s={[0.1, 3.2 - DOOR_H, DOOR_W]} c="#0f2a8f" />
+      <DoorFrame z={-19.2} />
       {doors}
       {panels}
       {/* folyosó vége */}
@@ -81,12 +97,12 @@ const Corridor: FC<{ f: number }> = ({ f }) => {
 
 // ---------- Ajtó ----------
 const Door: FC<{ f: number }> = ({ f }) => {
-  const angle = interpolate(f, [172, 218], [0, 1.78], { ...clamp, easing: Easing.bezier(0.2, 0.7, 0.2, 1) });
+  const angle = interpolate(f, [172, 218], [0, 2.7], { ...clamp, easing: Easing.bezier(0.2, 0.7, 0.2, 1) });
   return (
     <group position={[-1.55, 0, -18.6]} rotation={[0, angle, 0]}>
-      <Box p={[0, 1.05, -0.6]} s={[0.06, 2.1, 1.2]} c="#e8f4ff" />
-      <Box p={[0.04, 1.4, -0.6]} s={[0.02, 0.6, 0.5]} c="#9fd2ff" basic />
-      <Box p={[0.05, 1.0, -1.05]} s={[0.05, 0.05, 0.14]} c="#ffd98a" basic />
+      <Box p={[0, DOOR_H / 2, -DOOR_W / 2]} s={[0.06, DOOR_H, DOOR_W]} c="#e8f4ff" />
+      <Box p={[0.035, 1.45, -DOOR_W / 2]} s={[0.02, 0.6, 0.5]} c="#8fb4ff" />
+      <Box p={[0.04, 1.0, -DOOR_W + 0.15]} s={[0.02, 0.05, 0.12]} c="#ffd98a" />
     </group>
   );
 };
@@ -200,8 +216,8 @@ const Windows: FC<{ env: Env }> = ({ env }) => {
     const t = k / (NB - 1);
     const col = t < 0.45 ? sky[2].clone().lerp(sky[1], t / 0.45) : sky[1].clone().lerp(sky[0], (t - 0.45) / 0.55);
     bands.push(
-      <mesh key={k} position={[-7.6, 0.4 + k * 0.3 + 0.15, -27.0]}>
-        <planeGeometry args={[14, 0.31]} />
+      <mesh key={k} position={[-8.9, 0.4 + k * 0.3 + 0.15, -27.0]}>
+        <planeGeometry args={[9.6, 0.31]} />
         <meshBasicMaterial color={col} fog={false} />
       </mesh>,
     );
@@ -211,10 +227,10 @@ const Windows: FC<{ env: Env }> = ({ env }) => {
   const dayHaze = new THREE.Color("#35539f").lerp(new THREE.Color("#05093a"), night);
   const dusk = new THREE.Color("#3a2a6a").lerp(new THREE.Color("#05093a"), night);
   const sil = dayHaze.lerp(dusk, warm * 0.8);
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 15; i++) {
     const h = 0.8 + 1.15 * rnd(i * 3.7);
     skyline.push(
-      <mesh key={i} position={[-13.8 + i * 0.7, h / 2, -26.8]}>
+      <mesh key={i} position={[-13.2 + i * 0.6, h / 2, -26.8]}>
         <boxGeometry args={[0.62, h, 0.3]} />
         <meshBasicMaterial color={sil} fog={false} />
       </mesh>,
@@ -233,7 +249,7 @@ const Windows: FC<{ env: Env }> = ({ env }) => {
   for (let i = 0; i < 40; i++) {
     const tw = 0.45 + 0.55 * Math.abs(Math.sin(env.f * 0.15 + i * 1.7));
     stars.push(
-      <mesh key={i} position={[-13 + rnd(i * 5.1) * 9, 1.0 + rnd(i * 9.3) * 3.6, -26.7]}>
+      <mesh key={i} position={[-13 + rnd(i * 5.1) * 8.5, 1.0 + rnd(i * 9.3) * 3.6, -26.7]}>
         <planeGeometry args={[0.05, 0.05]} />
         <meshBasicMaterial color="#dfe9ff" transparent opacity={night * tw} fog={false} />
       </mesh>,
@@ -313,7 +329,7 @@ const Sunlight: FC<{ env: Env }> = ({ env }) => {
       const za = zw + d1;
       const zb = zw + Math.min(d2, DMAX);
       els.push(
-        <Quad key={`f${j}`} pts={[[x0, 0.012, za], [x1, 0.012, za], [x1, 0.012, zb], [x0, 0.012, zb]]} color={sunC} opacity={0.5 * bright} />,
+        <Quad key={`f${j}`} pts={[[x0, 0.02, za], [x1, 0.02, za], [x1, 0.02, zb], [x0, 0.02, zb]]} color={sunC} opacity={0.5 * bright} />,
       );
     }
     // folt a szemközti falon (alacsony napnál)
@@ -400,7 +416,7 @@ export const World: FC = () => {
   const env = envAt(f);
   const c = camAt(f);
   return (
-    <ThreeCanvas width={width} height={height} camera={{ fov: 72, near: 0.05, far: 60, position: [0, 1.6, 8] }}>
+    <ThreeCanvas width={width} height={height} camera={{ fov: 72, near: 0.1, far: 45, position: [0, 1.6, 8] }}>
       <color attach="background" args={[D.void]} />
       <fog attach="fog" args={[D.void, 4, 26]} />
       <ambientLight intensity={env.ambI} color={env.ambC} />

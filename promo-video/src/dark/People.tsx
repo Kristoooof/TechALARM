@@ -1,7 +1,7 @@
 import type React from "react";
 import type { FC } from "react";
 import { Easing, interpolate } from "remotion";
-import { clamp, easeOut, flashAt, rnd } from "./theme";
+import { clamp, easeOut, rnd } from "./theme";
 
 const PROJ = { x: -6.2, z: -19.5 };
 const SPEED = 0.09; // méter / képkocka (kb. 2,7 m/s: csengetés után sietnek)
@@ -43,7 +43,6 @@ export type Pose = {
   thR: number;
   shL: number;
   shR: number;
-  splay: number;
   armL: [number, number];
   armR: [number, number];
   elL: number;
@@ -52,26 +51,36 @@ export type Pose = {
   headY: number;
 };
 
+const Ball: FC<{ p: [number, number, number]; r: number; c: string }> = ({ p, r, c }) => (
+  <mesh position={p}>
+    <sphereGeometry args={[r, 12, 10]} />
+    <meshLambertMaterial color={c} />
+  </mesh>
+);
+
+// A méretek szándékosan eltérnek (egysíkú lapok nincsenek), az ízületeket gömbök fedik,
+// így nincs Z-fighting és nem „villognak” az összeillesztések.
 const Arm: FC<{ side: 1 | -1; sh: [number, number]; el: number; look: Look }> = ({ side, sh, el, look }) => (
-  <group position={[side * 0.23, 0.52, 0]} rotation={[sh[0], 0, sh[1]]}>
-    <Box p={[0, -0.15, 0]} s={[0.1, 0.3, 0.1]} c={look.top} />
+  <group position={[side * 0.225, 0.5, 0]} rotation={[sh[0], 0, sh[1]]}>
+    <Ball p={[0, 0, 0]} r={0.072} c={look.top} />
+    <Box p={[0, -0.15, 0]} s={[0.1, 0.3, 0.104]} c={look.top} />
     <group position={[0, -0.3, 0]} rotation={[el, 0, 0]}>
-      <Box p={[0, -0.14, 0]} s={[0.085, 0.28, 0.085]} c={look.skin} />
-      <mesh position={[0, -0.3, 0]}>
-        <sphereGeometry args={[0.055, 10, 8]} />
-        <meshLambertMaterial color={look.skin} />
-      </mesh>
+      <Ball p={[0, 0, 0]} r={0.056} c={look.top} />
+      <Box p={[0, -0.14, 0]} s={[0.082, 0.28, 0.086]} c={look.skin} />
+      <Ball p={[0, -0.3, 0]} r={0.056} c={look.skin} />
     </group>
   </group>
 );
 
-const Leg: FC<{ side: 1 | -1; hipY: number; th: number; sh: number; splay: number; look: Look }> = ({ side, hipY, th, sh, splay, look }) => (
-  <group position={[side * 0.1, hipY, 0]} rotation={[0, side * splay, 0]}>
+const Leg: FC<{ side: 1 | -1; hipY: number; th: number; sh: number; look: Look }> = ({ side, hipY, th, sh, look }) => (
+  <group position={[side * 0.1, hipY, 0]}>
+    <Ball p={[0, 0, 0]} r={0.085} c={look.pants} />
     <group rotation={[th, 0, 0]}>
-      <Box p={[0, -0.22, 0]} s={[0.13, 0.44, 0.13]} c={look.pants} />
+      <Box p={[0, -0.22, 0]} s={[0.14, 0.44, 0.146]} c={look.pants} />
       <group position={[0, -0.44, 0]} rotation={[sh, 0, 0]}>
-        <Box p={[0, -0.21, 0]} s={[0.11, 0.42, 0.11]} c={look.pants} />
-        <Box p={[0, -0.43, 0.04]} s={[0.12, 0.07, 0.22]} c="#e8f4ff" />
+        <Ball p={[0, 0, 0]} r={0.076} c={look.pants} />
+        <Box p={[0, -0.21, 0]} s={[0.114, 0.42, 0.118]} c={look.pants} />
+        <Box p={[0, -0.4, 0.045]} s={[0.126, 0.07, 0.232]} c="#e8f4ff" />
       </group>
     </group>
   </group>
@@ -79,20 +88,27 @@ const Leg: FC<{ side: 1 | -1; hipY: number; th: number; sh: number; splay: numbe
 
 export const Person: FC<{ pose: Pose; look: Look }> = ({ pose: p, look }) => (
   <group position={[p.x, p.y, p.z]} rotation={[0, p.ry, 0]}>
-    <Leg side={-1} hipY={p.hipY} th={p.thL} sh={p.shL} splay={p.splay} look={look} />
-    <Leg side={1} hipY={p.hipY} th={p.thR} sh={p.shR} splay={p.splay} look={look} />
+    <Leg side={-1} hipY={p.hipY} th={p.thL} sh={p.shL} look={look} />
+    <Leg side={1} hipY={p.hipY} th={p.thR} sh={p.shR} look={look} />
     <group position={[0, p.hipY, 0]} rotation={[p.lean, 0, 0]}>
-      <Box p={[0, 0.29, 0]} s={[0.36, 0.58, 0.2]} c={look.top} />
-      <Box p={[0, 0.02, 0]} s={[0.34, 0.14, 0.2]} c={look.pants} />
+      <Box p={[0, 0.02, 0]} s={[0.34, 0.16, 0.2]} c={look.pants} />
+      <Box p={[0, 0.3, 0]} s={[0.372, 0.56, 0.216]} c={look.top} />
       <Arm side={-1} sh={p.armL} el={p.elL} look={look} />
       <Arm side={1} sh={p.armR} el={p.elR} look={look} />
-      <group position={[0, 0.62, 0]} rotation={[p.headX, p.headY, 0]}>
-        <mesh position={[0, 0.14, 0]}>
-          <sphereGeometry args={[0.125, 14, 12]} />
+      <Box p={[0, 0.63, 0]} s={[0.085, 0.1, 0.09]} c={look.skin} />
+      <group position={[0, 0.64, 0]} rotation={[p.headX, p.headY, 0]}>
+        <mesh position={[0, 0.13, 0]}>
+          <sphereGeometry args={[0.125, 16, 12]} />
           <meshLambertMaterial color={look.skin} />
         </mesh>
-        <mesh position={[0, 0.175, -0.035]} scale={[1, 0.92, 1]}>
-          <sphereGeometry args={[0.13, 14, 12]} />
+        {[-1, 1].map((e) => (
+          <mesh key={e} position={[e * 0.045, 0.14, 0.113]}>
+            <sphereGeometry args={[0.017, 8, 6]} />
+            <meshBasicMaterial color="#10143a" />
+          </mesh>
+        ))}
+        <mesh position={[0, 0.165, -0.04]} scale={[1, 0.92, 1]}>
+          <sphereGeometry args={[0.135, 16, 12]} />
           <meshLambertMaterial color={look.hair} />
         </mesh>
       </group>
@@ -110,10 +126,6 @@ const lerpAng = (a: number, b: number, t: number) => {
   if (d > Math.PI) d -= Math.PI * 2;
   if (d < -Math.PI) d += Math.PI * 2;
   return a + d * t;
-};
-const nearFlash = (f: number) => {
-  for (let k = -5; k <= 5; k++) if (flashAt(f + k) > 0) return true;
-  return false;
 };
 
 type Pt = [number, number];
@@ -137,9 +149,10 @@ type Walker = {
   stand: number; // mikor áll fel
   start: number; // mikor indul el
   path: Pt[]; // útvonal az ajtóig és ki a folyosóra (a seat az első pont)
-  tilt: number; // fejdöntés ültében
   phase: number;
 };
+
+const SEAT_LOOK = (seat: Pt) => angTo(PROJ.x - seat[0], PROJ.z - seat[1]);
 
 const Hall = (z: number): Pt[] => [
   [0.1, z],
@@ -154,8 +167,7 @@ export const WALKERS: Walker[] = [
     seat: [-5.3, -18.65],
     stand: 408,
     start: 418,
-    path: [[-5.3, -18.65], [-3.6, -18.85], [-1.9, -19.0], ...Hall(-19.0)],
-    tilt: -0.75,
+    path: [[-5.3, -18.65], [-3.6, -18.75], [-2.4, -18.8], [-1.85, -19.0], ...Hall(-19.0)],
     phase: 0,
   },
   {
@@ -164,8 +176,7 @@ export const WALKERS: Walker[] = [
     seat: [-7.35, -18.55],
     stand: 414,
     start: 424,
-    path: [[-7.35, -18.55], [-6.2, -18.62], [-3.6, -18.85], [-1.9, -19.0], ...Hall(-19.0)],
-    tilt: -0.8,
+    path: [[-7.35, -18.55], [-6.2, -18.62], [-3.6, -18.75], [-2.4, -18.8], [-1.85, -19.0], ...Hall(-19.0)],
     phase: 1.3,
   },
   {
@@ -174,8 +185,7 @@ export const WALKERS: Walker[] = [
     seat: [-5.45, -20.55],
     stand: 410,
     start: 420,
-    path: [[-5.45, -20.55], [-4.6, -20.15], [-3.0, -20.05], [-2.0, -19.7], [-1.5, -19.5], ...Hall(-19.5)],
-    tilt: -0.7,
+    path: [[-5.45, -20.55], [-4.6, -20.25], [-3.0, -20.25], [-2.4, -20.1], [-1.9, -19.55], [-1.5, -19.4], ...Hall(-19.4)],
     phase: 2.1,
   },
   {
@@ -184,8 +194,7 @@ export const WALKERS: Walker[] = [
     seat: [-6.95, -20.7],
     stand: 422,
     start: 434,
-    path: [[-6.95, -20.7], [-6.0, -20.2], [-3.0, -20.05], [-2.0, -19.7], [-1.5, -19.5], ...Hall(-19.5)],
-    tilt: -0.78,
+    path: [[-6.95, -20.7], [-6.0, -20.3], [-3.0, -20.25], [-2.4, -20.1], [-1.9, -19.55], [-1.5, -19.4], ...Hall(-19.4)],
     phase: 3.4,
   },
   {
@@ -194,68 +203,59 @@ export const WALKERS: Walker[] = [
     seat: [-7.9, -19.7],
     stand: 426,
     start: 438,
-    path: [[-7.9, -19.7], [-7.3, -20.15], [-3.0, -20.05], [-2.0, -19.7], [-1.5, -19.5], ...Hall(-19.5)],
-    tilt: -0.82,
+    path: [[-7.9, -19.7], [-7.3, -20.2], [-3.0, -20.25], [-2.4, -20.1], [-1.9, -19.55], [-1.5, -19.4], ...Hall(-19.4)],
     phase: 4.7,
   },
 ];
 
-const SEAT_LOOK = (seat: Pt) => angTo(PROJ.x - seat[0], PROJ.z - seat[1]);
+const STAND = 0.88; // csípőmagasság állva (a talp pont a padlón)
+const swing = (phi: number, on: boolean) => {
+  const sw = on ? Math.sin(phi) : 0;
+  return {
+    thL: 0.55 * sw,
+    thR: -0.55 * sw,
+    shL: on ? 0.15 + 0.7 * Math.max(0, Math.sin(phi + 1.2)) : 0,
+    shR: on ? 0.15 + 0.7 * Math.max(0, Math.sin(phi + 1.2 + Math.PI)) : 0,
+    sw,
+  };
+};
 
+/** Állva néző diák: a kar, a törzs mozdulatlan, csak a fej követi a projektort. */
 export const walkerPose = (w: Walker, f: number): Pose => {
   const path = makePath(w.path);
-  const seatRy = SEAT_LOOK(w.seat);
-  const sFrac = ease(f, w.stand, w.stand + 10); // 0 = ül, 1 = áll
+  const lookRy = SEAT_LOOK(w.seat);
+  const turn = ease(f, w.stand, w.stand + 10);
   const walked = Math.max(0, (f - w.start) * SPEED);
   const [px, pz] = path.at(walked);
   const [qx, qz] = path.at(walked + 0.4);
   const heading = angTo(qx - px, qz - pz);
+  const toDoor = angTo(path.at(0.6)[0] - w.seat[0], path.at(0.6)[1] - w.seat[1]);
+  const ry = f < w.start ? lerpAng(lookRy, toDoor, turn) : heading;
   const walkingNow = f >= w.start && walked < path.len;
-  const ry = f < w.start ? lerpAng(seatRy, angTo(path.at(0.6)[0] - w.seat[0], path.at(0.6)[1] - w.seat[1]), sFrac) : heading;
-
-  const sway = Math.sin(f * 0.07 + w.phase) * 0.03;
-  const fl = flashAt(f);
-  const shock = nearFlash(f) ? 1 : 0;
   const phi = walked * 4.5;
-  const sw = walkingNow ? Math.sin(phi) : 0;
-  const swO = walkingNow ? -Math.sin(phi) : 0;
-
-  // ülő testtartás ↔ álló testtartás
-  const hipY = lerp(0.1, 0.86, sFrac);
-  const thSit = -1.35;
-  const thL = lerp(thSit, 0.55 * sw, sFrac);
-  const thR = lerp(thSit, -0.55 * sw, sFrac);
-  const shL = lerp(2.55, walkingNow ? 0.15 + 0.7 * Math.max(0, Math.sin(phi + 1.2)) : 0, sFrac);
-  const shR = lerp(2.55, walkingNow ? 0.15 + 0.7 * Math.max(0, Math.sin(phi + 1.2 + Math.PI)) : 0, sFrac);
-
-  // karok: ültében a térden; villanáskor az egyik a projektorra mutat
-  const pointer = w.id === "A" || w.id === "D" || w.id === "F";
-  const raise = (1 - sFrac) * (pointer ? fl : 0);
-  const armRest: [number, number] = [-0.9, 0];
-  const armL: [number, number] = [lerp(lerp(armRest[0], -2.65, 0), -0.8 * swO * 0.7, sFrac), 0.05];
-  const armR: [number, number] = [lerp(lerp(armRest[0], -2.65, raise), -0.8 * sw * 0.7, sFrac), -0.05];
-  const lean = lerp(0.1 + sway - 0.12 * shock * (1 - sFrac), 0.05, sFrac);
-  const headX = lerp(w.tilt - 0.15 * shock + Math.sin(f * 0.05 + w.phase) * 0.04, 0, sFrac);
-
-  const bob = walkingNow ? 0.025 * Math.abs(Math.sin(phi)) : 0;
+  const sg = swing(phi, walkingNow);
+  const dist = Math.hypot(PROJ.x - w.seat[0], PROJ.z - w.seat[1]);
+  const lookUp = -Math.atan2(2.5 - 1.6, dist) * 0.95; // a projektorra néz
+  const headX = f < w.start ? lerp(lookUp, 0, turn) : 0;
+  const relaxL: [number, number] = [0.04, 0.07];
+  const relaxR: [number, number] = [0.04, -0.07];
   return {
     x: f < w.start ? w.seat[0] : px,
-    y: bob,
+    y: walkingNow ? 0.02 * Math.abs(Math.sin(phi)) : 0,
     z: f < w.start ? w.seat[1] : pz,
     ry,
-    hipY,
-    lean,
-    thL,
-    thR,
-    shL,
-    shR,
-    splay: lerp(0.55, 0, sFrac),
-    armL,
-    armR,
-    elL: lerp(-0.7, -0.25, sFrac),
-    elR: lerp(-0.7 - raise * -0.5, -0.25, sFrac),
+    hipY: STAND,
+    lean: 0.02,
+    thL: sg.thL,
+    thR: sg.thR,
+    shL: sg.shL,
+    shR: sg.shR,
+    armL: walkingNow ? [-0.7 * sg.sw, 0.05] : relaxL,
+    armR: walkingNow ? [0.7 * sg.sw, -0.05] : relaxR,
+    elL: -0.18,
+    elR: -0.18,
     headX,
-    headY: lerp(Math.sin(f * 0.04 + w.phase) * 0.12, 0, sFrac),
+    headY: 0,
   };
 };
 
@@ -273,23 +273,20 @@ export const chairPos = (f: number): Pt => {
   return [lerp(CHAIR_WORK[0], CHAIR_HOME[0], t), lerp(CHAIR_WORK[1], CHAIR_HOME[1], t)];
 };
 
-const G_PATH: Pt[] = [[-6.3, -18.45], [-4.4, -18.85], [-2.2, -19.0], ...Hall(-19.0)];
+const G_PATH: Pt[] = [[-6.3, -18.45], [-4.4, -18.75], [-2.4, -18.8], [-1.85, -19.0], ...Hall(-19.0)];
 
 export const gPose = (f: number): Pose => {
-  const fl = flashAt(f);
-  const shock = nearFlash(f) ? 1 : 0;
   const base: Pose = {
     x: CHAIR_WORK[0],
     y: 0.475,
     z: CHAIR_WORK[1],
     ry: Math.PI,
-    hipY: 0.86,
+    hipY: STAND,
     lean: 0.24,
     thL: 0,
     thR: 0,
     shL: 0,
     shR: 0,
-    splay: 0,
     armL: [-2.7, 0.08],
     armR: [-2.7, -0.08],
     elL: -0.15,
@@ -298,28 +295,26 @@ export const gPose = (f: number): Pose => {
     headY: 0,
   };
   if (f < G_HOP) {
-    // piszkálja a projektort: kis rázkódás, villanáskor összerezzen
-    const w = Math.sin(f * 0.55);
-    const w2 = Math.sin(f * 0.37 + 1);
+    // babrál a projektoron: a mozdulat a saját ritmusa szerint megy, nem a fényre reagál
+    const w = Math.sin(f * 0.45);
+    const w2 = Math.sin(f * 0.31 + 1);
     return {
       ...base,
-      x: base.x + Math.sin(f * 0.11) * 0.015,
-      lean: base.lean + 0.03 * Math.sin(f * 0.3) - 0.14 * shock,
-      armL: [-2.7 + 0.12 * w + 0.25 * shock, 0.08 + 0.05 * w2],
-      armR: [-2.7 + 0.12 * w2 - 0.25 * shock * fl, -0.08 - 0.05 * w],
-      elL: -0.15 - 0.18 * w,
-      elR: -0.15 - 0.18 * w2,
-      headX: -0.45 + 0.06 * w2 + 0.15 * shock,
+      lean: base.lean + 0.02 * Math.sin(f * 0.21),
+      armL: [-2.7 + 0.1 * w, 0.08 + 0.04 * w2],
+      armR: [-2.7 + 0.1 * w2, -0.08 - 0.04 * w],
+      elL: -0.15 - 0.15 * w,
+      elR: -0.15 - 0.15 * w2,
+      headX: -0.45 + 0.04 * w2,
     };
   }
   if (f < G_PUSH0) {
     // lelép a székről, megfordul
     const t = ease(f, G_HOP, G_PUSH0);
-    const ret = lerp(0, 1, t);
     return {
       ...base,
       y: 0.475 * (1 - Easing.in(Easing.quad)(t)) + Math.sin(Math.PI * t) * 0.08,
-      z: lerp(CHAIR_WORK[1], -19.55, ret),
+      z: lerp(CHAIR_WORK[1], -19.55, t),
       ry: lerpAng(Math.PI, 0, ease(f, G_HOP + 2, G_PUSH0)),
       lean: lerp(0.24, 0.1, t),
       armL: [lerp(-2.7, -1.0, t), 0.08],
@@ -333,6 +328,7 @@ export const gPose = (f: number): Pose => {
     // tolja a széket a helyére: a diák a szék mögött halad
     const [, cz] = chairPos(f);
     const phi = (f - G_PUSH0) * 0.5;
+    const sg = swing(phi, true);
     return {
       ...base,
       y: 0,
@@ -340,10 +336,10 @@ export const gPose = (f: number): Pose => {
       z: cz - 0.6,
       ry: 0,
       lean: 0.18,
-      thL: 0.4 * Math.sin(phi),
-      thR: -0.4 * Math.sin(phi),
-      shL: 0.25 * Math.max(0, Math.sin(phi + 1)),
-      shR: 0.25 * Math.max(0, -Math.sin(phi + 1)),
+      thL: sg.thL * 0.7,
+      thR: sg.thR * 0.7,
+      shL: sg.shL * 0.4,
+      shR: sg.shR * 0.4,
       armL: [-1.25, 0.12],
       armR: [-1.25, -0.12],
       elL: -0.25,
@@ -358,22 +354,22 @@ export const gPose = (f: number): Pose => {
   const turn = ease(f, G_WALK, G_WALK + 8);
   const phi = walked * 4.5;
   const moving = walked < path.len;
-  const sw = moving ? Math.sin(phi) : 0;
+  const sg = swing(phi, moving);
   return {
     ...base,
-    y: moving ? 0.025 * Math.abs(Math.sin(phi)) : 0,
+    y: moving ? 0.02 * Math.abs(Math.sin(phi)) : 0,
     x: px,
     z: pz,
     ry: lerpAng(0, angTo(qx - px, qz - pz), turn),
     lean: 0.05,
-    thL: 0.55 * sw,
-    thR: -0.55 * sw,
-    shL: moving ? 0.15 + 0.7 * Math.max(0, Math.sin(phi + 1.2)) : 0,
-    shR: moving ? 0.15 + 0.7 * Math.max(0, Math.sin(phi + 1.2 + Math.PI)) : 0,
-    armL: [lerp(-1.25, 0.55 * sw, turn), 0.05],
-    armR: [lerp(-1.25, -0.55 * sw, turn), -0.05],
-    elL: -0.25,
-    elR: -0.25,
+    thL: sg.thL,
+    thR: sg.thR,
+    shL: sg.shL,
+    shR: sg.shR,
+    armL: [lerp(-1.25, -0.7 * sg.sw, turn), 0.05],
+    armR: [lerp(-1.25, 0.7 * sg.sw, turn), -0.05],
+    elL: -0.18,
+    elR: -0.18,
     headX: 0,
   };
 };
