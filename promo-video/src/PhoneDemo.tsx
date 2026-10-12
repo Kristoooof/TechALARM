@@ -65,13 +65,16 @@ const Field: React.FC<{ label: string; value?: string; focused?: boolean; tall?:
   </div>
 );
 
-const SiteScreen: React.FC<{ f: number }> = ({ f }) => {
-  const room = f >= T.room + 14 ? "Gépműhely" : "";
-  const device = f >= T.device + 14 ? "Fúrógép (GM-001)" : "";
+export type FormText = { room: string; device: string; description: string };
+const DEFAULT_FORM: FormText = { room: "Gépműhely", device: "Fúrógép (GM-001)", description: DESCRIPTION };
+
+const SiteScreen: React.FC<{ f: number; form: FormText }> = ({ f, form }) => {
+  const room = f >= T.room + 14 ? form.room : "";
+  const device = f >= T.device + 14 ? form.device : "";
   const category = f >= T.category + 12 ? "Elromlott / nem működik" : "";
-  const chars = Math.floor(interpolate(f, [T.typeStart, T.typeEnd], [0, DESCRIPTION.length], clamp));
+  const chars = Math.floor(interpolate(f, [T.typeStart, T.typeEnd], [0, form.description.length], clamp));
   const caret = f >= T.typeStart && f < T.tap && Math.floor(f / 8) % 2 === 0 ? "▏" : "";
-  const typed = DESCRIPTION.slice(0, chars) + caret;
+  const typed = form.description.slice(0, chars) + caret;
 
   const roomFocus = f >= T.room && f < T.room + 22;
   const deviceFocus = f >= T.device && f < T.device + 22;
@@ -240,7 +243,7 @@ const Tap: React.FC<{ f: number }> = ({ f }) => {
   );
 };
 
-export const Phone: React.FC<{ f: number }> = ({ f }) => (
+export const Phone: React.FC<{ f: number; form?: FormText }> = ({ f, form = DEFAULT_FORM }) => (
   <div
     style={{
       width: SCREEN_W * SCALE + BEZEL * 2,
@@ -256,7 +259,7 @@ export const Phone: React.FC<{ f: number }> = ({ f }) => (
   >
     <div style={{ width: SCREEN_W * SCALE, height: SCREEN_H * SCALE, borderRadius: 64, overflow: "hidden", position: "relative" }}>
       <div style={{ width: SCREEN_W, height: SCREEN_H, transformOrigin: "top left", scale: String(SCALE) }}>
-        <SiteScreen f={f} />
+        <SiteScreen f={f} form={form} />
       </div>
     </div>
     {/* Dinamikus sziget */}

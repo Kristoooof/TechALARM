@@ -12,7 +12,7 @@ export const D = {
 };
 
 export const SEG = {
-  world: 560, // 3D: folyosó, ajtó, tanterem
+  world: 880, // 3D: folyosó, tanterem, diákok, időugrás
   card: 50, // átvezető kártya
   demo: 330, // TechALARM menü + telefon
   end: 150, // zárás
@@ -25,14 +25,15 @@ export const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as 
 
 // A projektor villanásai a 3D jelenetben: [kezdő képkocka, hossz, erősség]
 export const FLASHES: [number, number, number][] = [
-  [330, 3, 1],
-  [352, 2, 0.8],
-  [372, 8, 1],
-  [420, 3, 1],
-  [431, 2, 0.7],
-  [470, 2, 1],
-  [498, 14, 1],
-  [536, 3, 0.9],
+  [262, 3, 1],
+  [285, 2, 0.8],
+  [302, 8, 1],
+  [345, 3, 1],
+  [357, 2, 0.7],
+  [376, 2, 1],
+  [386, 8, 1],
+  [566, 5, 0.6], // üres teremben is megpróbálja
+  [842, 6, 0.9],
 ];
 
 export const flashAt = (f: number): number => {
