@@ -42,28 +42,69 @@ const Box: FC<{ p: [number, number, number]; s: [number, number, number]; c: str
 const DOOR_W = 1.2;
 const DOOR_H = 2.1;
 const TRIM = 0.08;
+const FRAME_C = "#9fc0ff";
 const DoorFrame: FC<{ z: number }> = ({ z }) => (
   <group>
-    <Box p={[-1.475, (DOOR_H + TRIM) / 2, z - DOOR_W / 2 - TRIM / 2]} s={[0.07, DOOR_H + TRIM, TRIM]} c="#9fc0ff" />
-    <Box p={[-1.475, (DOOR_H + TRIM) / 2, z + DOOR_W / 2 + TRIM / 2]} s={[0.07, DOOR_H + TRIM, TRIM]} c="#9fc0ff" />
-    <Box p={[-1.475, DOOR_H + TRIM / 2, z]} s={[0.07, TRIM, DOOR_W + 2 * TRIM]} c="#9fc0ff" />
+    {/* a falsíkon (x > -1.5) álló keret: nem fedi át a fal térfogatát */}
+    <Box p={[-1.465, DOOR_H / 2, z - DOOR_W / 2 - TRIM / 2]} s={[0.07, DOOR_H, TRIM]} c={FRAME_C} />
+    <Box p={[-1.465, DOOR_H / 2, z + DOOR_W / 2 + TRIM / 2]} s={[0.07, DOOR_H, TRIM]} c={FRAME_C} />
+    <Box p={[-1.465, DOOR_H + TRIM / 2, z]} s={[0.07, TRIM, DOOR_W + 2 * TRIM]} c={FRAME_C} />
   </group>
 );
 
 // ---------- Folyosó ----------
+// A főfolyosó egyenesen megy z = -22-ig, ott kétszer 45°-ot fordul jobbra, és +x irányba folytatódik.
+// A szakaszok illesztése gérvágású (a külső fal meghosszabbítva, a belső lerövidítve), így nincs rés.
+const A_END = -22;
+const MITER = 1.5 * Math.tan(Math.PI / 8);
+const B_LEN = 7;
+const B_ORIGIN: [number, number] = [0, A_END];
+const B_END: [number, number] = [B_ORIGIN[0] + B_LEN * Math.SQRT1_2, B_ORIGIN[1] - B_LEN * Math.SQRT1_2];
+const C_LEN = 16;
+const lamp = (b: number) => new THREE.Color(0.55 * b, 0.82 * b, 1.0 * b).getStyle();
+
+/** Egy elfordított folyosószakasz (helyi koordinátákban -z az előre). */
+const Segment: FC<{ origin: [number, number]; theta: number; len: number; t0: number; t1: number; panels: number[]; cap?: boolean }> = ({ origin, theta, len, t0, t1, panels, cap }) => {
+  const zs = t0; // a külső fal és a padló/mennyezet eleje (hátrafelé nyúlik)
+  const ze = -(len + t1);
+  const L = zs - ze;
+  const C = (zs + ze) / 2;
+  const iz0 = -t0; // belső fal: lerövidítve
+  const iz1 = -(len - t1);
+  const lockers: React.ReactElement[] = [];
+  for (let z = iz0 - 0.3, i = 0; z > iz1 + 0.3; z -= 0.55, i++) {
+    lockers.push(<Box key={`l${i}`} p={[1.27, 1.05, z]} s={[0.46, 2.1, 0.5]} c={i % 2 ? "#1c47e0" : "#2354f0"} />);
+    lockers.push(<Box key={`h${i}`} p={[1.03, 1.15, z]} s={[0.03, 0.2, 0.06]} c="#9fd2ff" basic />);
+  }
+  return (
+    <group position={[origin[0], 0, origin[1]]} rotation={[0, theta, 0]}>
+      <Box p={[0, -0.05, C]} s={[3, 0.1, L]} c="#0c1a73" />
+      <Box p={[-0.9, 0.01, C]} s={[0.05, 0.02, L]} c="#5aa0ff" basic />
+      <Box p={[0.9, 0.01, (iz0 + iz1) / 2]} s={[0.05, 0.02, iz0 - iz1]} c="#5aa0ff" basic />
+      <Box p={[0, 3.2, C]} s={[3, 0.1, L]} c="#0a1660" basic />
+      <Box p={[-1.55, 1.6, C]} s={[0.1, 3.2, L]} c="#0f2a8f" />
+      <Box p={[1.52, 1.6, (iz0 + iz1) / 2]} s={[0.04, 3.2, iz0 - iz1]} c="#0a1a78" />
+      {lockers}
+      {panels.map((z, i) => (
+        <Box key={`p${i}`} p={[0, 3.09, z]} s={[0.9, 0.03, 1.5]} c={lamp(1)} basic />
+      ))}
+      {cap ? <Box p={[0, 1.6, ze - 0.05]} s={[3.1, 3.2, 0.1]} c="#0b1c80" /> : null}
+    </group>
+  );
+};
+
 const Corridor: FC<{ f: number }> = ({ f }) => {
   const lockers: React.ReactElement[] = [];
-  for (let i = 0; i < 64; i++) {
+  for (let i = 0; i < 55; i++) {
     const z = 9 - i * 0.55;
     lockers.push(<Box key={i} p={[1.27, 1.05, z]} s={[0.46, 2.1, 0.5]} c={i % 2 ? "#1c47e0" : "#2354f0"} />);
     lockers.push(<Box key={`h${i}`} p={[1.03, 1.15, z]} s={[0.03, 0.2, 0.06]} c="#9fd2ff" basic />);
   }
   const panels: React.ReactElement[] = [];
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 10; i++) {
     const z = 7 - i * 3.2;
     const flick = i === 4 || i === 7 ? 0.45 + 0.55 * rnd(Math.floor(f / 3) + i * 9) : 1;
-    const b = 0.55 + 0.45 * flick;
-    panels.push(<Box key={i} p={[0, 3.09, z]} s={[0.9, 0.03, 1.5]} c={new THREE.Color(0.55 * b, 0.82 * b, 1.0 * b).getStyle()} basic />);
+    panels.push(<Box key={i} p={[0, 3.09, z]} s={[0.9, 0.03, 1.5]} c={lamp(0.55 + 0.45 * flick)} basic />);
   }
   const doors: React.ReactElement[] = [];
   [-4.6, -9.8, -14.4].forEach((z, i) => {
@@ -72,37 +113,50 @@ const Corridor: FC<{ f: number }> = ({ f }) => {
     doors.push(<Box key={`w${i}`} p={[-1.463, 1.45, z]} s={[0.02, 0.6, 0.5]} c="#4f7fe0" />);
     doors.push(<Box key={`k${i}`} p={[-1.462, 1.0, z - 0.45]} s={[0.02, 0.05, 0.12]} c="#ffd98a" />);
   });
+  const aEnd = A_END - MITER;
+  const aLen = 11 - aEnd;
+  const aC = (11 + aEnd) / 2;
+  const rEnd = A_END + MITER; // belső (jobb) fal vége
+  const fade = 1 - smooth(f, 205, 250);
   return (
     <group>
-      {/* padló és mennyezet */}
-      <Box p={[0, -0.05, -9]} s={[3, 0.1, 40]} c="#0c1a73" />
-      <Box p={[-0.9, 0.01, -9]} s={[0.05, 0.02, 40]} c="#5aa0ff" basic />
-      <Box p={[0.9, 0.01, -9]} s={[0.05, 0.02, 40]} c="#5aa0ff" basic />
-      <Box p={[0, 3.2, -9]} s={[3, 0.1, 40]} c="#0a1660" basic />
-      {/* jobb fal + szekrények */}
-      <Box p={[1.52, 1.6, -9]} s={[0.04, 3.2, 40]} c="#0a1a78" />
+      {/* A szakasz: egyenes folyosó */}
+      <Box p={[0, -0.05, aC]} s={[3, 0.1, aLen]} c="#0c1a73" />
+      <Box p={[-0.9, 0.01, aC]} s={[0.05, 0.02, aLen]} c="#5aa0ff" basic />
+      <Box p={[0.9, 0.01, (11 + rEnd) / 2]} s={[0.05, 0.02, 11 - rEnd]} c="#5aa0ff" basic />
+      <Box p={[0, 3.2, aC]} s={[3, 0.1, aLen]} c="#0a1660" basic />
+      <Box p={[1.52, 1.6, (11 + rEnd) / 2]} s={[0.04, 3.2, 11 - rEnd]} c="#0a1a78" />
       {lockers}
       {/* bal fal: szakaszok az ajtó körül (rés: -18.6 … -19.8) */}
       <Box p={[-1.55, 1.6, -4.8]} s={[0.1, 3.2, 27.6]} c="#0f2a8f" />
-      <Box p={[-1.55, 1.6, -23.4]} s={[0.1, 3.2, 7.2]} c="#0f2a8f" />
+      <Box p={[-1.55, 1.6, (-19.8 + aEnd) / 2]} s={[0.1, 3.2, -19.8 - aEnd]} c="#0f2a8f" />
       <Box p={[-1.55, (DOOR_H + 3.2) / 2, -19.2]} s={[0.1, 3.2 - DOOR_H, DOOR_W]} c="#0f2a8f" />
       <DoorFrame z={-19.2} />
       {doors}
       {panels}
-      {/* folyosó vége */}
-      <Box p={[0, 1.6, -29]} s={[3, 3.2, 0.1]} c="#071263" />
+      {/* B szakasz: 45°-os kanyar jobbra; C szakasz: tovább +x irányba */}
+      <Segment origin={B_ORIGIN} theta={-Math.PI / 4} len={B_LEN} t0={MITER} t1={MITER} panels={[-2.2, -5.2]} />
+      <Segment origin={B_END} theta={-Math.PI / 2} len={C_LEN} t0={MITER} t1={0} panels={[-2.6, -5.8, -9.0, -12.2]} cap />
+      {/* lámpafény a kanyarban és utána, hogy látsszon a fal és a folyosó folytatása */}
+      <pointLight position={[1.2, 2.6, -23.6]} intensity={15 * fade} distance={11} decay={1.3} color="#cfe0ff" />
+      <pointLight position={[4.4, 2.6, -26.2]} intensity={15 * fade} distance={11} decay={1.3} color="#cfe0ff" />
+      <pointLight position={[10.5, 2.6, B_END[1]]} intensity={13 * fade} distance={12} decay={1.3} color="#cfe0ff" />
     </group>
   );
 };
 
-// ---------- Ajtó ----------
+// ---------- Ajtó (a terem ajtaja, ugyanolyan, mint a folyosó többi ajtaja) ----------
+const DOOR_COLOR = "#0a1a78";
+const PANE_COLOR = "#4f7fe0";
+const KNOB_COLOR = "#ffd98a";
 const Door: FC<{ f: number }> = ({ f }) => {
   const angle = interpolate(f, [172, 218], [0, 2.7], { ...clamp, easing: Easing.bezier(0.2, 0.7, 0.2, 1) });
+  // a csuklópont a fal terem felőli síkján (x = -1.6): nyitva sem metszi a falat
   return (
-    <group position={[-1.55, 0, -18.6]} rotation={[0, angle, 0]}>
-      <Box p={[0, DOOR_H / 2, -DOOR_W / 2]} s={[0.06, DOOR_H, DOOR_W]} c="#e8f4ff" />
-      <Box p={[0.035, 1.45, -DOOR_W / 2]} s={[0.02, 0.6, 0.5]} c="#8fb4ff" />
-      <Box p={[0.04, 1.0, -DOOR_W + 0.15]} s={[0.02, 0.05, 0.12]} c="#ffd98a" />
+    <group position={[-1.6, 0, -18.6]} rotation={[0, angle, 0]}>
+      <Box p={[0.03, DOOR_H / 2, -DOOR_W / 2]} s={[0.06, DOOR_H, DOOR_W]} c={DOOR_COLOR} />
+      <Box p={[0.07, 1.45, -DOOR_W / 2]} s={[0.02, 0.6, 0.5]} c={PANE_COLOR} />
+      <Box p={[0.071, 1.0, -DOOR_W + 0.15]} s={[0.02, 0.05, 0.12]} c={KNOB_COLOR} />
     </group>
   );
 };
@@ -357,10 +411,21 @@ const Sunlight: FC<{ env: Env }> = ({ env }) => {
 
 const Ceiling: FC<{ env: Env }> = ({ env }) => {
   const on = env.lights;
-  const col = new THREE.Color("#171f66").lerp(new THREE.Color("#f0f8ff"), on).getStyle();
   const panels: React.ReactElement[] = [];
   [-4.2, -6.75, -9.3].forEach((x, i) =>
-    [-15.6, -19.5, -23.4].forEach((z, j) => panels.push(<Box key={`${i}${j}`} p={[x, 3.19, z]} s={[1.7, 0.04, 0.5]} c={col} basic />)),
+    [-15.6, -19.5, -23.4].forEach((z, j) =>
+      panels.push(
+        <group key={`${i}${j}`} position={[x, 3.17, z]}>
+          {/* mindig látszó keret */}
+          <Box p={[0, 0, 0]} s={[1.84, 0.03, 0.64]} c="#3a4fc0" />
+          {/* kikapcsolva halvány szürkéskék test, bekapcsolva fehéren világít */}
+          <mesh position={[0, -0.02, 0]}>
+            <boxGeometry args={[1.7, 0.03, 0.5]} />
+            <meshLambertMaterial color="#aebcea" emissive={new THREE.Color("#f4fbff")} emissiveIntensity={on} />
+          </mesh>
+        </group>,
+      ),
+    ),
   );
   return <group>{panels}</group>;
 };
@@ -376,6 +441,8 @@ const Classroom: FC<{ f: number; env: Env }> = ({ f, env }) => {
       <Box p={[-6.75, 3.25, -19.5]} s={[10.5, 0.1, 13]} c="#0b1a6a" basic />
       <Box p={[-12.05, 1.6, -19.5]} s={[0.1, 3.2, 13]} c="#0f2a8f" />
       <Box p={[-6.75, 1.6, -13.05]} s={[10.5, 3.2, 0.1]} c="#0d2386" />
+      {/* a terem ajtó felőli fala a kanyar előtt is zárt */}
+      <Box p={[-1.55, 1.6, -24.3]} s={[0.1, 3.2, 3.4]} c="#0f2a8f" />
       <Windows env={env} />
       <Ceiling env={env} />
       {/* tábla */}
@@ -416,9 +483,9 @@ export const World: FC = () => {
   const env = envAt(f);
   const c = camAt(f);
   return (
-    <ThreeCanvas width={width} height={height} camera={{ fov: 72, near: 0.1, far: 45, position: [0, 1.6, 8] }}>
+    <ThreeCanvas width={width} height={height} camera={{ fov: 72, near: 0.1, far: 60, position: [0, 1.6, 8] }}>
       <color attach="background" args={[D.void]} />
-      <fog attach="fog" args={[D.void, 4, 26]} />
+      <fog attach="fog" args={[D.void, 6, f < 230 ? 46 : 46 - 16 * smooth(f, 230, 340)]} />
       <ambientLight intensity={env.ambI} color={env.ambC} />
       <directionalLight position={env.sunPos} intensity={env.sunI} color={env.sunC} />
       <directionalLight position={env.moonPos} intensity={env.moonI} color="#8fb0ff" />
