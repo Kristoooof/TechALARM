@@ -6,3 +6,6 @@ out
 next-env.d.ts
 *.tsbuildinfo
 .vercel
+
+promo-video/out
+promo-video/node_modules
