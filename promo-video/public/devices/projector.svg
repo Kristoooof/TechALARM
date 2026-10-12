@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#e5ebf3"/><stop offset="1" stop-color="#9aa9bd"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#64748b"/><stop offset=".5" stop-color="#1e293b"/><stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <radialGradient id="glass" cx=".36" cy=".32" r=".85">
+      <stop offset="0" stop-color="#bfdbfe"/><stop offset=".25" stop-color="#3b82f6"/><stop offset=".6" stop-color="#1e3a8a"/><stop offset="1" stop-color="#050a1c"/>
+    </radialGradient>
+  </defs>
+  <rect x="86" y="258" width="64" height="26" rx="9" fill="#334155"/>
+  <rect x="370" y="258" width="64" height="26" rx="9" fill="#334155"/>
+  <rect x="18" y="64" width="484" height="204" rx="50" fill="url(#body)"/>
+  <rect x="26" y="70" width="468" height="84" rx="44" fill="url(#sheen)" opacity=".85"/>
+  <rect x="18" y="230" width="484" height="38" rx="30" fill="#64748b" opacity=".18"/>
+  <g stroke="#94a3b8" stroke-width="7" stroke-linecap="round" opacity=".75">
+    <path d="M62 112H178"/><path d="M62 136H178"/><path d="M62 160H178"/><path d="M62 184H178"/>
+  </g>
+  <circle cx="72" cy="226" r="9" fill="#2563eb"/><circle cx="72" cy="226" r="9" fill="#93c5fd" opacity=".45"/>
+  <circle cx="112" cy="226" r="9" fill="#cbd5e1" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="372" cy="166" r="92" fill="#0b1224" opacity=".18"/>
+  <circle cx="372" cy="166" r="84" fill="url(#ring)"/>
+  <circle cx="372" cy="166" r="68" fill="#0f172a"/>
+  <circle cx="372" cy="166" r="58" fill="url(#glass)"/>
+  <circle cx="372" cy="166" r="58" fill="none" stroke="#60a5fa" stroke-width="2" opacity=".6"/>
+  <ellipse cx="350" cy="140" rx="24" ry="12" fill="#fff" opacity=".55" transform="rotate(-35 350 140)"/>
+  <circle cx="394" cy="192" r="8" fill="#93c5fd" opacity=".35"/>
+</svg>

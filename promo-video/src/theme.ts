@@ -28,7 +28,7 @@ export const easeInOut = Easing.bezier(0.65, 0, 0.35, 1);
 // Jelenetek hossza (képkocka, 30 fps)
 export const SCENES = {
   hook: 90,
-  problem: 120,
+  problem: 150,
   logo: 90,
   demo: 270,
   tracking: 120,

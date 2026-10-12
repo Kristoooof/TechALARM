@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
-import { interpolate, useCurrentFrame } from "remotion";
+import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { colors, ease, FONT, SCENES } from "./theme";
+import { DeviceImg, FloatingDevices } from "./Device";
 import { Scene } from "./ui";
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
@@ -273,14 +274,28 @@ const STEPS: { label: string; from: number; to: number }[] = [
 
 export const DemoScene: React.FC = () => {
   const f = useCurrentFrame();
-  const enter = interpolate(f, [0, 34], [0, 1], { ...clamp, easing: ease });
+  const { fps } = useVideoConfig();
+  const enter = interpolate(f, [0, 38], [0, 1], { ...clamp, easing: ease });
+  // A telefon 3D-ben fordul be, majd finoman lebeg
+  const tilt = (1 - enter) * 26 + Math.sin(f / 45) * 1.2;
   const phoneStyle: CSSProperties = {
     opacity: enter,
-    translate: `0px ${(1 - enter) * 140}px`,
-    scale: String(0.92 + enter * 0.08),
+    translate: `0px ${(1 - enter) * 120 + Math.sin(f / 38) * 6}px`,
+    transform: `rotateY(${-tilt}deg) rotateX(${(1 - enter) * 8}deg)`,
   };
+  // A kiválasztott eszköz (fúrógép) kiugrik az „Eszköz” lépésnél
+  const chipIn = spring({ frame: f - 96, fps, config: { damping: 13, stiffness: 120 } });
+  const chipOut = interpolate(f, [214, 236], [1, 0], clamp);
+  const chip = f >= 96 ? chipIn * chipOut : 0;
   return (
     <Scene duration={SCENES.demo} push={0.02}>
+      <FloatingDevices
+        items={[
+          { name: "projector", x: 1010, y: 70, h: 130, rot: -8, blur: 9, opacity: 0.22 },
+          { name: "pc", x: 960, y: 800, h: 190, rot: 6, blur: 10, opacity: 0.2, delay: 10 },
+          { name: "chair", x: 1750, y: 780, h: 230, rot: -6, blur: 9, opacity: 0.2, delay: 16 },
+        ]}
+      />
       <div style={{ position: "absolute", left: 150, top: 0, bottom: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 34 }}>
         <div style={{ fontSize: 36, fontWeight: 600, letterSpacing: "0.02em", color: colors.sky, marginBottom: 6, opacity: enter }}>
           Kevesebb, mint egy perc
@@ -311,8 +326,37 @@ export const DemoScene: React.FC = () => {
           );
         })}
       </div>
-      <div style={{ position: "absolute", right: 190, top: 0, bottom: 0, display: "flex", alignItems: "center", ...phoneStyle }}>
-        <Phone f={f} />
+
+      {/* Kiugró eszközkártya */}
+      <div
+        style={{
+          position: "absolute",
+          left: 1000,
+          top: 470,
+          width: 250,
+          opacity: Math.min(1, chip * 1.4),
+          scale: String(0.6 + chip * 0.4),
+          translate: `${(1 - chip) * 120}px 0px`,
+          padding: "20px 20px 22px",
+          borderRadius: 28,
+          background: "rgba(255,255,255,0.08)",
+          border: "1px solid rgba(255,255,255,0.18)",
+          boxShadow: "0 30px 80px rgba(0,0,0,0.4)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <DeviceImg name="drill" height={170} />
+        <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em" }}>Fúrógép</div>
+        <div style={{ fontSize: 22, color: colors.muted }}>GM-001</div>
+      </div>
+
+      <div style={{ position: "absolute", right: 190, top: 0, bottom: 0, display: "flex", alignItems: "center", perspective: 1800 }}>
+        <div style={phoneStyle}>
+          <Phone f={f} />
+        </div>
       </div>
     </Scene>
   );
