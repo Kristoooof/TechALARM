@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "./globals.css";
+import "./theme.css";
 
 export const metadata: Metadata = {
   title: "TechALARM – Hibabejelentő",
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#c2410c",
+  themeColor: "#172554",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
