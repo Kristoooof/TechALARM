@@ -5,7 +5,8 @@ import "./theme.css";
 
 export const metadata: Metadata = {
   title: "TechALARM – Hibabejelentő",
-  description: "Elromlott eszközök és rongálások bejelentése a MSZC Gépészeti Technikumban.",
+  description: "Elromlott eszközök és rongálások bejelentése a Mátészalkai Gépészeti Technikumban.",
+  openGraph: { title: "TechALARM – Hibabejelentő", description: "Elromlott eszközök és rongálások bejelentése – névtelenül, követhetően.", locale: "hu_HU", type: "website" },
 };
 
 export const viewport: Viewport = {
@@ -20,8 +21,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="site-header">
           <div className="container header-inner">
-            <Link href="/" className="brand">
-              Tech<span>ALARM</span>
+            <Link href="/" className="brand" aria-label="TechALARM – főoldal">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/brand/logo-mark.svg" alt="" width={28} height={31} className="brand-mark" />
+              <strong className="brand-text">
+                Tech<span>ALARM</span>
+              </strong>
             </Link>
             <nav>
               <Link href="/">Bejelentés</Link>

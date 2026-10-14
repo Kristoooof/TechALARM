@@ -306,3 +306,9 @@ main.container {
 .site-footer a {
     color: #93c5fd;
 }
+
+/* Logó a fejlécben: címer + szöveg */
+.brand { display: inline-flex; align-items: center; gap: 0.55rem; }
+.brand-mark { display: block; height: 1.9rem; width: auto; flex: none; }
+.brand-text { font-weight: inherit; }
+.brand-text span { color: #60a5fa; }
