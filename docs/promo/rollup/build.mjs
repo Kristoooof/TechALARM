@@ -43,7 +43,7 @@ h1 em{font-style:normal;color:#60a5fa;display:block}
 .devs{left:40mm;width:${W - 80}mm;top:900mm;height:200mm;display:flex;justify-content:space-between;align-items:flex-end}
 .dev{position:relative;display:flex;align-items:flex-end;justify-content:center;height:200mm}
 .dev img{height:100%;max-width:200mm;filter:drop-shadow(0 6mm 14mm rgba(0,0,0,.45))}
-.badge{position:absolute;top:-6mm;right:-10mm;width:46mm;height:46mm;border-radius:50%;background:#ef4444;border:5mm solid #0b1437;color:#fff;font-weight:900;font-size:30mm;display:flex;align-items:center;justify-content:center;line-height:1;padding-bottom:1mm}
+.badge{position:absolute;top:-6mm;right:-4mm;width:46mm;height:46mm;border-radius:50%;background:#ef4444;border:5mm solid #0b1437;color:#fff;font-weight:900;font-size:30mm;display:flex;align-items:center;justify-content:center;line-height:1;padding-bottom:1mm}
 .steps{left:60mm;width:${W - 120}mm;top:1150mm;display:flex;flex-direction:column;gap:22mm}
 .step{display:flex;align-items:center;gap:26mm;background:rgba(255,255,255,.08);border:1.2mm solid rgba(147,197,253,.35);border-radius:16mm;padding:14mm 22mm}
 .num{flex:none;width:62mm;height:62mm;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:36mm}
@@ -69,9 +69,9 @@ const html = `<!doctype html><html lang="hu"><head><meta charset="utf-8"><title>
   <div class="abs tag"><span>Szólj. Névtelenül.</span></div>
   <div class="abs devs">
     <div class="dev"><img src="${dev("projector")}" alt=""><div class="badge">!</div></div>
-    <div class="dev"><img src="${dev("pc")}" alt=""></div>
+    <div class="dev"><img src="${dev("pc")}" alt=""><div class="badge">!</div></div>
     <div class="dev"><img src="${dev("desk")}" alt=""><div class="badge">!</div></div>
-    <div class="dev"><img src="${dev("chair")}" alt=""></div>
+    <div class="dev"><img src="${dev("chair")}" alt=""><div class="badge">!</div></div>
   </div>
   <div class="abs steps">
     <div class="step"><div class="num">1</div><div><b>Válaszd ki a termet</b><small>és az eszközt, ami elromlott</small></div></div>
