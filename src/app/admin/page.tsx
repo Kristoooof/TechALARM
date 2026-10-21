@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
-import { STATUSES, categoryLabel, isStatus, statusLabel, type Status } from "@/lib/constants";
+import { STATUSES, categoryLabel, isStatus, roomLabel, statusLabel, type Status } from "@/lib/constants";
 import AdminNav from "./AdminNav";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
 
   let query = supabase
     .from("reports")
-    .select("id, tracking_code, room_name, device_name, category, status, description, created_at")
+    .select("id, tracking_code, room_name, room_number, device_name, category, status, description, created_at")
     .order("created_at", { ascending: false })
     .limit(300);
   if (filter) query = query.eq("status", filter);
@@ -44,7 +44,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
           <li key={r.id}>
             <Link href={`/admin/${r.id}`} className="list-item">
               <div className="row">
-                <strong>{r.room_name}{r.device_name ? ` – ${r.device_name}` : ""}</strong>
+                <strong>{roomLabel(r.room_name, r.room_number)}{r.device_name ? ` – ${r.device_name}` : ""}</strong>
                 <span className={`badge ${r.status}`}>{statusLabel(r.status)}</span>
               </div>
               <div className="meta">

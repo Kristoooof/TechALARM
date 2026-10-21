@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { normalizeTrackingCode } from "@/lib/tracking";
-import { categoryLabel, statusLabel } from "@/lib/constants";
+import { categoryLabel, roomLabel, statusLabel } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Állapot – TechALARM" };
@@ -10,14 +10,14 @@ export default async function Track({ searchParams }: { searchParams: Promise<{ 
   const code = kod ? normalizeTrackingCode(kod) : null;
 
   let report: {
-    tracking_code: string; room_name: string; device_name: string | null; category: string;
+    tracking_code: string; room_name: string; room_number: string | null; device_name: string | null; category: string;
     description: string; status: string; admin_note: string | null; created_at: string; updated_at: string;
   } | null = null;
 
   if (code) {
     const { data } = await createAdminClient()
       .from("reports")
-      .select("tracking_code, room_name, device_name, category, description, status, admin_note, created_at, updated_at")
+      .select("tracking_code, room_name, room_number, device_name, category, description, status, admin_note, created_at, updated_at")
       .eq("tracking_code", code)
       .maybeSingle();
     report = data;
@@ -48,7 +48,7 @@ export default async function Track({ searchParams }: { searchParams: Promise<{ 
             <span className={`badge ${report.status}`}>{statusLabel(report.status)}</span>
           </div>
           <dl className="details">
-            <dt>Hely</dt><dd>{report.room_name}</dd>
+            <dt>Hely</dt><dd>{roomLabel(report.room_name, report.room_number)}</dd>
             <dt>Eszköz</dt><dd>{report.device_name ?? "–"}</dd>
             <dt>Típus</dt><dd>{categoryLabel(report.category)}</dd>
             <dt>Leírás</dt><dd>{report.description}</dd>

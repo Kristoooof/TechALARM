@@ -4,7 +4,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { headers } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { generateTrackingCode } from "@/lib/tracking";
-import { MAX_PHOTO_BYTES, MAX_REPORTS_PER_HOUR, isCategory } from "@/lib/constants";
+import { MAX_PHOTO_BYTES, MAX_REPORTS_PER_HOUR, ROOM_NUMBER_MAX, isCategory, isRoomNumber } from "@/lib/constants";
 
 export type SubmitResult = { ok: true; code: string } | { ok: false; error: string };
 
@@ -50,13 +50,18 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
   if (str(fd, "website")) return { ok: true, code: "TA-0000-0000" };
 
   const roomId = str(fd, "room_id");
+  const roomNumber = str(fd, "room_number").replace(/\s+/g, " ");
   const deviceChoice = str(fd, "device_id");
   const deviceText = str(fd, "device_text");
   const category = str(fd, "category");
   const description = str(fd, "description");
   const photo = fd.get("photo");
 
-  if (!UUID_RE.test(roomId)) return fail("Válaszd ki a termet.");
+  if (!UUID_RE.test(roomId)) return fail("Válaszd ki a terem típusát.");
+  if (!roomNumber) return fail("Írd be, melyik terem (pl. 1, 104).");
+  if (roomNumber.length > ROOM_NUMBER_MAX || !isRoomNumber(roomNumber)) {
+    return fail(`A terem száma legfeljebb ${ROOM_NUMBER_MAX} karakter lehet, és csak betűt, számot, szóközt, pontot, per- vagy kötőjelet tartalmazhat.`);
+  }
   if (!deviceChoice) return fail("Válaszd ki az eszközt.");
   if (!isCategory(category)) return fail("Válaszd ki a bejelentés típusát.");
   if (description.length < 5) return fail("Írj egy rövid leírást (legalább 5 karakter).");
@@ -138,6 +143,7 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
       room_id: room.id,
       device_id: deviceId,
       room_name: room.name,
+      room_number: roomNumber,
       device_name: deviceName,
       category,
       description,

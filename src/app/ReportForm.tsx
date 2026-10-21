@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Script from "next/script";
 import { useMemo, useRef, useState, useTransition } from "react";
-import { CATEGORIES } from "@/lib/constants";
+import { CATEGORIES, ROOM_NUMBER_MAX } from "@/lib/constants";
 import { submitReport, type SubmitResult } from "./actions";
 import Turnstile from "./Turnstile";
 
@@ -102,7 +102,7 @@ export default function ReportForm({
       {result && !result.ok && <div className="alert error" role="alert">{result.error}</div>}
 
       <div className="field">
-        <label htmlFor="room_id">Terem / labor</label>
+        <label htmlFor="room_id">Terem típusa</label>
         <select id="room_id" name="room_id" required value={roomId} onChange={(e) => { setRoomId(e.target.value); setDeviceId(""); }}>
           <option value="">– válassz –</option>
           {rooms.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
@@ -110,9 +110,22 @@ export default function ReportForm({
       </div>
 
       <div className="field">
+        <label htmlFor="room_number">Terem száma / jele</label>
+        <input
+          id="room_number"
+          name="room_number"
+          type="text"
+          required
+          maxLength={ROOM_NUMBER_MAX}
+          autoComplete="off"
+          placeholder="pl. 1, 104, A12"
+        />
+      </div>
+
+      <div className="field">
         <label htmlFor="device_id">Eszköz</label>
         <select id="device_id" name="device_id" required disabled={!roomId} value={deviceId} onChange={(e) => setDeviceId(e.target.value)}>
-          <option value="">{roomId ? "– válassz –" : "Előbb válassz termet"}</option>
+          <option value="">{roomId ? "– válassz –" : "Előbb válaszd ki a terem típusát"}</option>
           {roomDevices.map((d) => (
             <option key={d.id} value={d.id}>{d.name}{d.inventory_code ? ` (${d.inventory_code})` : ""}</option>
           ))}

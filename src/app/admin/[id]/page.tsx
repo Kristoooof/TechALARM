@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
-import { STATUSES, categoryLabel, statusLabel, type Status } from "@/lib/constants";
+import { STATUSES, categoryLabel, roomLabel, statusLabel, type Status } from "@/lib/constants";
 import { deleteReport, updateReport } from "../actions";
 import ConfirmButton from "../ConfirmButton";
 
@@ -32,7 +32,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
           <span className={`badge ${r.status}`}>{statusLabel(r.status)}</span>
         </div>
         <dl className="details">
-          <dt>Terem</dt><dd>{r.room_name}</dd>
+          <dt>Terem</dt><dd>{roomLabel(r.room_name, r.room_number)}</dd>
           <dt>Eszköz</dt><dd>{r.device_name ?? "–"}</dd>
           <dt>Típus</dt><dd>{categoryLabel(r.category)}</dd>
           <dt>Leírás</dt><dd style={{ whiteSpace: "pre-wrap" }}>{r.description}</dd>

@@ -6,7 +6,7 @@ Hibabejelentő weboldal a MSZC Gépészeti Technikum számára: elromlott eszkö
 
 ## Funkciók
 
-- **Bejelentés** (`/`) – terem, eszköz, típus, leírás, opcionális fénykép. Bejelentkezés nélkül. Telefonra optimalizált. A `/?terem=<terem-id>` hivatkozás előre kiválasztja a termet (későbbi QR-kódokhoz).
+- **Bejelentés** (`/`) – terem típusa (Informatika terem / Gépész terem / Osztályterem), a terem száma (a bejelentő írja be, pl. 1, 104), eszköz, típus, leírás, opcionális fénykép. Bejelentkezés nélkül. Telefonra optimalizált. A `/?terem=<terem-id>` hivatkozás előre kiválasztja a termet (későbbi QR-kódokhoz).
 - **Állapotkövetés** (`/nyomon`) – a bejelentő a kapott `TA-XXXX-XXXX` kóddal nézheti meg az állapotot és az admin üzenetét.
 - **Admin** (`/admin`) – belépés után: bejelentések listája és szűrése, státuszváltás (új / folyamatban / megjavítva / elutasítva), megjegyzés, törlés; termek és eszközök kezelése, CSV-import (`/admin/helyek`).
 - **Spamvédelem** – Turnstile, rejtett csalimező, IP-alapú korlát (óránként 5 bejelentés; az IP-t csak sózott hash-ként tároljuk).
@@ -68,7 +68,7 @@ Excelből: *Mentés másként → CSV UTF-8*. A már létező termeket és eszk�
 
 | Tábla | Tartalom |
 | --- | --- |
-| `rooms` | termek / laborok (`active`: rejtés a bejelentő űrlapról) |
+| `rooms` | teremtípusok (Informatika terem, Gépész terem, Osztályterem; `active`: rejtés a bejelentő űrlapról) |
 | `devices` | eszközök, teremhez kötve, leltári számmal |
 | `reports` | bejelentések (követőkód, státusz, admin megjegyzés, fotó útvonala) |
 | `private.admins` | adminok (nem érhető el az API-n keresztül) |

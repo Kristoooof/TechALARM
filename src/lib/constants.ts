@@ -25,3 +25,11 @@ export const MAX_REPORTS_PER_HOUR = 5;
 
 export const statusLabel = (v: string): string => (isStatus(v) ? STATUSES[v] : v);
 export const categoryLabel = (v: string): string => (isCategory(v) ? CATEGORIES[v] : v);
+
+/** A teremszám / terem jele (pl. „1”, „104”, „A12”, „2/b”): betű, szám, szóköz, pont, per- és kötőjel. */
+export const ROOM_NUMBER_MAX = 20;
+export const ROOM_NUMBER_RE = /^[\p{L}\p{N}][\p{L}\p{N} ./\-]*$/u;
+export const isRoomNumber = (v: string): boolean => v.length >= 1 && v.length <= ROOM_NUMBER_MAX && ROOM_NUMBER_RE.test(v);
+
+/** A teremtípus és a terem száma együtt, pl. „Informatika terem – 104”. */
+export const roomLabel = (name: string, number?: string | null): string => (number ? `${name} – ${number}` : name);
