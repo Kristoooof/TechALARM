@@ -2,3 +2,4 @@
 work-*/
 render-h264.mp4
 node_modules/
+.render-*/
