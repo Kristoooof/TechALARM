@@ -64,7 +64,7 @@ export default function ReportForm({
         if (photo instanceof File && photo.size > 0) {
           const small = await shrinkPhoto(photo);
           if (small.size > MAX_UPLOAD_BYTES) {
-            setResult({ ok: false, error: "A fénykép túl nagy. Válassz kisebb képet, vagy küldd fénykép nélkül." });
+            setResult({ ok: false, error: "A fénykép túl nagy. Válassz kisebb képet." });
             setResetKey((k) => k + 1);
             return;
           }
@@ -155,8 +155,8 @@ export default function ReportForm({
       </div>
 
       <div className="field">
-        <label htmlFor="photo">Fénykép <span className="hint">(nem kötelező, automatikusan lekicsinyítjük)</span></label>
-        <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" />
+        <label htmlFor="photo">Fénykép <span className="hint">(kötelező, automatikusan lekicsinyítjük)</span></label>
+        <input id="photo" name="photo" type="file" required accept="image/jpeg,image/png,image/webp" />
       </div>
 
       {/* Csalogató mező botoknak */}

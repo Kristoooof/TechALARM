@@ -113,29 +113,22 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
     deviceName = device.inventory_code ? `${device.name} (${device.inventory_code})` : device.name;
   }
 
-  // Fénykép (nem kötelező)
-  let photoBytes: Uint8Array | null = null;
-  let photoInfo: { ext: string; mime: string } | null = null;
-  if (photo instanceof File && photo.size > 0) {
-    if (photo.size > MAX_PHOTO_BYTES) return fail("A fénykép legfeljebb 5 MB lehet.");
-    photoBytes = new Uint8Array(await photo.arrayBuffer());
-    photoInfo = sniffImage(photoBytes);
-    if (!photoInfo) return fail("Csak JPG, PNG vagy WebP kép tölthető fel.");
-  }
+  // Fénykép (kötelező)
+  if (!(photo instanceof File) || photo.size === 0) return fail("Csatolj egy fényképet a hibáról.");
+  if (photo.size > MAX_PHOTO_BYTES) return fail("A fénykép legfeljebb 5 MB lehet.");
+  const photoBytes = new Uint8Array(await photo.arrayBuffer());
+  const photoInfo = sniffImage(photoBytes);
+  if (!photoInfo) return fail("Csak JPG, PNG vagy WebP kép tölthető fel.");
 
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = generateTrackingCode();
-    let photoPath: string | null = null;
-
-    if (photoBytes && photoInfo) {
-      photoPath = `${code}/${randomUUID()}.${photoInfo.ext}`;
-      const { error } = await db.storage
-        .from("report-photos")
-        .upload(photoPath, photoBytes, { contentType: photoInfo.mime });
-      if (error) {
-        console.error("Fotófeltöltési hiba:", error.message);
-        return fail("A fénykép feltöltése nem sikerült. Próbáld újra, vagy küldd fénykép nélkül.");
-      }
+    const photoPath = `${code}/${randomUUID()}.${photoInfo.ext}`;
+    const { error: uploadError } = await db.storage
+      .from("report-photos")
+      .upload(photoPath, photoBytes, { contentType: photoInfo.mime });
+    if (uploadError) {
+      console.error("Fotófeltöltési hiba:", uploadError.message);
+      return fail("A fénykép feltöltése nem sikerült. Próbáld újra.");
     }
 
     const { error } = await db.from("reports").insert({
@@ -153,7 +146,7 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
 
     if (!error) return { ok: true, code };
 
-    if (photoPath) await db.storage.from("report-photos").remove([photoPath]);
+    await db.storage.from("report-photos").remove([photoPath]);
     if (error.code !== "23505") {
       console.error("Bejelentés mentési hiba:", error.message);
       return fail("A bejelentést nem sikerült elmenteni. Próbáld újra később.");
