@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="hu" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>TechALARM – brag</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Inter"; font-weight: 100 900; src: url("assets/fonts/inter-latin-wght-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215; }
+      @font-face { font-family: "Inter"; font-weight: 100 900; src: url("assets/fonts/inter-latin-ext-wght-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113; }
+
+      :root {
+        --bg: #0b1437; --ink: #eaf1ff; --navy: #172554; --blue: #2563eb; --sky: #60a5fa;
+        --paper: #f8fbff; --card: #fdfeff; --muted: #9db4e8; --line: #cbd5e1; --slate: #475569;
+        --red: #ef4444; --amber: #f59e0b; --green: #22c55e;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+      body { font-family: "Inter", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
+      .scene { position: absolute; inset: 0; overflow: hidden; background: var(--bg); }
+      .abs { position: absolute; }
+      .glow { position: absolute; border-radius: 50%; pointer-events: none; }
+      .ghost { position: absolute; font-weight: 900; letter-spacing: -0.05em; color: rgba(96, 165, 250, 0.13); white-space: nowrap; line-height: 0.8; pointer-events: none; }
+      .ch { opacity: 0; }
+      .w { display: inline-block; white-space: nowrap; }
+      .badge { border-radius: 50%; background: var(--red); color: #fff1f1; font-weight: 900; display: flex; align-items: center; justify-content: center; line-height: 1; border: 6px solid var(--bg); }
+      .badge.xl { width: 170px; height: 170px; font-size: 118px; flex: none; }
+      .badge.sm { width: 64px; height: 64px; font-size: 42px; border-width: 5px; }
+
+      /* ---------- Scene 1 ---------- */
+      #s1 .row { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 44px; }
+      #s1-text { font-size: 160px; font-weight: 800; letter-spacing: -0.045em; color: var(--ink); white-space: nowrap; }
+
+      /* ---------- Scene 2 ---------- */
+      #s2-head { left: 130px; top: 110px; font-size: 96px; font-weight: 900; letter-spacing: -0.045em; }
+      #s2-head em { font-style: normal; color: var(--sky); }
+      #s2-devs { left: 110px; top: 300px; width: 940px; height: 700px; }
+      .dev { position: absolute; width: 440px; height: 330px; display: flex; align-items: flex-end; justify-content: center; }
+      .dev img { max-height: 290px; max-width: 380px; filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.45)); }
+      .dev .badge { position: absolute; top: -6px; right: 28px; }
+      #s2-cats { left: 1090px; top: 270px; width: 720px; display: flex; flex-direction: column; gap: 28px; }
+      .cat { display: flex; align-items: center; gap: 28px; padding: 30px 38px; border-radius: 26px; background: rgba(255, 255, 255, 0.07); border: 3px solid rgba(147, 197, 253, 0.4); font-size: 50px; font-weight: 800; letter-spacing: -0.03em; }
+      .cat i { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--sky); }
+
+      /* ---------- Scene 3 ---------- */
+      #s3-lines { left: 150px; top: 250px; width: 1620px; display: flex; flex-direction: column; gap: 58px; }
+      #s3-lines p { font-size: 92px; font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; }
+      #s3-l3 { color: var(--sky); }
+      #s3-ul { position: absolute; left: 0; bottom: -10px; height: 10px; width: 100%; background: var(--sky); border-radius: 5px; transform-origin: left center; }
+      #s3-q { right: 140px; bottom: 100px; font-size: 150px; font-weight: 900; letter-spacing: -0.05em; text-align: right; line-height: 0.95; }
+      #s3-q em { font-style: normal; color: var(--sky); }
+
+      /* ---------- Scene 4 ---------- */
+      #s4-logo { left: 170px; top: 110px; width: 760px; }
+      #s4-glow { left: 20px; top: 40px; width: 1000px; height: 1000px; background: radial-gradient(circle, rgba(37, 99, 235, 0.55), transparent 62%); }
+      #s4-t { left: 1000px; top: 250px; width: 800px; }
+      #s4-t h2 { font-size: 132px; font-weight: 900; letter-spacing: -0.05em; line-height: 0.95; }
+      #s4-t h2 em { font-style: normal; color: var(--sky); display: block; }
+      #s4-t p { margin-top: 54px; font-size: 40px; line-height: 1.3; font-weight: 500; color: #c7d8ff; max-width: 740px; }
+
+      /* ---------- Phone ---------- */
+      .phone { width: 462px; height: 962px; border-radius: 78px; background: linear-gradient(145deg, #1e293b, #0b1224); padding: 16px; border: 2px solid rgba(148, 163, 184, 0.35); box-shadow: 0 0 150px rgba(37, 99, 235, 0.45); }
+      .screen { position: relative; width: 430px; height: 930px; border-radius: 64px; overflow: hidden; background: var(--paper); color: var(--navy); }
+      .island { position: absolute; top: 14px; left: 50%; margin-left: -56px; width: 112px; height: 32px; border-radius: 16px; background: #000; z-index: 5; }
+      .sh { height: 104px; background: var(--navy); padding: 54px 24px 0; display: flex; align-items: center; justify-content: space-between; }
+      .sh .br { display: flex; align-items: center; gap: 10px; font-size: 25px; font-weight: 800; letter-spacing: -0.03em; color: #fff; }
+      .sh .br img { height: 30px; }
+      .sh .br b { font-weight: 800; }
+      .sh .br b span { color: var(--sky); }
+      .sh nav { font-size: 17px; font-weight: 600; color: #dbeafe; display: flex; gap: 14px; }
+      .pad { padding: 22px 22px; }
+      .pad h2 { font-size: 36px; font-weight: 800; letter-spacing: -0.03em; }
+      .pad .lead { font-size: 17px; color: #64748b; margin: 6px 0 14px; line-height: 1.4; }
+      .fcard { background: var(--card); border: 1.5px solid #bfdbfe; border-radius: 20px; padding: 18px; position: relative; }
+      .fld { margin-bottom: 12px; position: relative; }
+      .fld label { display: block; font-size: 18px; font-weight: 600; margin-bottom: 5px; }
+      .box { height: 54px; border: 1.5px solid var(--line); border-radius: 13px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-size: 20px; color: #64748b; }
+      .box.on { border-color: var(--sky); box-shadow: 0 0 0 5px rgba(96, 165, 250, 0.28); }
+      .box .v { color: var(--navy); font-weight: 500; }
+      .box .chev { width: 11px; height: 11px; border-right: 3px solid #64748b; border-bottom: 3px solid #64748b; transform: rotate(45deg); margin-top: -5px; flex: none; }
+      .ta { height: 104px; align-items: flex-start; padding: 14px 16px; line-height: 1.4; }
+      .btn { height: 58px; border-radius: 13px; background: var(--blue); color: #f5f9ff; font-size: 21px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+      .dd { position: absolute; left: 0; right: 0; top: 84px; background: #fff; border: 1.5px solid #bfdbfe; border-radius: 14px; box-shadow: 0 18px 40px rgba(23, 37, 84, 0.22); z-index: 6; overflow: hidden; opacity: 0; }
+      .dd div { padding: 13px 18px; font-size: 20px; color: var(--navy); font-weight: 500; }
+      .dd div.hl { background: #dbeafe; font-weight: 700; }
+      .tap { position: absolute; left: 0; top: 0; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; background: rgba(96, 165, 250, 0.5); border: 3px solid rgba(255, 255, 255, 0.85); opacity: 0; z-index: 9; pointer-events: none; }
+      .succ { position: absolute; left: 18px; right: 18px; top: 0; opacity: 0; }
+      .notice { background: #f0fdf4; border: 1.5px solid #bbf7d0; color: #15803d; border-radius: 13px; padding: 14px 16px; font-size: 19px; font-weight: 700; }
+      .succ p { font-size: 18px; color: #475569; margin: 14px 0 12px; line-height: 1.4; }
+      .code { text-align: center; font-size: 36px; font-weight: 800; letter-spacing: 1.5px; color: #1d4ed8; background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 16px; padding: 20px 0; margin-bottom: 14px; }
+
+      /* ---------- Scene 5 (flow) ---------- */
+      #s5-phone { left: 1180px; top: 50px; }
+      #s5-steps { left: 130px; top: 190px; width: 880px; display: flex; flex-direction: column; gap: 22px; }
+      .plate { display: flex; align-items: center; gap: 26px; padding: 22px 34px; border-radius: 24px; background: rgba(255, 255, 255, 0.06); border: 3px solid rgba(147, 197, 253, 0.28); font-size: 46px; font-weight: 800; letter-spacing: -0.03em; color: #b9ccf5; }
+      .plate b { flex: none; width: 62px; height: 62px; border-radius: 50%; background: rgba(37, 99, 235, 0.35); display: flex; align-items: center; justify-content: center; font-size: 32px; color: #dbe8ff; }
+      #s5-side { left: 130px; top: 190px; width: 880px; opacity: 0; }
+      #s5-side h3 { font-size: 112px; font-weight: 900; letter-spacing: -0.05em; line-height: 0.98; }
+      #s5-side h3 em { font-style: normal; color: var(--sky); display: block; }
+      #s5-side ul { margin-top: 56px; list-style: none; display: flex; flex-direction: column; gap: 26px; }
+      #s5-side li { font-size: 42px; font-weight: 600; line-height: 1.25; color: #c7d8ff; padding-left: 52px; position: relative; max-width: 860px; }
+      #s5-side li::before { content: ""; position: absolute; left: 0; top: 16px; width: 20px; height: 20px; border-radius: 50%; background: var(--sky); }
+      .ex { position: absolute; font-size: 22px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+
+      /* ---------- Desktop window ---------- */
+      .win { background: var(--paper); border-radius: 26px; overflow: hidden; box-shadow: 0 40px 140px rgba(0, 0, 0, 0.55), 0 0 0 3px rgba(147, 197, 253, 0.25); color: var(--navy); }
+      .win .bar { height: 66px; background: #e8eefb; display: flex; align-items: center; gap: 12px; padding: 0 26px; }
+      .win .bar i { width: 18px; height: 18px; border-radius: 50%; background: #c0cbe3; }
+      .win .bar span { margin-left: 22px; background: #fff; border-radius: 12px; height: 38px; padding: 0 22px; display: flex; align-items: center; font-size: 21px; font-weight: 500; color: #475569; width: 640px; }
+      .adm { height: 82px; background: var(--navy); display: flex; align-items: center; justify-content: space-between; padding: 0 44px; }
+      .adm .br { display: flex; align-items: center; gap: 12px; font-size: 32px; font-weight: 800; letter-spacing: -0.03em; color: #fff; }
+      .adm .br img { height: 38px; }
+      .adm .br b span { color: var(--sky); }
+      .adm nav { font-size: 24px; font-weight: 600; color: #dbeafe; display: flex; gap: 34px; }
+      .adm nav .act { color: #fff; border-bottom: 4px solid var(--sky); padding-bottom: 4px; }
+      .adb { padding: 36px 44px; }
+      .adb h2 { font-size: 46px; font-weight: 800; letter-spacing: -0.03em; }
+      .chips { display: flex; gap: 14px; margin: 22px 0 26px; }
+      .chip { font-size: 24px; font-weight: 700; padding: 11px 26px; border-radius: 40px; background: #e8eefb; color: #334155; border: 2px solid #cbd5e1; }
+      .chip.on { background: var(--blue); color: #f5f9ff; border-color: var(--blue); }
+      .rrow { display: grid; grid-template-columns: 1fr 300px 270px; align-items: center; gap: 20px; padding: 20px 26px; background: #fff; border: 2px solid #dbe5f7; border-radius: 18px; margin-bottom: 14px; position: relative; overflow: hidden; }
+      .rrow strong { font-size: 29px; font-weight: 800; letter-spacing: -0.02em; display: block; }
+      .rrow small { font-size: 20px; color: #64748b; font-weight: 500; }
+      .pill { font-size: 22px; font-weight: 700; padding: 8px 18px; border-radius: 30px; text-align: center; }
+      .pill.cat2 { background: #e2e8f0; color: #334155; }
+      .pill.s-uj { background: #fee2e2; color: #b91c1c; }
+      .pill.s-fo { background: #fef3c7; color: #92400e; }
+      .pill.s-mj { background: #dcfce7; color: #166534; }
+      .cur { position: absolute; left: 0; top: 0; width: 44px; height: 44px; z-index: 30; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4)); opacity: 0; }
+
+      #s7-win { left: 170px; top: 130px; width: 1580px; height: 850px; }
+      #s7-new { position: relative; }
+      #s7-new::after { content: ""; position: absolute; inset: 0; border-radius: 16px; box-shadow: inset 0 0 0 5px var(--blue); }
+      #s7-cap { left: 170px; top: 40px; font-size: 54px; font-weight: 800; letter-spacing: -0.03em; }
+      #s7-cap em { font-style: normal; color: var(--sky); }
+      .exb { position: absolute; right: 36px; bottom: 22px; font-size: 20px; font-weight: 800; letter-spacing: 0.1em; color: #b45309; background: #fef3c7; padding: 7px 14px; border-radius: 10px; }
+
+      #s8-win { left: 170px; top: 130px; width: 1580px; height: 850px; }
+      .det { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 30px 44px; }
+      .det dl { display: grid; grid-template-columns: 190px 1fr; gap: 14px 20px; font-size: 27px; background: #fff; border: 2px solid #dbe5f7; border-radius: 20px; padding: 28px 30px; align-content: start; }
+      .det dt { color: #64748b; font-weight: 600; }
+      .det dd { font-weight: 700; }
+      .det .code2 { font-size: 30px; letter-spacing: 1.5px; color: #1d4ed8; }
+      .panel2 { background: #fff; border: 2px solid #dbe5f7; border-radius: 20px; padding: 28px 30px; position: relative; }
+      .panel2 label { display: block; font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+      .panel2 label small { font-weight: 500; color: #64748b; font-size: 21px; }
+      .box2 { height: 66px; border: 2px solid var(--line); border-radius: 14px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 26px; font-weight: 600; }
+      .box2.on { border-color: var(--sky); box-shadow: 0 0 0 6px rgba(96, 165, 250, 0.28); }
+      .box2 .chev { width: 13px; height: 13px; border-right: 3px solid #64748b; border-bottom: 3px solid #64748b; transform: rotate(45deg); margin-top: -6px; }
+      .ta2 { height: 150px; align-items: flex-start; padding: 16px 22px; line-height: 1.4; font-weight: 500; }
+      .btn2 { height: 70px; width: 260px; border-radius: 14px; background: var(--blue); color: #f5f9ff; font-size: 27px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+      .dd2 { position: absolute; left: 30px; right: 30px; top: 118px; background: #fff; border: 2px solid #bfdbfe; border-radius: 16px; box-shadow: 0 20px 44px rgba(23, 37, 84, 0.25); z-index: 8; overflow: hidden; opacity: 0; }
+      .dd2 div { padding: 15px 22px; font-size: 26px; font-weight: 600; }
+      .dd2 div.hl { background: #dbeafe; font-weight: 800; }
+      .toast { position: absolute; right: 30px; top: -22px; background: #166534; color: #f0fdf4; font-size: 24px; font-weight: 800; padding: 12px 24px; border-radius: 14px; opacity: 0; }
+
+      /* ---------- Scene 9 ---------- */
+      #s9-phone { left: 1180px; top: 50px; }
+      #s9-left { left: 130px; top: 150px; width: 900px; }
+      #s9-left h3 { font-size: 112px; font-weight: 900; letter-spacing: -0.05em; line-height: 0.98; }
+      #s9-left h3 em { font-style: normal; color: var(--sky); display: block; }
+      #s9-chain { left: 130px; top: 540px; width: 900px; display: flex; flex-direction: column; gap: 20px; }
+      .link { display: flex; align-items: center; gap: 24px; padding: 20px 32px; border-radius: 22px; font-size: 44px; font-weight: 800; letter-spacing: -0.03em; background: rgba(255, 255, 255, 0.06); border: 3px solid rgba(147, 197, 253, 0.25); color: #b9ccf5; }
+      .link i { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 4px solid #7e96cf; display: block; }
+      .res { position: absolute; left: 22px; right: 22px; top: 0; opacity: 0; }
+      .rcard { background: #fff; border: 1.5px solid #bfdbfe; border-radius: 18px; padding: 18px; }
+      .rcard dl { display: grid; grid-template-columns: 88px 1fr; gap: 8px 12px; font-size: 19px; }
+      .rcard dt { color: #64748b; font-weight: 600; }
+      .rcard dd { font-weight: 700; }
+      .spill { display: inline-block; font-size: 19px; font-weight: 800; padding: 5px 14px; border-radius: 20px; }
+      .msg { margin-top: 14px; background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 14px 16px; font-size: 19px; line-height: 1.4; }
+      .msg b { display: block; color: #1d4ed8; font-size: 17px; margin-bottom: 4px; }
+
+      /* ---------- Scene 10 ---------- */
+      #s10-win { left: 170px; top: 130px; width: 1580px; height: 850px; }
+      .types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 22px; }
+      .tcard { background: #fff; border: 2px solid #dbe5f7; border-radius: 20px; padding: 22px 24px; }
+      .tcard h3 { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; }
+      .tcard h3 span { float: right; font-size: 22px; font-weight: 700; color: #1d4ed8; background: #dbeafe; padding: 6px 14px; border-radius: 20px; }
+      .tcard ul { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 23px; font-weight: 500; color: #334155; }
+      .csv { margin-top: 22px; background: #0f1b4d; color: #dbe8ff; border-radius: 18px; padding: 22px 28px; font-family: "Inter", monospace; font-size: 24px; line-height: 1.5; font-weight: 500; }
+      .csv h4 { font-size: 24px; font-weight: 800; color: #93c5fd; margin-bottom: 8px; }
+      #s10-note { left: 170px; top: 40px; font-size: 54px; font-weight: 800; letter-spacing: -0.03em; }
+      #s10-note em { font-style: normal; color: var(--sky); }
+      #s10-num { position: absolute; right: 44px; top: 36px; width: 420px; }
+      #s10-num .lab { font-size: 20px; font-weight: 700; color: #475569; margin-bottom: 6px; }
+
+      /* ---------- Scene 11 ---------- */
+      #s11-roll { left: 190px; top: 60px; height: 960px; border-radius: 14px; box-shadow: 0 34px 100px rgba(0, 0, 0, 0.55); }
+      #s11-pos { left: 700px; top: 50px; width: 1060px; border-radius: 14px; box-shadow: 0 34px 100px rgba(0, 0, 0, 0.55); }
+      #s11-cap { left: 700px; top: 730px; width: 1100px; }
+      #s11-cap h2 { font-size: 100px; font-weight: 900; letter-spacing: -0.05em; line-height: 0.98; }
+      #s11-cap h2 em { font-style: normal; color: var(--sky); }
+      #s11-cap p { margin-top: 24px; font-size: 36px; line-height: 1.3; font-weight: 500; color: #c7d8ff; max-width: 1060px; }
+      #s11-ring { left: 0; top: 0; width: 210px; height: 210px; border-radius: 50%; border: 8px solid var(--sky); opacity: 0; }
+
+      /* ---------- Scene 12 ---------- */
+      #s12-glow { left: -200px; top: -120px; width: 1300px; height: 1300px; background: radial-gradient(circle, rgba(37, 99, 235, 0.5), transparent 62%); }
+      #s12-logo { left: 140px; top: 90px; width: 680px; }
+      #s12-t { left: 120px; top: 760px; width: 1000px; }
+      #s12-t h2 { font-size: 108px; font-weight: 900; letter-spacing: -0.05em; line-height: 0.95; }
+      #s12-t h2 em { font-style: normal; color: var(--sky); }
+      #s12-url { left: 1010px; top: 150px; font-size: 54px; font-weight: 800; letter-spacing: -0.03em; background: var(--blue); color: #f5f9ff; padding: 22px 42px; border-radius: 22px; white-space: nowrap; }
+      #s12-qr { left: 1090px; top: 330px; width: 600px; height: 600px; background: #f8fbff; border-radius: 34px; padding: 26px; box-shadow: 0 0 0 10px rgba(37, 99, 235, 0.9); }
+      #s12-qr img { display: block; width: 100%; height: 100%; }
+      #s12-dev { left: 760px; top: 780px; width: 300px; height: 230px; display: flex; align-items: flex-end; }
+      #s12-dev img { max-height: 200px; max-width: 280px; filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.45)); }
+      #s12-dev .badge { position: absolute; top: -6px; right: -8px; }
+
+      /* ---------- Transitions ---------- */
+      #wipe { position: absolute; top: -200px; left: 0; width: 4400px; height: 1480px; z-index: 50; pointer-events: none; opacity: 0; }
+      #wipe i { position: absolute; top: 0; bottom: 0; }
+      #wipe .a { left: 0; width: 2600px; background: var(--blue); transform: skewX(-14deg); }
+      #wipe .b { left: 2540px; width: 70px; background: var(--sky); transform: skewX(-14deg); }
+      #flash { position: absolute; inset: 0; background: #e8f0ff; z-index: 60; opacity: 0; pointer-events: none; }
+      #dark { position: absolute; inset: 0; background: var(--bg); z-index: 70; opacity: 0; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="120" data-width="1920" data-height="1080">
+
+      <!-- ===== 1 · Hook ===== -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="3.02" data-track-index="1">
+        <div class="glow" style="left: 360px; top: 80px; width: 1200px; height: 900px; background: radial-gradient(ellipse, rgba(37, 99, 235, 0.32), transparent 64%)"></div>
+        <div class="row">
+          <h1 id="s1-text">Megint elromlott?</h1>
+          <div id="s1-badge" class="badge xl" style="opacity: 0">!</div>
+        </div>
+      </section>
+
+      <!-- ===== 2 · A problémák ===== -->
+      <section id="s2" class="clip scene" data-start="3.02" data-duration="6.5" data-track-index="1">
+        <div class="glow" style="left: -200px; top: -250px; width: 1100px; height: 900px; background: radial-gradient(ellipse, rgba(37, 99, 235, 0.38), transparent 66%)"></div>
+        <div class="ghost" id="s2-ghost" data-layout-allow-occlusion data-layout-allow-overflow style="left: -30px; top: 700px; font-size: 330px">ELROMLOTT</div>
+        <div id="s2-head" class="abs" style="opacity: 0">Elromlott <em>valami?</em></div>
+        <div id="s2-devs" class="abs">
+          <div class="dev" id="d1" style="left: 0; top: 0; opacity: 0"><img src="assets/devices/projector.svg" alt="" /><div class="badge sm">!</div></div>
+          <div class="dev" id="d2" style="left: 470px; top: 0; opacity: 0"><img src="assets/devices/pc.svg" alt="" /><div class="badge sm">!</div></div>
+          <div class="dev" id="d3" style="left: 0; top: 350px; opacity: 0"><img src="assets/devices/desk.svg" alt="" /><div class="badge sm">!</div></div>
+          <div class="dev" id="d4" style="left: 470px; top: 350px; opacity: 0"><img src="assets/devices/chair.svg" alt="" /><div class="badge sm">!</div></div>
+        </div>
+        <div id="s2-cats" class="abs">
+          <div class="cat" id="c1" style="opacity: 0"><i></i>Elromlott / nem működik</div>
+          <div class="cat" id="c2" style="opacity: 0"><i></i>Rongálás</div>
+          <div class="cat" id="c3" style="opacity: 0"><i></i>Hiányzik / eltűnt</div>
+          <div class="cat" id="c4" style="opacity: 0"><i></i>Egyéb</div>
+        </div>
+      </section>
+
+      <!-- ===== 3 · Senki nem tudott segíteni ===== -->
+      <section id="s3" class="clip scene" data-start="9.52" data-duration="6.5" data-track-index="1">
+        <div class="glow" style="left: 900px; top: 300px; width: 1100px; height: 900px; background: radial-gradient(ellipse, rgba(37, 99, 235, 0.3), transparent 66%)"></div>
+        <div id="s3-lines" class="abs">
+          <p id="s3-l1">Szóltam a tanárnak.</p>
+          <p id="s3-l2">Szóltam az osztálytársnak.</p>
+          <p id="s3-l3" style="position: relative; width: fit-content"><span id="s3-l3t">Senki nem tudott segíteni.</span><i id="s3-ul"></i></p>
+        </div>
+        <div id="s3-q" class="abs" style="opacity: 0">Ismerős<br /><em>helyzet?</em></div>
+      </section>
+
+      <!-- ===== 4 · Logó ===== -->
+      <section id="s4" class="clip scene" data-start="16.02" data-duration="8" data-track-index="1">
+        <div id="s4-glow" class="glow"></div>
+        <img id="s4-logo" class="abs" src="assets/logo-dark.svg" alt="TechALARM – Mátészalkai Gépészeti Technikum" style="opacity: 0" />
+        <div id="s4-t" class="abs">
+          <h2 id="s4-h" style="opacity: 0">Szólj.<em>Névtelenül.</em></h2>
+          <p id="s4-p" style="opacity: 0">Elromlott eszközök és rongálások jelentése, névtelenül is.</p>
+        </div>
+      </section>
+
+      <!-- ===== 5 · Az űrlap + elküldés (telefon) ===== -->
+      <section id="s5" class="clip scene" data-start="24.02" data-duration="24" data-track-index="1">
+        <div class="glow" data-layout-allow-overflow style="left: 900px; top: -100px; width: 1200px; height: 1200px; background: radial-gradient(circle, rgba(37, 99, 235, 0.5), transparent 62%)"></div>
+        <div class="ghost" data-layout-allow-occlusion data-layout-allow-overflow style="left: 40px; top: 830px; font-size: 260px">BEJELENTÉS</div>
+
+        <div id="s5-steps" class="abs">
+          <div class="plate" id="p1"><b>1</b>Terem típusa</div>
+          <div class="plate" id="p2"><b>2</b>Terem száma / jele</div>
+          <div class="plate" id="p3"><b>3</b>Eszköz</div>
+          <div class="plate" id="p4"><b>4</b>Mi a probléma?</div>
+          <div class="plate" id="p5"><b>5</b>Leírás</div>
+        </div>
+        <div id="s5-side" class="abs">
+          <h3>Név nélkül.<em>Fiók nélkül.</em></h3>
+          <ul>
+            <li id="sl1" style="opacity: 0">Bejelentkezés nélkül, telefonról is.</li>
+            <li id="sl2" style="opacity: 0">Az IP-címet csak sózott hash-ként tároljuk.</li>
+            <li id="sl3" style="opacity: 0">Jegyezd fel a kódot: utólag nem kérhető le.</li>
+          </ul>
+        </div>
+
+        <div id="s5-phone" class="abs phone" style="opacity: 0">
+          <div class="screen">
+            <div class="island"></div>
+            <div class="sh"><div class="br"><img src="assets/logo-mark.svg" alt="" /><b>Tech<span>ALARM</span></b></div><nav><span>Bejelentés</span><span>Állapot</span></nav></div>
+            <div class="pad">
+              <h2>Hibabejelentés</h2>
+              <p class="lead" style="margin-bottom: 12px">Nem kell bejelentkezni.</p>
+              <div class="fcard" id="fcard">
+                <div class="fld"><label>Terem típusa</label><div class="box" id="f1"><span class="v" id="f1v"></span><span class="ph" id="f1p">– válassz –</span><i class="chev"></i></div>
+                  <div class="dd" id="dd1" data-layout-allow-overlap><div>Informatika terem</div><div>Gépész terem</div><div>Osztályterem</div></div></div>
+                <div class="fld"><label>Terem száma / jele</label><div class="box" id="f2"><span class="v" id="f2v">104</span><span class="ph" id="f2p">pl. 1, 104, A12</span></div></div>
+                <div class="fld"><label>Eszköz</label><div class="box" id="f3"><span class="v" id="f3v"></span><span class="ph" id="f3p">– válassz –</span><i class="chev"></i></div>
+                  <div class="dd" id="dd3" data-layout-allow-overlap><div>Számítógép</div><div>Monitor</div><div>Projektor</div><div>Okostábla / interaktív tábla</div></div></div>
+                <div class="fld"><label>Mi a probléma?</label><div class="box" id="f4"><span class="v" id="f4v"></span><span class="ph" id="f4p">– válassz –</span><i class="chev"></i></div>
+                  <div class="dd" id="dd4" data-layout-allow-overlap><div>Elromlott / nem működik</div><div>Rongálás</div><div>Hiányzik / eltűnt</div><div>Egyéb</div></div></div>
+                <div class="fld"><label>Leírás</label><div class="box ta" id="f5"><span class="v" id="f5v">A projektor füstöl, a kép csak néha jön be.</span><span class="ph" id="f5p">Mi történt? Mióta áll fenn a hiba?</span></div></div>
+                <div class="btn" id="sendbtn">Bejelentés elküldése</div>
+                <div class="succ" id="succ">
+                  <div class="notice">Köszönjük, a bejelentésed megérkezett!</div>
+                  <p>Ezzel a kóddal később megnézheted, hogy intézkedtek-e. <b>Jegyezd fel vagy készíts róla képernyőképet</b>, mert utólag nem kérhető le.</p>
+                  <div class="code" id="s5-code">TA-K7M2-QX9P</div>
+                  <div class="btn" style="height: 54px">Állapot megtekintése</div>
+                </div>
+              </div>
+            </div>
+            <div class="tap" id="tap5"></div>
+          </div>
+        </div>
+        <div class="ex" id="s5-ex" style="left: 1230px; top: 20px; opacity: 0">Példa-kód</div>
+      </section>
+
+      <!-- ===== 7 · Admin lista ===== -->
+      <section id="s7" class="clip scene" data-start="48.02" data-duration="12" data-track-index="1">
+        <div class="glow" style="left: 300px; top: 300px; width: 1400px; height: 800px; background: radial-gradient(ellipse, rgba(37, 99, 235, 0.4), transparent 66%)"></div>
+        <div id="s7-cap" class="abs" style="opacity: 0">Az admin <em>látja.</em></div>
+        <div id="s7-win" class="abs win" style="opacity: 0">
+          <div class="bar"><i></i><i></i><i></i><span>tech-alarm.vercel.app/admin</span></div>
+          <div class="adm"><div class="br"><img src="assets/logo-mark.svg" alt="" /><b>Tech<span>ALARM</span></b></div><nav><span class="act">Bejelentések</span><span>Termek és eszközök</span></nav></div>
+          <div class="adb">
+            <h2>Bejelentések</h2>
+            <div class="chips"><div class="chip on" id="ch-all">Mind</div><div class="chip" id="ch-uj">Új</div><div class="chip" id="ch-fo">Folyamatban</div><div class="chip" id="ch-mj">Megjavítva</div><div class="chip">Elutasítva</div></div>
+            <div id="s7-rows">
+              <div class="rrow" id="r1" style="opacity: 0"><div><strong>Informatika terem – 104 – Projektor</strong><small>A projektor füstöl, a kép csak néha jön be.</small></div><span class="pill cat2">Elromlott / nem működik</span><span class="pill s-uj">Új</span></div>
+              <div class="rrow" id="r2" style="opacity: 0"><div><strong>Gépész terem – 12 – Fúrógép</strong><small>A bekapcsoló gomb beragadt.</small></div><span class="pill cat2">Elromlott / nem működik</span><span class="pill s-fo">Folyamatban</span></div>
+              <div class="rrow" id="r3" style="opacity: 0"><div><strong>Osztályterem – 1 – Tábla</strong><small>Nincs a teremben tábla-filc.</small></div><span class="pill cat2">Hiányzik / eltűnt</span><span class="pill s-uj">Új</span></div>
+              <div class="rrow" id="r4" style="opacity: 0"><div><strong>Informatika terem – 2 – Monitor</strong><small>A képernyő sarka megrepedt.</small></div><span class="pill cat2">Rongálás</span><span class="pill s-mj">Megjavítva</span></div>
+            </div>
+          </div>
+          <div class="exb">PÉLDA-ADATOK</div>
+        </div>
+        <svg class="cur" id="cur7" viewBox="0 0 44 44"><path d="M6 3 L6 33 L14 26 L19 38 L25 35 L20 24 L31 24 Z" fill="#fdfeff" stroke="#0b1437" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </section>
+
+      <!-- ===== 8 · Státusz és üzenet ===== -->
+      <section id="s8" class="clip scene" data-start="60.02" data-duration="12" data-track-index="1">
+        <div class="glow" style="left: 300px; top: 300px; width: 1400px; height: 800px; background: radial-gradient(ellipse, rgba(37, 99, 235, 0.4), transparent 66%)"></div>
+        <div id="s8-win" class="abs win" style="opacity: 0">
+          <div class="bar"><i></i><i></i><i></i><span>tech-alarm.vercel.app/admin/…</span></div>
+          <div class="adm"><div class="br"><img src="assets/logo-mark.svg" alt="" /><b>Tech<span>ALARM</span></b></div><nav><span class="act">Bejelentések</span><span>Termek és eszközök</span></nav></div>
+          <div class="det">
+            <dl>
+              <dt>Terem</dt><dd>Informatika terem – 104</dd>
+              <dt>Eszköz</dt><dd>Projektor</dd>
+              <dt>Típus</dt><dd>Elromlott / nem működik</dd>
+              <dt>Leírás</dt><dd style="font-weight: 500">A projektor füstöl, a kép csak néha jön be.</dd>
+              <dt>Követőkód</dt><dd class="code2">TA-K7M2-QX9P</dd>
+              <dt>Állapot</dt><dd><span class="pill s-uj" id="s8-pill" style="display: inline-block">Új</span></dd>
+            </dl>
+            <div class="panel2">
+              <div class="toast" id="s8-toast">Mentve</div>
+              <label>Státusz</label>
+              <div class="box2" id="g1"><span id="g1v">Új</span><i class="chev"></i></div>
+              <div class="dd2" id="gdd" data-layout-allow-overlap><div>Új</div><div>Folyamatban</div><div>Megjavítva / elintézve</div><div>Elutasítva</div></div>
+              <label style="margin-top: 26px">Megjegyzés <small>(a bejelentő is látja a követőoldalon)</small></label>
+              <div class="box2 ta2" id="g2"><span id="g2v">Csütörtökön új projektor érkezik.</span></div>
+              <div class="btn2" id="g3" style="margin-top: 26px">Mentés</div>
+            </div>
+          </div>
+          <div class="exb">PÉLDA-ADATOK</div>
+        </div>
+        <div id="s8-cap" class="abs" style="left: 170px; top: 40px; font-size: 54px; font-weight: 800; letter-spacing: -0.03em; opacity: 0">Státusz. <span style="color: var(--sky)">Üzenet.</span></div>
+        <svg class="cur" id="cur8" viewBox="0 0 44 44"><path d="M6 3 L6 33 L14 26 L19 38 L25 35 L20 24 L31 24 Z" fill="#fdfeff" stroke="#0b1437" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </section>
+
+      <!-- ===== 9 · A bejelentő látja ===== -->
+      <section id="s9" class="clip scene" data-start="72.02" data-duration="12" data-track-index="1">
+        <div class="glow" style="left: 900px; top: -100px; width: 1200px; height: 1200px; background: radial-gradient(circle, rgba(37, 99, 235, 0.5), transparent 62%)"></div>
+        <div id="s9-left" class="abs"><h3 id="s9-h" style="opacity: 0">Nem tűnik el<em>a bejelentésed.</em></h3></div>
+        <div id="s9-chain" class="abs">
+          <div class="link" id="k1" style="opacity: 0"><i></i>Új</div>
+          <div class="link" id="k2" style="opacity: 0"><i></i>Folyamatban</div>
+          <div class="link" id="k3" style="opacity: 0"><i></i>Megjavítva</div>
+        </div>
+        <div id="s9-phone" class="abs phone" style="opacity: 0">
+          <div class="screen">
+            <div class="island"></div>
+            <div class="sh"><div class="br"><img src="assets/logo-mark.svg" alt="" /><b>Tech<span>ALARM</span></b></div><nav><span>Bejelentés</span><span>Állapot</span></nav></div>
+            <div class="pad">
+              <h2>Bejelentés állapota</h2>
+              <p class="lead">Add meg a bejelentéskor kapott követőkódot.</p>
+              <div class="fcard" style="height: 560px">
+                <div class="fld"><label>Követőkód</label><div class="box" id="t1"><span class="v" id="t1v">TA-K7M2-QX9P</span><span class="ph" id="t1p">TA-XXXX-XXXX</span></div></div>
+                <div class="btn" id="t2">Keresés</div>
+                <div class="res" id="res" style="top: 160px; left: 18px; right: 18px">
+                  <div class="rcard"><dl>
+                    <dt>Hely</dt><dd>Informatika terem – 104</dd>
+                    <dt>Eszköz</dt><dd>Projektor</dd>
+                    <dt>Állapot</dt><dd><span class="spill" id="t-pill" style="background: #fee2e2; color: #b91c1c">Új</span></dd>
+                  </dl></div>
+                  <div class="msg" id="t-msg" style="opacity: 0"><b>Üzenet a karbantartótól:</b>Csütörtökön új projektor érkezik.</div>
+                </div>
+              </div>
+            </div>
+            <div class="tap" id="tap9"></div>
+          </div>
+        </div>
+        <div class="ex" id="s9-ex" style="left: 1230px; top: 20px; opacity: 0">Példa-adatok</div>
+      </section>
+
+      <!-- ===== 10 · Termek és eszközök ===== -->
+      <section id="s10" class="clip scene" data-start="84.02" data-duration="11.99" data-track-index="1">
+        <div class="glow" style="left: 300px; top: 300px; width: 1400px; height: 800px; background: radial-gradient(ellipse, rgba(37, 99, 235, 0.4), transparent 66%)"></div>
+        <div id="s10-note" class="abs" style="opacity: 0">A típust <em>választod,</em> a számot <em>beírod.</em></div>
+        <div id="s10-win" class="abs win" style="opacity: 0">
+          <div class="bar"><i></i><i></i><i></i><span>tech-alarm.vercel.app/admin/helyek</span></div>
+          <div class="adm"><div class="br"><img src="assets/logo-mark.svg" alt="" /><b>Tech<span>ALARM</span></b></div><nav><span>Bejelentések</span><span class="act">Termek és eszközök</span></nav></div>
+          <div class="adb">
+            <h2>Termek és eszközök</h2>
+            <div class="types">
+              <div class="tcard" id="tc1" style="opacity: 0"><h3>Informatika terem<span>7</span></h3><ul><li>Számítógép</li><li>Monitor</li><li>Projektor</li><li>Nyomtató</li></ul></div>
+              <div class="tcard" id="tc2" style="opacity: 0"><h3>Gépész terem<span>9</span></h3><ul><li>Fúrógép</li><li>Esztergapad</li><li>CNC gép</li><li>Hegesztőgép</li></ul></div>
+              <div class="tcard" id="tc3" style="opacity: 0"><h3>Osztályterem<span>8</span></h3><ul><li>Projektor</li><li>Okostábla / interaktív tábla</li><li>Tábla</li><li>Pad</li></ul></div>
+            </div>
+            <div class="csv" id="csv" style="opacity: 0"><h4>Tömeges feltöltés CSV-ből · terem; eszköz; leltári szám</h4><div id="csv1">Gépész terem; Fúrógép; GM-001</div><div id="csv2">Informatika terem; Projektor; INF-002</div></div>
+          </div>
+          <div class="exb">PÉLDA-ADATOK</div>
+        </div>
+        <svg class="cur" id="cur10" viewBox="0 0 44 44"><path d="M6 3 L6 33 L14 26 L19 38 L25 35 L20 24 L31 24 Z" fill="#fdfeff" stroke="#0b1437" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </section>
+
+      <!-- ===== 11 · Plakát és QR ===== -->
+      <section id="s11" class="clip scene" data-start="96.01" data-duration="12.01" data-track-index="1">
+        <div class="glow" style="left: 300px; top: 100px; width: 1500px; height: 900px; background: radial-gradient(ellipse, rgba(37, 99, 235, 0.42), transparent 66%)"></div>
+        <img id="s11-roll" class="abs" src="assets/shots/rollup.png" alt="TechALARM roll-up" style="opacity: 0" />
+        <img id="s11-pos" class="abs" src="assets/shots/plakat-16x9.png" alt="TechALARM plakát" style="opacity: 0" />
+        <div id="s11-cap" class="abs"><h2 id="s11-h" style="opacity: 0">Egy beolvasás –<br /><em>és már jelentesz.</em></h2><p id="s11-p" style="opacity: 0">Előre kiválasztott teremmel is megnyílik a bejelentés.</p></div>
+        <div id="s11-ring" class="abs"></div>
+      </section>
+
+      <!-- ===== 12 · Finálé ===== -->
+      <section id="s12" class="clip scene" data-start="108.02" data-duration="11.98" data-track-index="1">
+        <div id="s12-glow" class="glow"></div>
+        <img id="s12-logo" class="abs" src="assets/logo-dark.svg" alt="TechALARM – Mátészalkai Gépészeti Technikum" style="opacity: 0" />
+        <div id="s12-t" class="abs"><h2 id="s12-h" style="opacity: 0">Szólj.<br /><em>Névtelenül.</em></h2></div>
+        <div id="s12-url" class="abs" style="opacity: 0">tech-alarm.vercel.app</div>
+        <div id="s12-qr" class="abs" style="opacity: 0"><img src="assets/qr.svg" alt="QR-kód: tech-alarm.vercel.app" /></div>
+        <div id="s12-dev" class="abs" style="opacity: 0"><img src="assets/devices/projector.svg" alt="" /><div class="badge sm" id="s12-badge">!</div></div>
+      </section>
+
+      <!-- átmenetek -->
+      <div id="wipe"><i class="a"></i><i class="b"></i></div>
+      <div id="flash"></div>
+      <div id="dark"></div>
+
+            <!-- zene: Happy Beats / Business Moves vol. 1 (ende.app), 120,19 BPM -->
+      <audio id="bgm" src="assets/music/bgm.mp3" data-start="0" data-duration="120" data-track-index="10" data-volume="1" data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{&quot;t&quot;:0,&quot;v&quot;:0},{&quot;t&quot;:1.5,&quot;v&quot;:0.55},{&quot;t&quot;:114,&quot;v&quot;:0.55},{&quot;t&quot;:120,&quot;v&quot;:0}]}]}"></audio>
+      <!-- SFX (Kenney, CC0): mozgáshoz illesztve -->
+      <audio id="sfx-0" src="assets/sfx/keyboard/keypress-003.wav" data-start="0.45" data-duration="0.25" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-1" src="assets/sfx/keyboard/keypress-013.wav" data-start="0.64" data-duration="0.25" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="sfx-2" src="assets/sfx/keyboard/keypress-023.wav" data-start="0.83" data-duration="0.25" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-3" src="assets/sfx/keyboard/keypress-005.wav" data-start="1.02" data-duration="0.25" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="sfx-4" src="assets/sfx/keyboard/keypress-015.wav" data-start="1.21" data-duration="0.25" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-5" src="assets/sfx/keyboard/keypress-025.wav" data-start="1.4" data-duration="0.25" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="sfx-6" src="assets/sfx/keyboard/keypress-007.wav" data-start="1.59" data-duration="0.25" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-7" src="assets/sfx/keyboard/keypress-017.wav" data-start="1.78" data-duration="0.25" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="sfx-8" src="assets/sfx/keyboard/keypress-027.wav" data-start="1.97" data-duration="0.25" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-9" src="assets/sfx/impact/impactSoft_medium_001.ogg" data-start="2.19" data-duration="0.184" data-track-index="12" data-volume="0.8"></audio>
+      <audio id="sfx-10" src="assets/sfx/ui/click2.ogg" data-start="3.52" data-duration="0.056" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-11" src="assets/sfx/interface/drop_001.ogg" data-start="4.02" data-duration="0.11" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="sfx-12" src="assets/sfx/interface/drop_002.ogg" data-start="5.02" data-duration="0.192" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="sfx-13" src="assets/sfx/interface/drop_003.ogg" data-start="6.02" data-duration="0.192" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="sfx-14" src="assets/sfx/interface/drop_001.ogg" data-start="7.02" data-duration="0.11" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="sfx-15" src="assets/sfx/impact/impactSoft_medium_000.ogg" data-start="9.4" data-duration="0.119" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-16" src="assets/sfx/keyboard/keypress-005.wav" data-start="9.95" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-17" src="assets/sfx/keyboard/keypress-009.wav" data-start="10.15" data-duration="0.25" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-18" src="assets/sfx/keyboard/keypress-013.wav" data-start="10.35" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-19" src="assets/sfx/keyboard/keypress-017.wav" data-start="10.55" data-duration="0.25" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-20" src="assets/sfx/keyboard/keypress-009.wav" data-start="11.15" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-21" src="assets/sfx/keyboard/keypress-012.wav" data-start="11.35" data-duration="0.25" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-22" src="assets/sfx/keyboard/keypress-015.wav" data-start="11.55" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-23" src="assets/sfx/keyboard/keypress-018.wav" data-start="11.75" data-duration="0.25" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-24" src="assets/sfx/keyboard/keypress-021.wav" data-start="11.95" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-25" src="assets/sfx/keyboard/keypress-014.wav" data-start="12.55" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-26" src="assets/sfx/keyboard/keypress-017.wav" data-start="12.75" data-duration="0.25" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-27" src="assets/sfx/keyboard/keypress-020.wav" data-start="12.95" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-28" src="assets/sfx/keyboard/keypress-023.wav" data-start="13.15" data-duration="0.25" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-29" src="assets/sfx/keyboard/keypress-026.wav" data-start="13.35" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-30" src="assets/sfx/ui/click2.ogg" data-start="13.9" data-duration="0.056" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-31" src="assets/sfx/impact/impactSoft_medium_002.ogg" data-start="14.02" data-duration="0.136" data-track-index="11" data-volume="0.85"></audio>
+      <audio id="sfx-32" src="assets/sfx/impact/impactSoft_medium_000.ogg" data-start="16.02" data-duration="0.119" data-track-index="11" data-volume="0.9"></audio>
+      <audio id="sfx-33" src="assets/sfx/interface/bong_001.ogg" data-start="16.1" data-duration="0.123" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-34" src="assets/sfx/interface/drop_002.ogg" data-start="17.02" data-duration="0.192" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-35" src="assets/sfx/interface/drop_003.ogg" data-start="18.52" data-duration="0.192" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-36" src="assets/sfx/impact/impactSoft_medium_000.ogg" data-start="23.9" data-duration="0.119" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-37" src="assets/sfx/casino/card-slide-1.ogg" data-start="24.22" data-duration="0.601" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-38" src="assets/sfx/interface/click_003.ogg" data-start="26.3" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-39" src="assets/sfx/interface/select_008.ogg" data-start="27.5" data-duration="0.047" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-40" src="assets/sfx/interface/click_003.ogg" data-start="28.3" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-41" src="assets/sfx/keyboard/keypress-006.wav" data-start="28.6" data-duration="0.25" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-42" src="assets/sfx/keyboard/keypress-013.wav" data-start="28.85" data-duration="0.25" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="sfx-43" src="assets/sfx/keyboard/keypress-020.wav" data-start="29.1" data-duration="0.25" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-44" src="assets/sfx/interface/click_003.ogg" data-start="30.3" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-45" src="assets/sfx/interface/select_008.ogg" data-start="31.5" data-duration="0.047" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-46" src="assets/sfx/interface/click_003.ogg" data-start="32.3" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-47" src="assets/sfx/interface/select_008.ogg" data-start="33.5" data-duration="0.047" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-48" src="assets/sfx/interface/click_003.ogg" data-start="34.3" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-49" src="assets/sfx/keyboard/keypress-002.wav" data-start="34.6" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-50" src="assets/sfx/keyboard/keypress-009.wav" data-start="34.726" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-51" src="assets/sfx/keyboard/keypress-016.wav" data-start="34.852" data-duration="0.25" data-track-index="13" data-volume="0.4"></audio>
+      <audio id="sfx-52" src="assets/sfx/keyboard/keypress-023.wav" data-start="34.978" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-53" src="assets/sfx/keyboard/keypress-030.wav" data-start="35.104" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-54" src="assets/sfx/keyboard/keypress-007.wav" data-start="35.23" data-duration="0.25" data-track-index="13" data-volume="0.4"></audio>
+      <audio id="sfx-55" src="assets/sfx/keyboard/keypress-014.wav" data-start="35.356" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-56" src="assets/sfx/keyboard/keypress-021.wav" data-start="35.482" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-57" src="assets/sfx/keyboard/keypress-028.wav" data-start="35.608" data-duration="0.25" data-track-index="13" data-volume="0.4"></audio>
+      <audio id="sfx-58" src="assets/sfx/keyboard/keypress-005.wav" data-start="35.734" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-59" src="assets/sfx/keyboard/keypress-012.wav" data-start="35.86" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-60" src="assets/sfx/keyboard/keypress-019.wav" data-start="35.986" data-duration="0.25" data-track-index="13" data-volume="0.4"></audio>
+      <audio id="sfx-61" src="assets/sfx/keyboard/keypress-026.wav" data-start="36.112" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-62" src="assets/sfx/keyboard/keypress-003.wav" data-start="36.238" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-63" src="assets/sfx/interface/click_002.ogg" data-start="37" data-duration="0.011" data-track-index="11" data-volume="0.8"></audio>
+      <audio id="sfx-64" src="assets/sfx/impact/impactSoft_medium_003.ogg" data-start="37.8" data-duration="0.141" data-track-index="11" data-volume="0.8"></audio>
+      <audio id="sfx-65" src="assets/sfx/impact/impactBell_heavy_000.ogg" data-start="38.7" data-duration="1.481" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-66" src="assets/sfx/interface/drop_001.ogg" data-start="39.6" data-duration="0.11" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="sfx-67" src="assets/sfx/interface/drop_001.ogg" data-start="41.6" data-duration="0.11" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-68" src="assets/sfx/interface/drop_001.ogg" data-start="43.6" data-duration="0.11" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-69" src="assets/sfx/impact/impactSoft_medium_004.ogg" data-start="48.02" data-duration="0.148" data-track-index="11" data-volume="0.9"></audio>
+      <audio id="sfx-70" src="assets/sfx/interface/drop_002.ogg" data-start="48.37" data-duration="0.192" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="sfx-71" src="assets/sfx/casino/card-slide-1.ogg" data-start="49.52" data-duration="0.601" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="sfx-72" src="assets/sfx/casino/card-slide-1.ogg" data-start="50.02" data-duration="0.601" data-track-index="12" data-volume="0.35"></audio>
+      <audio id="sfx-73" src="assets/sfx/casino/card-slide-1.ogg" data-start="50.52" data-duration="0.601" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="sfx-74" src="assets/sfx/interface/click_003.ogg" data-start="53.12" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-75" src="assets/sfx/interface/click_003.ogg" data-start="56.42" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-76" src="assets/sfx/impact/impactSoft_medium_000.ogg" data-start="59.9" data-duration="0.119" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-77" src="assets/sfx/interface/click_003.ogg" data-start="62.32" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-78" src="assets/sfx/interface/select_008.ogg" data-start="63.22" data-duration="0.047" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-79" src="assets/sfx/keyboard/keypress-004.wav" data-start="64.42" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-80" src="assets/sfx/keyboard/keypress-010.wav" data-start="64.63" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-81" src="assets/sfx/keyboard/keypress-016.wav" data-start="64.84" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-82" src="assets/sfx/keyboard/keypress-022.wav" data-start="65.05" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-83" src="assets/sfx/keyboard/keypress-028.wav" data-start="65.26" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-84" src="assets/sfx/keyboard/keypress-006.wav" data-start="65.47" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-85" src="assets/sfx/keyboard/keypress-012.wav" data-start="65.68" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-86" src="assets/sfx/keyboard/keypress-018.wav" data-start="65.89" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-87" src="assets/sfx/keyboard/keypress-024.wav" data-start="66.1" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-88" src="assets/sfx/keyboard/keypress-030.wav" data-start="66.31" data-duration="0.25" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="sfx-89" src="assets/sfx/keyboard/keypress-008.wav" data-start="66.52" data-duration="0.25" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-90" src="assets/sfx/interface/click_002.ogg" data-start="67.62" data-duration="0.011" data-track-index="11" data-volume="0.8"></audio>
+      <audio id="sfx-91" src="assets/sfx/interface/bong_001.ogg" data-start="67.72" data-duration="0.123" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-92" src="assets/sfx/interface/click_003.ogg" data-start="69.22" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-93" src="assets/sfx/interface/select_008.ogg" data-start="69.92" data-duration="0.047" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-94" src="assets/sfx/impact/impactBell_heavy_004.ogg" data-start="71.02" data-duration="0.302" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-95" src="assets/sfx/impact/impactSoft_medium_000.ogg" data-start="71.9" data-duration="0.119" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-96" src="assets/sfx/casino/card-slide-1.ogg" data-start="72.07" data-duration="0.601" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-97" src="assets/sfx/interface/click_003.ogg" data-start="74.42" data-duration="0.011" data-track-index="11" data-volume="0.7"></audio>
+      <audio id="sfx-98" src="assets/sfx/keyboard/keypress-008.wav" data-start="74.82" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-99" src="assets/sfx/keyboard/keypress-012.wav" data-start="75.04" data-duration="0.25" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-100" src="assets/sfx/keyboard/keypress-016.wav" data-start="75.26" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-101" src="assets/sfx/keyboard/keypress-020.wav" data-start="75.48" data-duration="0.25" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-102" src="assets/sfx/keyboard/keypress-024.wav" data-start="75.7" data-duration="0.25" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="sfx-103" src="assets/sfx/keyboard/keypress-028.wav" data-start="75.92" data-duration="0.25" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="sfx-104" src="assets/sfx/interface/click_002.ogg" data-start="76.82" data-duration="0.011" data-track-index="11" data-volume="0.8"></audio>
+      <audio id="sfx-105" src="assets/sfx/interface/drop_001.ogg" data-start="77.32" data-duration="0.11" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-106" src="assets/sfx/interface/drop_002.ogg" data-start="77.62" data-duration="0.192" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="sfx-107" src="assets/sfx/interface/drop_002.ogg" data-start="79.02" data-duration="0.192" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="sfx-108" src="assets/sfx/impact/impactBell_heavy_003.ogg" data-start="80.42" data-duration="0.654" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="sfx-109" src="assets/sfx/interface/drop_003.ogg" data-start="81.42" data-duration="0.192" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-110" src="assets/sfx/impact/impactSoft_medium_000.ogg" data-start="83.9" data-duration="0.119" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-111" src="assets/sfx/interface/drop_001.ogg" data-start="85.52" data-duration="0.11" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="sfx-112" src="assets/sfx/interface/drop_002.ogg" data-start="86.52" data-duration="0.192" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="sfx-113" src="assets/sfx/interface/drop_003.ogg" data-start="87.52" data-duration="0.192" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="sfx-114" src="assets/sfx/casino/card-place-1.ogg" data-start="89.52" data-duration="0.69" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-115" src="assets/sfx/casino/card-slide-1.ogg" data-start="91.52" data-duration="0.601" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-116" src="assets/sfx/impact/impactSoft_medium_000.ogg" data-start="95.89" data-duration="0.119" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-117" src="assets/sfx/impact/impactSoft_medium_002.ogg" data-start="96.01" data-duration="0.136" data-track-index="12" data-volume="0.9"></audio>
+      <audio id="sfx-118" src="assets/sfx/casino/card-slide-1.ogg" data-start="97.01" data-duration="0.601" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-119" src="assets/sfx/interface/drop_002.ogg" data-start="98.51" data-duration="0.192" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-120" src="assets/sfx/interface/bong_001.ogg" data-start="102.51" data-duration="0.123" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-121" src="assets/sfx/impact/impactSoft_medium_001.ogg" data-start="108.02" data-duration="0.184" data-track-index="11" data-volume="0.9"></audio>
+      <audio id="sfx-122" src="assets/sfx/interface/bong_001.ogg" data-start="108.1" data-duration="0.123" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="sfx-123" src="assets/sfx/interface/drop_003.ogg" data-start="109.52" data-duration="0.192" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-124" src="assets/sfx/interface/click_003.ogg" data-start="111.02" data-duration="0.011" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="sfx-125" src="assets/sfx/casino/card-place-1.ogg" data-start="111.52" data-duration="0.69" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-126" src="assets/sfx/interface/drop_001.ogg" data-start="113.02" data-duration="0.11" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-127" src="assets/sfx/impact/impactBell_heavy_000.ogg" data-start="115.02" data-duration="1.481" data-track-index="11" data-volume="0.7"></audio>
+
+    </div>
+
+    <script>
+      /* ===== segédek ===== */
+      const tl = gsap.timeline({ paused: true });
+      const $ = (s) => document.querySelector(s);
+      const CARET = "3px 0 0 0 #60a5fa";
+      const NOCARET = "0 0 0 0 rgba(0,0,0,0)";
+
+      // a szöveget karakterenként felbontja (gépeléshez)
+      function charify(el) {
+        const text = el.textContent;
+        el.textContent = "";
+        const words = text.split(" ");
+        words.forEach((w, wi) => {
+          const ws = document.createElement("span");
+          ws.className = "w";
+          [...w].forEach((c) => {
+            const s = document.createElement("span");
+            s.className = "ch";
+            s.textContent = c;
+            ws.appendChild(s);
+          });
+          el.appendChild(ws);
+          if (wi < words.length - 1) el.appendChild(document.createTextNode(" "));
+        });
+        return el.querySelectorAll(".ch");
+      }
+      // gépelés: dt másodpercenként egy karakter; visszaadja a befejezés idejét
+      function type(el, t0, dt, caret) {
+        const ch = charify(typeof el === "string" ? $(el) : el);
+        ch.forEach((c, i) => {
+          tl.set(c, { opacity: 1 }, t0 + i * dt);
+          if (caret) {
+            tl.set(c, { boxShadow: CARET }, t0 + i * dt);
+            tl.set(c, { boxShadow: NOCARET }, t0 + (i + 1) * dt);
+          }
+        });
+        return t0 + ch.length * dt;
+      }
+      const show = (sel, t, from, to) =>
+        tl.fromTo(sel, Object.assign({ opacity: 0 }, from || {}), Object.assign({ opacity: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "power3.out" }, to || {}), t);
+      const tap = (id, x, y, t) => {
+        tl.set(id, { x: x, y: y }, t - 0.16);
+        tl.fromTo(id, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.16, ease: "power2.out", immediateRender: false }, t - 0.16);
+        tl.to(id, { opacity: 0, scale: 1.6, duration: 0.32, ease: "power1.out" }, t);
+      };
+      const pointer = (id, x, y, t, d) => tl.to(id, { x: x, y: y, duration: d || 0.7, ease: "power2.inOut" }, t);
+
+      /* ===== átmenetek ===== */
+      // tiszta (kék) törlés: t = a vágás pillanata
+      function wipe(t) {
+        tl.set("#wipe", { opacity: 1, x: -3070 }, t - 0.26);
+        tl.to("#wipe", { x: 2320, duration: 0.52, ease: "power2.inOut" }, t - 0.26);
+        tl.set("#wipe", { opacity: 0 }, t + 0.3);
+      }
+      // villanás: erős ütemre
+      function flash(t) {
+        tl.set("#flash", { opacity: 0 }, t - 0.2);
+        tl.to("#flash", { opacity: 0.92, duration: 0.2, ease: "power2.in" }, t - 0.2);
+        tl.to("#flash", { opacity: 0, duration: 0.55, ease: "power2.out" }, t);
+      }
+
+      /* ===== 1 · Hook (0–3,02) ===== */
+      tl.fromTo("#s1-text", { opacity: 0 }, { opacity: 1, duration: 0.01 }, 0);
+      const s1end = type("#s1-text", 0.45, 0.095, true);
+      tl.fromTo("#s1-badge", { opacity: 0, scale: 0.2 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)" }, s1end + 0.12);
+      tl.to("#s1-badge", { scale: 1.07, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, s1end + 0.6);
+      tl.to("#s1-text", { x: -20, duration: 2.5, ease: "none" }, 0.4);
+
+      /* ===== 2 · A problémák (3,02–9,52) ===== */
+      // beat-grid: 3,52 · 4,02 · 5,02 · 6,02 · 7,02 (minden második ütem)
+      show("#s2-head", 3.52, { y: 30 }, { duration: 0.55 });
+      tl.fromTo("#s2-ghost", { x: -30 }, { x: 40, duration: 6.4, ease: "none" }, 3.02);
+      const devT = [4.02, 5.02, 6.02, 7.02];
+      ["#d1", "#d2", "#d3", "#d4"].forEach((d, i) => show(d, devT[i], { y: 50, scale: 0.85 }, { duration: 0.5, ease: "back.out(1.6)" }));
+      ["#c1", "#c2", "#c3", "#c4"].forEach((c, i) => show(c, devT[i] + 0.02, { x: 70 }, { duration: 0.5 }));
+      ["#d1", "#d2", "#d3", "#d4"].forEach((d, i) => tl.to(d + " img", { y: -8, duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: 2 }, devT[i] + 0.6));
+
+      /* ===== 3 · Senki nem tudott segíteni (9,52–16,02) ===== */
+      const l1 = type("#s3-l1", 9.95, 0.045, false);
+      const l2 = type("#s3-l2", 11.15, 0.04, false);
+      const l3 = type("#s3-l3t", 12.55, 0.04, false);
+      tl.fromTo("#s3-ul", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power3.out" }, l3 + 0.1);
+      tl.fromTo("#s3-q", { opacity: 0, scale: 0.6, rotation: -4 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.8)" }, 14.02); // beat-grid
+      tl.to("#s3-q", { scale: 1.04, duration: 1.0, ease: "sine.inOut", yoyo: true, repeat: 1 }, 14.7);
+
+      /* ===== 4 · Logó (16,02–24,02) ===== */
+      // beat-locked: 16,02
+      tl.fromTo("#s4-logo", { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.7, ease: "expo.out" }, 16.02);
+      tl.fromTo("#s4-glow", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 1.2, ease: "power2.out" }, 16.02);
+      tl.to("#s4-glow", { scale: 1.12, duration: 2.0, ease: "sine.inOut", yoyo: true, repeat: 2 }, 17.3);
+      tl.fromTo("#s4-h", { opacity: 0, x: 120 }, { opacity: 1, x: 0, duration: 0.7, ease: "power4.out" }, 17.02); // beat-grid
+      tl.fromTo("#s4-p", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 18.52); // beat-grid
+      tl.to("#s4-logo", { y: -14, duration: 2.0, ease: "sine.inOut", yoyo: true, repeat: 2 }, 17.4);
+
+      /* ===== 5 · Űrlap + elküldés (24,02–48,02) ===== */
+      const P = 24.02;
+      tl.fromTo("#s5-phone", { opacity: 0, y: 120 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, P + 0.2);
+      // lépéslista egyesével
+      ["#p1", "#p2", "#p3", "#p4", "#p5"].forEach((p, i) => tl.fromTo(p, { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, P + 0.6 + i * 0.25));
+      const hi = (p, t0, t1) => {
+        tl.to(p, { backgroundColor: "rgba(37,99,235,0.85)", color: "#f4f8ff", x: 24, duration: 0.3, ease: "power2.out" }, t0);
+        tl.to(p, { backgroundColor: "rgba(255,255,255,0.06)", color: "#b9ccf5", x: 0, duration: 0.3, ease: "power2.inOut" }, t1);
+      };
+      const ON = { borderColor: "#60a5fa", boxShadow: "0 0 0 5px rgba(96,165,250,0.28)" };
+      const OFF = { borderColor: "#cbd5e1", boxShadow: "0 0 0 0 rgba(96,165,250,0)" };
+      const focus = (id, t0, t1) => { tl.set(id, ON, t0); tl.set(id, OFF, t1); };
+      const focusTA = focus;
+      const hl = (sel, t, on) => tl.set(sel, on === false ? { backgroundColor: "rgba(219,234,254,0)", fontWeight: 500 } : { backgroundColor: "#dbeafe", fontWeight: 700 }, t);
+
+      // 1 · Terem típusa
+      hi("#p1", 26.0, 28.0);
+      tap("#tap5", 330, 284, 26.3);
+      focus("#f1", 26.3, 28.0);
+      tl.fromTo("#dd1", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.25 }, 26.45);
+      hl("#dd1 div:nth-child(1)", 27.0);
+      tl.set("#f1p", { opacity: 0 }, 27.5);
+      tl.set("#f1v", { textContent: "Informatika terem" }, 27.5);
+      tl.to("#dd1", { opacity: 0, duration: 0.2 }, 27.5);
+      // 2 · Terem száma
+      hi("#p2", 28.02, 30.0);
+      tap("#tap5", 330, 377, 28.3);
+      focus("#f2", 28.3, 30.0);
+      tl.set("#f2p", { opacity: 0 }, 28.5);
+      const e2 = type("#f2v", 28.6, 0.25, false); // 1 · 0 · 4
+      // 3 · Eszköz
+      hi("#p3", 30.02, 32.0);
+      tap("#tap5", 330, 470, 30.3);
+      focus("#f3", 30.3, 32.0);
+      tl.fromTo("#dd3", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.25 }, 30.45);
+      hl("#dd3 div:nth-child(3)", 31.0);
+      tl.set("#f3p", { opacity: 0 }, 31.5);
+      tl.set("#f3v", { textContent: "Projektor" }, 31.5);
+      tl.to("#dd3", { opacity: 0, duration: 0.2 }, 31.5);
+      // 4 · Probléma
+      hi("#p4", 32.02, 34.0);
+      tap("#tap5", 330, 563, 32.3);
+      focus("#f4", 32.3, 34.0);
+      tl.fromTo("#dd4", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.25 }, 32.45);
+      hl("#dd4 div:nth-child(1)", 33.0);
+      tl.set("#f4p", { opacity: 0 }, 33.5);
+      tl.set("#f4v", { textContent: "Elromlott / nem működik" }, 33.5);
+      tl.to("#dd4", { opacity: 0, duration: 0.2 }, 33.5);
+      // 5 · Leírás
+      hi("#p5", 34.02, 36.02);
+      tap("#tap5", 330, 681, 34.3);
+      focusTA("#f5", 34.3, 36.2);
+      tl.set("#f5p", { opacity: 0 }, 34.5);
+      const e5 = type("#f5v", 34.6, 0.042, false); // 43 karakter ≈ 1,8 s
+      // Elküldés
+      tl.to("#sendbtn", { backgroundColor: "#1d4ed8", scale: 0.96, duration: 0.12 }, 36.9);
+      tap("#tap5", 215, 774, 37.0);
+      tl.to("#sendbtn", { scale: 1, duration: 0.15 }, 37.15);
+      // siker-képernyő: az űrlap mezői elhalványulnak
+      ["#f1", "#f2", "#f3", "#f4", "#f5"].forEach((f) => tl.to(f, { opacity: 0, duration: 0.3 }, 37.5));
+      tl.to(".fcard .fld label", { opacity: 0, duration: 0.3 }, 37.5);
+      tl.to("#sendbtn", { opacity: 0, duration: 0.2 }, 37.5);
+      tl.fromTo("#succ", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 37.8);
+      tl.fromTo("#s5-code", { scale: 0.7 }, { scale: 1, duration: 0.55, ease: "back.out(2)" }, 38.7);
+      tl.fromTo("#s5-ex", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 38.9);
+      // bal oldal: a lépéslista átvált a magyarázatra
+      tl.to("#s5-steps", { opacity: 0, x: -80, duration: 0.5, ease: "power2.in" }, 37.6);
+      tl.fromTo("#s5-side", { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, 38.1);
+      show("#sl1", 39.6, { y: 24 });
+      show("#sl2", 41.6, { y: 24 });
+      show("#sl3", 43.6, { y: 24 });
+
+      /* ===== 7 · Admin lista (48,02–60,02) ===== */
+      const A = 48.02;
+      show("#s7-cap", A + 0.2, { y: -24 }, { duration: 0.5 });
+      tl.fromTo("#s7-win", { opacity: 0, y: 70, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out" }, A + 0.1);
+      // beat-locked: 48,02 az első (új) sor
+      show("#r1", A + 0.35, { y: -50 }, { duration: 0.55, ease: "back.out(1.4)" });
+      show("#r2", A + 1.5, { y: 24 });
+      show("#r3", A + 2.0, { y: 24 });
+      show("#r4", A + 2.5, { y: 24 });
+      tl.fromTo("#r1", { boxShadow: "inset 0 0 0 0 rgba(37,99,235,0)" }, { boxShadow: "inset 0 0 0 7px rgba(37,99,235,0.7)", duration: 0.5, yoyo: true, repeat: 3, ease: "sine.inOut" }, A + 1.0);
+      // kurzor: szűrés „Új”-ra
+      tl.set("#cur7", { x: 900, y: 700, opacity: 1 }, A + 4.0);
+      pointer("#cur7", 395, 420, A + 4.2, 0.8);
+      tl.to("#ch-all", { backgroundColor: "#e8eefb", color: "#334155", borderColor: "#cbd5e1", duration: 0.2 }, A + 5.2);
+      tl.to("#ch-uj", { backgroundColor: "#2563eb", color: "#f5f9ff", borderColor: "#2563eb", duration: 0.2 }, A + 5.2);
+      tl.to("#cur7", { scale: 0.85, duration: 0.1, yoyo: true, repeat: 1 }, A + 5.1);
+      tl.to("#r2", { opacity: 0, x: -70, duration: 0.4, ease: "power2.in" }, A + 5.5);
+      tl.to("#r4", { opacity: 0, x: -70, duration: 0.4, ease: "power2.in" }, A + 5.55);
+      tl.to("#r3", { y: -117, duration: 0.55, ease: "power3.inOut" }, A + 5.75);
+      pointer("#cur7", 900, 520, A + 7.2, 0.9);
+      tl.to("#cur7", { scale: 0.85, duration: 0.1, yoyo: true, repeat: 1 }, A + 8.4);
+      tl.to("#r1", { backgroundColor: "#dbeafe", duration: 0.2 }, A + 8.45);
+
+      /* ===== 8 · Státusz + üzenet (60,02–72,02) ===== */
+      const S = 60.02;
+      const ON2 = { borderColor: "#60a5fa", boxShadow: "0 0 0 6px rgba(96,165,250,0.28)" };
+      const OFF2 = { borderColor: "#cbd5e1", boxShadow: "0 0 0 0 rgba(96,165,250,0)" };
+      show("#s8-cap", S + 0.2, { y: -24 }, { duration: 0.5 });
+      tl.fromTo("#s8-win", { opacity: 0, y: 70, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out" }, S + 0.1);
+      // 1) státusz: Folyamatban
+      tl.set("#cur8", { x: 1200, y: 780, opacity: 1 }, S + 1.2);
+      pointer("#cur8", 1343, 408, S + 1.4, 0.8);
+      tl.set("#g1", ON2, S + 2.3);
+      tl.fromTo("#gdd", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.25 }, S + 2.35);
+      pointer("#cur8", 1343, 517, S + 2.7, 0.5);
+      hl("#gdd div:nth-child(2)", S + 3.2);
+      tl.to("#gdd", { opacity: 0, duration: 0.2 }, S + 3.5);
+      tl.set("#g1", OFF2, S + 3.5);
+      tl.set("#g1v", { textContent: "Folyamatban" }, S + 3.5);
+      // 2) megjegyzés gépelése
+      pointer("#cur8", 1343, 581, S + 3.8, 0.5);
+      tl.set("#g2", ON2, S + 4.3);
+      const e8 = type("#g2v", S + 4.4, 0.07, false); // 33 karakter ≈ 2,3 s
+      tl.set("#g2", OFF2, S + 6.9);
+      // 3) Mentés
+      pointer("#cur8", 1140, 717, S + 6.9, 0.6);
+      tl.to("#g3", { scale: 0.95, duration: 0.1, yoyo: true, repeat: 1 }, S + 7.6);
+      tl.fromTo("#s8-toast", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.3 }, S + 7.7);
+      tl.set("#s8-pill", { textContent: "Folyamatban", backgroundColor: "#fef3c7", color: "#92400e" }, S + 7.7);
+      tl.to("#s8-toast", { opacity: 0, duration: 0.3 }, S + 9.0);
+      // 4) státusz: Megjavítva
+      tl.set("#g1", ON2, S + 9.2);
+      tl.fromTo("#gdd", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.25, immediateRender: false }, S + 9.25);
+      hl("#gdd div:nth-child(2)", S + 9.4, false);
+      hl("#gdd div:nth-child(3)", S + 9.9);
+      tl.to("#gdd", { opacity: 0, duration: 0.2 }, S + 10.4);
+      tl.set("#g1", OFF2, S + 10.4);
+      tl.set("#g1v", { textContent: "Megjavítva / elintézve" }, S + 10.4);
+      tl.set("#s8-pill", { textContent: "Megjavítva", backgroundColor: "#dcfce7", color: "#166534" }, S + 11.0);
+
+      /* ===== 9 · A bejelentő látja (72,02–84,02) ===== */
+      const T = 72.02;
+      // beat-locked: 72,02 a telefon + cím
+      tl.fromTo("#s9-phone", { opacity: 0, y: 120 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, T + 0.05);
+      show("#s9-h", T + 0.4, { y: 40 }, { duration: 0.7, ease: "power4.out" });
+      tap("#tap9", 330, 310, T + 2.4);
+      tl.set("#t1", ON, T + 2.4);
+      tl.set("#t1p", { opacity: 0 }, T + 2.7);
+      const e9 = type("#t1v", T + 2.8, 0.11, false); // 12 karakter ≈ 1,3 s
+      tl.set("#t1", OFF, T + 4.3);
+      tap("#tap9", 215, 378, T + 4.8);
+      tl.to("#t2", { scale: 0.96, duration: 0.1, yoyo: true, repeat: 1 }, T + 4.7);
+      tl.fromTo("#res", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, T + 5.3);
+      // státuszlánc: Új → Folyamatban → Megjavítva (bal oldal + a telefon jelzése)
+      const chainOn = (k, t, bg, br) => {
+        show(k, t, { x: -60 }, { duration: 0.5 });
+        tl.to(k, { backgroundColor: bg, borderColor: br, color: "#f4f8ff", duration: 0.3 }, t + 0.3);
+        tl.to(k + " i", { backgroundColor: "#f4f8ff", borderColor: "#f4f8ff", duration: 0.3 }, t + 0.3);
+      };
+      chainOn("#k1", T + 5.6, "rgba(239,68,68,0.55)", "rgba(239,68,68,0.9)");
+      chainOn("#k2", T + 7.0, "rgba(245,158,11,0.55)", "rgba(245,158,11,0.9)");
+      tl.set("#t-pill", { textContent: "Folyamatban", backgroundColor: "#fef3c7", color: "#92400e" }, T + 7.0);
+      chainOn("#k3", T + 8.4, "rgba(34,197,94,0.6)", "rgba(34,197,94,0.95)");
+      tl.set("#t-pill", { textContent: "Megjavítva", backgroundColor: "#dcfce7", color: "#166534" }, T + 8.4);
+      tl.fromTo("#t-msg", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, T + 9.4);
+      tl.fromTo("#s9-ex", { opacity: 0 }, { opacity: 1, duration: 0.4 }, T + 5.6);
+
+      /* ===== 10 · Termek és eszközök (84,02–96,01) ===== */
+      const R = 84.02;
+      show("#s10-note", R + 0.2, { y: -24 }, { duration: 0.5 });
+      tl.fromTo("#s10-win", { opacity: 0, y: 70, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out" }, R + 0.1);
+      show("#tc1", R + 1.5, { y: 40 });
+      show("#tc2", R + 2.5, { y: 40 });
+      show("#tc3", R + 3.5, { y: 40 });
+      show("#csv", R + 5.5, { y: 40 }, { duration: 0.6 });
+      show("#csv2", R + 7.5, { x: 40 }, { duration: 0.5 });
+      tl.fromTo("#tc1", { boxShadow: "0 0 0 0 rgba(37,99,235,0)" }, { boxShadow: "0 0 0 6px rgba(37,99,235,0.6)", duration: 0.5, yoyo: true, repeat: 1 }, R + 9.2);
+
+      /* ===== 11 · Plakát és QR (96,01–108,02) ===== */
+      const Q = 96.01;
+      // beat-locked: 96,01 a roll-up beúszik
+      tl.fromTo("#s11-roll", { opacity: 0, x: -140, rotation: -6 }, { opacity: 1, x: 0, rotation: -3, duration: 0.8, ease: "power4.out" }, Q);
+      tl.fromTo("#s11-pos", { opacity: 0, x: 140, y: 40, rotation: 5 }, { opacity: 1, x: 0, y: 0, rotation: 2, duration: 0.8, ease: "power4.out" }, Q + 1.0);
+      tl.to("#s11-roll", { y: -16, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: 3 }, Q + 1.0);
+      tl.to("#s11-pos", { y: 12, duration: 2.4, ease: "sine.inOut", yoyo: true, repeat: 3 }, Q + 1.4);
+      show("#s11-h", Q + 2.5, { y: 40 }, { duration: 0.7, ease: "power4.out" });
+      show("#s11-p", Q + 4.5, { y: 24 });
+      // jelzőgyűrű a plakát QR-kódja körül
+      tl.set("#s11-ring", { x: 1288, y: 440 }, Q + 6.5);
+      tl.fromTo("#s11-ring", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" }, Q + 6.5);
+      tl.to("#s11-ring", { scale: 1.25, opacity: 0.35, duration: 0.8, yoyo: true, repeat: 3, ease: "sine.inOut" }, Q + 7.1);
+
+      /* ===== 12 · Finálé (108,02–120) ===== */
+      const F = 108.02;
+      // beat-locked: 108,02 a logó
+      tl.fromTo("#s12-logo", { opacity: 0, scale: 1.2 }, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" }, F);
+      tl.fromTo("#s12-glow", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 1.4, ease: "power2.out" }, F);
+      tl.fromTo("#s12-h", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.7, ease: "power4.out" }, F + 1.5);
+      tl.fromTo("#s12-url", { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, F + 3.0);
+      tl.fromTo("#s12-qr", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.5)" }, F + 3.5);
+      tl.fromTo("#s12-dev", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, F + 5.0);
+      // a jelvény pirosról zöldre vált
+      tl.to("#s12-badge", { backgroundColor: "#22c55e", duration: 0.5, ease: "power2.inOut" }, F + 7.0);
+      tl.fromTo("#s12-badge", { scale: 1 }, { scale: 1.25, duration: 0.3, yoyo: true, repeat: 1, ease: "power2.out" }, F + 7.0);
+      tl.set("#s12-badge", { textContent: "✓" }, F + 7.25);
+      tl.to("#s12-logo", { y: -12, duration: 2.0, ease: "sine.inOut", yoyo: true, repeat: 2 }, F + 1.0);
+      tl.to("#dark", { opacity: 1, duration: 1.2, ease: "power2.inOut" }, 118.8);
+
+      /* ===== átmenetek az erős ütemeknél és a jelenetváltásoknál ===== */
+      wipe(9.52);
+      flash(16.02); // beat-locked: 16,02
+      wipe(24.02);
+      flash(48.02); // beat-locked: 48,02
+      wipe(60.02);
+      wipe(72.02);
+      wipe(84.02);
+      wipe(96.01);
+      flash(108.02); // beat-locked: 108,02
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

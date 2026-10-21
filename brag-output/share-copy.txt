@@ -1,0 +1,25 @@
+== Rövid poszt (Instagram / Facebook / Teams) ==
+
+Megint nem működik a projektor? 📽️
+Szólj. Névtelenül.
+
+A TechALARM a Mátészalkai Gépészeti Technikum hibabejelentője: kiválasztod a termet és az eszközt, leírod, mi a baj (fotót is csatolhatsz), a kapott kóddal pedig bármikor megnézheted, hol tart a javítás.
+
+🔗 tech-alarm.vercel.app
+#TechALARM #iskola #hibabejelentés #mátészalka
+
+== Hosszabb leírás (YouTube / iskolai hírlevél) ==
+
+Elromlott a projektor, nem működik a gép, törött a szék – és senki nem tudja, kinek kellene szólni? A TechALARM erre készült.
+
+A videóban végigmegyünk az egész úton:
+• bejelentés telefonról – terem típusa (informatika-, gépész-, osztályterem), terem száma, eszköz, kategória, leírás, fotó;
+• a karbantartók admin felülete – szűrés, státuszok, megjegyzések, CSV-export;
+• a bejelentő nyomon követi az állapotot a kapott kóddal;
+• plakát és roll-up QR-kóddal, előre kiválasztott teremmel is megnyitható űrlappal.
+
+Névtelen. Fényképpel is. Követhető állapot.
+
+🔗 tech-alarm.vercel.app
+
+Zene: Happy Beats / Business Moves vol. 1 (ende.app). Hangeffektek: Kenney (CC0).
