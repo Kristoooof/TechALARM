@@ -11,7 +11,7 @@ export default async function RegisterPage() {
     <>
       <h1>Regisztráció</h1>
       <p className="lead">
-        Hibát csak regisztrált felhasználó jelenthet be. Add meg a neved és az e-mail címed, az admin pedig jóváhagyja a regisztrációdat.
+        Hibát csak regisztrált felhasználó jelenthet be. Add meg a neved és egy jelszót, az admin pedig jóváhagyja a regisztrációdat.
       </p>
       <RegisterForm turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""} />
     </>

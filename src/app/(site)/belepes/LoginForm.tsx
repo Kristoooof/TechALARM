@@ -10,8 +10,8 @@ export default function LoginForm() {
     <form action={action} className="card">
       {state && !state.ok && <div className="alert error" role="alert">{state.message}</div>}
       <div className="field">
-        <label htmlFor="email">E-mail cím</label>
-        <input id="email" name="email" type="email" required autoComplete="username" defaultValue={state?.email ?? ""} />
+        <label htmlFor="name">Teljes név</label>
+        <input id="name" name="name" type="text" required autoComplete="username" defaultValue={state?.name ?? ""} />
       </div>
       <div className="field">
         <label htmlFor="password">Jelszó</label>

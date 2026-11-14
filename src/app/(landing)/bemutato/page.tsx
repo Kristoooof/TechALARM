@@ -21,15 +21,15 @@ export const metadata: Metadata = {
 const faq = [
   {
     q: "Kell hozzá regisztráció?",
-    a: "Igen. Megadod a neved, az e-mail címed és egy jelszót, az admin pedig jóváhagyja a regisztrációdat. Jóváhagyás után be tudsz lépni és bejelentést tenni.",
+    a: "Igen. Megadod a neved és egy jelszót, az admin pedig jóváhagyja a regisztrációdat. Jóváhagyás után be tudsz lépni és bejelentést tenni.",
   },
   {
     q: "Ki látja a nevemet?",
-    a: "A nevedet és az e-mail címedet az admin és a karbantartó látja a bejelentésnél. Más bejelentők nem látják, és a követőoldal sem mutatja a nevedet.",
+    a: "A nevedet az admin és a karbantartó látja a bejelentésnél. Más bejelentők nem látják, és a követőoldal sem mutatja a nevedet.",
   },
   {
     q: "Mennyi idő alatt hagyják jóvá a regisztrációt?",
-    a: "Ezt az admin dönti el, és most nem küldünk e-mailt a jóváhagyásról. Ha a belépésnél azt látod, hogy a regisztrációd még vár, próbáld meg később újra.",
+    a: "Ezt az admin dönti el, és most nem küldünk értesítést a jóváhagyásról. Ha a belépésnél azt látod, hogy a regisztrációd még vár, próbáld meg később újra.",
   },
   {
     q: "Muszáj fényképet csatolnom?",
@@ -175,7 +175,7 @@ export default function Landing() {
             <ol className="steps four">
               <li className="step">
                 <h3>Regisztrálj</h3>
-                <p>Add meg a neved és az e-mail címed. Az admin jóváhagyja a regisztrációdat, utána be tudsz lépni.</p>
+                <p>Add meg a neved és egy jelszót. Az admin jóváhagyja a regisztrációdat, utána be tudsz lépni.</p>
               </li>
               <li className="step">
                 <h3>Válaszd ki a helyet</h3>
@@ -247,15 +247,14 @@ export default function Landing() {
               <div className="card info">
                 <h3>Mit kérünk</h3>
                 <ul>
-                  <li>a teljes nevedet</li>
-                  <li>az e-mail címedet</li>
+                  <li>a teljes nevedet, ezzel fogsz belépni</li>
                   <li>egy jelszót a belépéshez</li>
                 </ul>
               </div>
               <div className="card yes">
                 <h3>Hogyan kezeljük</h3>
                 <ul>
-                  <li>a nevedet és az e-mail címedet a bejelentéseidhez kapcsoljuk</li>
+                  <li>a nevedet a bejelentéseidhez kapcsoljuk</li>
                   <li>a nevedet az admin és a karbantartó látja, más bejelentő nem</li>
                   <li>a jelszavadat nem olvasható formában tároljuk</li>
                   <li>névtelen látogatottsági statisztikát gyűjtünk, sütik nélkül</li>

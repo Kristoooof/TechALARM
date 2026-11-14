@@ -15,7 +15,7 @@ export default async function Registrations({ searchParams }: { searchParams: Pr
   const [{ data: profiles }, { data: all }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, full_name, email, status, created_at, decided_at")
+      .select("id, full_name, status, created_at, decided_at")
       .eq("status", filter)
       .order("created_at", { ascending: false })
       .limit(300),
@@ -30,7 +30,7 @@ export default async function Registrations({ searchParams }: { searchParams: Pr
     <>
       <AdminNav current="regisztraciok" />
       <h1>Regisztrációk</h1>
-      <p className="lead">Csak a jóváhagyott felhasználók tudnak bejelentést tenni. Jóváhagyás előtt ellenőrizd, hogy a név és az e-mail cím valódinak tűnik-e.</p>
+      <p className="lead">Csak a jóváhagyott felhasználók tudnak bejelentést tenni. Jóváhagyás előtt ellenőrizd, hogy a név valódinak tűnik-e, és tényleg az iskolához tartozó személyé.</p>
 
       <div className="tabs">
         {(Object.keys(PROFILE_STATUSES) as ProfileStatus[]).map((s) => (
@@ -49,7 +49,7 @@ export default async function Registrations({ searchParams }: { searchParams: Pr
               <span className="badge">{profileStatusLabel(p.status)}</span>
             </div>
             <div className="meta">
-              {p.email} · regisztrált: {fmt(p.created_at)}{p.decided_at ? ` · döntés: ${fmt(p.decided_at)}` : ""}
+              regisztrált: {fmt(p.created_at)}{p.decided_at ? ` · döntés: ${fmt(p.decided_at)}` : ""}
             </div>
             <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
               {p.status !== "approved" && (

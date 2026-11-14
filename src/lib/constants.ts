@@ -50,4 +50,5 @@ export const NAME_MAX = 100;
 export const NAME_RE = /^[\p{L}][\p{L} .'’-]*$/u;
 export const PASSWORD_MIN = 8;
 export const PASSWORD_MAX = 72;
-export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+/** A név egyedi azonosításhoz: szóközök összevonva, kisbetűsítve. */
+export const nameKey = (name: string): string => name.trim().replace(/\s+/g, " ").toLowerCase();

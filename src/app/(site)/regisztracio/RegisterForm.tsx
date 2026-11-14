@@ -22,8 +22,8 @@ export default function RegisterForm({ turnstileSiteKey }: { turnstileSiteKey: s
       <div className="card">
         <div className="alert success">{state.message}</div>
         <p>
-          Az admin jóváhagyása után be tudsz lépni, és bejelentést tudsz tenni. A jóváhagyásról most nem küldünk e-mailt,
-          ezért később próbálj meg belépni az e-mail címeddel ({state.email}).
+          Az admin jóváhagyása után be tudsz lépni a neveddel ({state.name}) és a jelszavaddal, és bejelentést tudsz tenni.
+          A jóváhagyásról most nem küldünk értesítést, ezért később próbálj meg belépni.
         </p>
         <Link className="btn block" href="/belepes">Tovább a belépéshez</Link>
       </div>
@@ -35,12 +35,8 @@ export default function RegisterForm({ turnstileSiteKey }: { turnstileSiteKey: s
       {state && !state.ok && <div className="alert error" role="alert">{state.message}</div>}
 
       <div className="field">
-        <label htmlFor="name">Teljes név</label>
-        <input id="name" name="name" type="text" required maxLength={NAME_MAX} autoComplete="name" defaultValue={state?.name ?? ""} />
-      </div>
-      <div className="field">
-        <label htmlFor="email">E-mail cím</label>
-        <input id="email" name="email" type="email" required autoComplete="email" defaultValue={state?.email ?? ""} />
+        <label htmlFor="name">Teljes név <span className="hint">(ezzel fogsz belépni)</span></label>
+        <input id="name" name="name" type="text" required maxLength={NAME_MAX} autoComplete="username" defaultValue={state?.name ?? ""} />
       </div>
       <div className="field">
         <label htmlFor="password">Jelszó <span className="hint">(legalább {PASSWORD_MIN} karakter)</span></label>
@@ -55,7 +51,7 @@ export default function RegisterForm({ turnstileSiteKey }: { turnstileSiteKey: s
         <label style={{ display: "flex", gap: 10, alignItems: "flex-start", fontWeight: 400 }}>
           <input type="checkbox" name="consent" required style={{ marginTop: 4 }} />
           <span>
-            Elfogadom, hogy a nevemet és az e-mail címemet a TechALARM tárolja, a bejelentéseimet pedig hozzám kapcsolja.
+            Elfogadom, hogy a nevemet a TechALARM tárolja, a bejelentéseimet pedig hozzám kapcsolja.
             A nevemet az admin és a karbantartó látja.
           </span>
         </label>

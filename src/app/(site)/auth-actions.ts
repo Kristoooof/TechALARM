@@ -1,35 +1,34 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { EMAIL_RE, NAME_MAX, NAME_MIN, NAME_RE, PASSWORD_MAX, PASSWORD_MIN } from "@/lib/constants";
+import { NAME_MAX, NAME_MIN, NAME_RE, PASSWORD_MAX, PASSWORD_MIN, nameKey } from "@/lib/constants";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { verifyTurnstile } from "@/lib/turnstile";
 
-export type AuthState = { ok: boolean; message: string; email?: string; name?: string } | null;
+export type AuthState = { ok: boolean; message: string; name?: string } | null;
 
 const field = (fd: FormData, k: string) => {
   const v = fd.get(k);
   return typeof v === "string" ? v.trim() : "";
 };
+const cleanName = (v: string) => v.replace(/\s+/g, " ");
 
 // ---------- Regisztráció ----------
 
 export async function register(_prev: AuthState, fd: FormData): Promise<AuthState> {
   if (field(fd, "website")) return { ok: true, message: "Köszönjük, a regisztrációd megérkezett." }; // csalimező
 
-  const name = field(fd, "name").replace(/\s+/g, " ");
-  const email = field(fd, "email").toLowerCase();
+  const name = cleanName(field(fd, "name"));
   const password = String(fd.get("password") ?? "");
   const password2 = String(fd.get("password2") ?? "");
-  const keep = { email, name };
-  const fail = (message: string): AuthState => ({ ok: false, message, ...keep });
+  const fail = (message: string): AuthState => ({ ok: false, message, name });
 
   if (name.length < NAME_MIN || name.length > NAME_MAX || !NAME_RE.test(name)) {
     return fail(`Add meg a teljes neved (${NAME_MIN}–${NAME_MAX} karakter, csak betűk, szóköz, pont és kötőjel).`);
   }
-  if (email.length > 254 || !EMAIL_RE.test(email)) return fail("Add meg érvényes e-mail címet.");
   if (password.length < PASSWORD_MIN) return fail(`A jelszó legalább ${PASSWORD_MIN} karakter legyen.`);
   if (password.length > PASSWORD_MAX) return fail(`A jelszó legfeljebb ${PASSWORD_MAX} karakter lehet.`);
   if (password !== password2) return fail("A két jelszó nem egyezik.");
@@ -42,43 +41,61 @@ export async function register(_prev: AuthState, fd: FormData): Promise<AuthStat
   }
 
   const db = createAdminClient();
+  const key = nameKey(name);
+  const taken = "Ezzel a névvel már van regisztráció. Ha te vagy, lépj be. Ha másik személy, adj meg pontosabb nevet (például a második keresztneveddel vagy az osztályoddal).";
+  const { data: existing } = await db.from("profiles").select("id").eq("name_key", key).maybeSingle();
+  if (existing) return fail(taken);
+
+  // A Supabase Auth belső azonosítót kap, a felhasználó e-mail címet nem ad meg.
+  const loginEmail = `${randomUUID()}@felhasznalo.techalarm.invalid`;
   const { data, error } = await db.auth.admin.createUser({
-    email,
+    email: loginEmail,
     password,
-    email_confirm: true, // az e-mail-címet nem levélben, hanem az admin jóváhagyása erősíti meg
+    email_confirm: true,
     user_metadata: { full_name: name },
   });
   if (error || !data.user) {
-    if (error && /already|exists|registered/i.test(error.message)) return fail("Ezzel az e-mail címmel már van regisztráció.");
     console.error("Regisztrációs hiba:", error?.message);
     return fail("A regisztrációt nem sikerült elmenteni. Próbáld újra később.");
   }
 
-  const { error: profileError } = await db.from("profiles").insert({ id: data.user.id, full_name: name, email });
+  const { error: profileError } = await db
+    .from("profiles")
+    .insert({ id: data.user.id, full_name: name, name_key: key, login_email: loginEmail });
   if (profileError) {
-    console.error("Profil mentési hiba:", profileError.message);
     await db.auth.admin.deleteUser(data.user.id);
+    if (profileError.code === "23505") return fail(taken); // közben valaki ugyanezt a nevet regisztrálta
+    console.error("Profil mentési hiba:", profileError.message);
     return fail("A regisztrációt nem sikerült elmenteni. Próbáld újra később.");
   }
 
-  return { ok: true, message: "Köszönjük, a regisztrációd megérkezett.", email };
+  return { ok: true, message: "Köszönjük, a regisztrációd megérkezett.", name };
 }
 
 // ---------- Belépés / kilépés ----------
 
 export async function loginReporter(_prev: AuthState, fd: FormData): Promise<AuthState> {
-  const email = field(fd, "email").toLowerCase();
+  const name = cleanName(field(fd, "name"));
   const password = String(fd.get("password") ?? "");
-  const fail = (message: string): AuthState => ({ ok: false, message, email });
+  const fail = (message: string): AuthState => ({ ok: false, message, name });
+  const wrong = "Hibás név vagy jelszó.";
+
+  if (!name || !password) return fail(wrong);
+  const { data: found } = await createAdminClient()
+    .from("profiles")
+    .select("login_email")
+    .eq("name_key", nameKey(name))
+    .maybeSingle();
+  if (!found) return fail(wrong);
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error || !data.user) return fail("Hibás e-mail cím vagy jelszó.");
+  const { data, error } = await supabase.auth.signInWithPassword({ email: found.login_email, password });
+  if (error || !data.user) return fail(wrong);
 
   const { data: profile } = await supabase.from("profiles").select("status").eq("id", data.user.id).maybeSingle();
   if (!profile) {
     await supabase.auth.signOut();
-    return fail("Ehhez a fiókhoz nincs bejelentői regisztráció. Admin belépés: /admin/login.");
+    return fail(wrong);
   }
   if (profile.status === "pending") {
     await supabase.auth.signOut();

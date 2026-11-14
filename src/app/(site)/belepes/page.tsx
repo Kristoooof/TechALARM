@@ -10,7 +10,7 @@ export default async function LoginPage() {
   return (
     <>
       <h1>Belépés</h1>
-      <p className="lead">Lépj be az e-mail címeddel és a jelszavaddal, hogy bejelentést tudj tenni.</p>
+      <p className="lead">Lépj be a neveddel és a jelszavaddal, hogy bejelentést tudj tenni.</p>
       <LoginForm />
     </>
   );
