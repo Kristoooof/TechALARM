@@ -3,6 +3,7 @@ import Link from "next/link";
 import TrackedLink from "../TrackedLink";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/karbantartoknak" },
   title: "TechALARM karbantartóknak és az iskolának",
   description: "Egy helyen minden bejelentés, pontos hellyel, eszközzel és fényképpel. Állapotkezelés és megjegyzés a bejelentőnek.",
   openGraph: {

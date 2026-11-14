@@ -5,6 +5,7 @@ import TrackedLink from "../TrackedLink";
 const SURVEY_URL = "https://forms.gle/YcREVdZa2MUa7WGT9";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/bemutato" },
   title: "TechALARM | Elromlott valami? Szólj, és kövesd, mi lesz vele",
   description:
     "Jelentsd be telefonról, bejelentkezés nélkül az iskolában elromlott eszközöket és a rongálásokat. A kapott kóddal bármikor megnézheted, hol tart az ügy.",
