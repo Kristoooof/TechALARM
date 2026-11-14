@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Reveal from "./Reveal";
 import TrackedLink from "./TrackedLink";
 import "./landing.css";
 
@@ -19,6 +20,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
       </header>
 
       <main>{children}</main>
+      <Reveal />
 
       <footer className="foot">
         <div className="wrap">

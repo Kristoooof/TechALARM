@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import RoomScene from "../RoomScene";
 import TrackedLink from "../TrackedLink";
 
 const SURVEY_URL = "https://forms.gle/YcREVdZa2MUa7WGT9";
@@ -106,23 +107,38 @@ export default function Landing() {
 
         {/* ---------- Probléma ---------- */}
         <section className="sec" id="problema">
-          <div className="wrap">
-            <p className="kicker">Ismerős helyzet?</p>
-            <h2>Látod, hogy valami nem működik. Azt viszont nem tudod, kinek szólj.</h2>
-            <div className="cards three">
-              <article className="card">
-                <h3>Nem tudom, kinek kellene szólni</h3>
-                <p>A tanár nincs ott, a karbantartó éppen máshol dolgozik. A hiba marad, mert senki nem tud róla.</p>
-              </article>
-              <article className="card">
-                <h3>Szóltam, de nem történt semmi</h3>
-                <p>A szóbeli jelzés könnyen elsikkad. Nincs nyoma, és nincs visszajelzés sem arról, hogy foglalkoznak vele.</p>
-              </article>
-              <article className="card">
-                <h3>Nem akarok besúgó lenni</h3>
-                <p>Rongálásnál különösen kényes szólni. A TechALARM nem kér nevet, és a bejelentést nem köti a személyedhez.</p>
-              </article>
+          <div className="wrap prob">
+            <div>
+              <p className="kicker">Ismerős helyzet?</p>
+              <h2>
+                Látod, hogy valami nem működik. Azt viszont nem tudod, <span className="hl">kinek szólj</span>.
+              </h2>
+              <ul className="notes">
+                <li className="note-card">
+                  <span className="bang" aria-hidden="true">!</span>
+                  <div>
+                    <h3>Nem tudom, kinek kellene szólni</h3>
+                    <p>A tanár nincs ott, a karbantartó éppen máshol dolgozik. A hiba marad, mert senki nem tud róla.</p>
+                  </div>
+                </li>
+                <li className="note-card">
+                  <span className="bang" aria-hidden="true">!</span>
+                  <div>
+                    <h3>Szóltam, de nem történt semmi</h3>
+                    <p>A szóbeli jelzés könnyen elsikkad. Nincs nyoma, és nem tudod, foglalkoznak-e vele.</p>
+                  </div>
+                </li>
+                <li className="note-card">
+                  <span className="bang" aria-hidden="true">!</span>
+                  <div>
+                    <h3>Nem akarok besúgó lenni</h3>
+                    <p>Rongálásnál különösen kényes szólni. A TechALARM nem kér nevet, és a bejelentést nem köti a személyedhez.</p>
+                  </div>
+                </li>
+              </ul>
+              <p className="conseq">Közben a hiba ott marad, és más is belefut ugyanabba.</p>
             </div>
+            <RoomScene />
           </div>
         </section>
 
@@ -130,7 +146,7 @@ export default function Landing() {
         <section className="sec" id="eredmeny">
           <div className="wrap">
             <p className="kicker">A különbség</p>
-            <h2>Ne kelljen azon gondolkodnod, hogy elintézték-e.</h2>
+            <h2>Ne kelljen azon gondolkodnod, <span className="hl">hogy elintézték-e</span>.</h2>
             <div className="cards ba">
               <article className="card before">
                 <span className="ba-tag">Eddig</span>
@@ -147,10 +163,10 @@ export default function Landing() {
         </section>
 
         {/* ---------- Hogyan működik ---------- */}
-        <section className="sec tint" id="hogyan">
+        <section className="sec dark" id="hogyan">
           <div className="wrap">
             <p className="kicker">Hogyan működik</p>
-            <h2>Három lépés, és a karbantartó már látja.</h2>
+            <h2>Három lépés, és <span className="hl">a karbantartó már látja</span>.</h2>
             <ol className="steps">
               <li className="step">
                 <h3>Válaszd ki a helyet</h3>
@@ -180,7 +196,7 @@ export default function Landing() {
         <section className="sec" id="allapot">
           <div className="wrap">
             <p className="kicker">Állapotkövetés</p>
-            <h2>Nem kell találgatnod, hol tart a javítás.</h2>
+            <h2>Nem kell találgatnod, <span className="hl">hol tart a javítás</span>.</h2>
             <div className="split">
               <div>
                 <p className="sub" style={{ marginTop: 0 }}>
