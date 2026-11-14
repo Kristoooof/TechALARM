@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Script from "next/script";
 import { useMemo, useRef, useState, useTransition } from "react";
 import { CATEGORIES, ROOM_NUMBER_MAX } from "@/lib/constants";
 import { submitReport, type SubmitResult } from "./actions";
-import Turnstile from "./Turnstile";
 
 type Room = { id: string; name: string };
 type Device = { id: string; room_id: string; name: string; inventory_code: string | null };
@@ -36,27 +34,24 @@ export default function ReportForm({
   rooms,
   devices,
   initialRoomId,
-  turnstileSiteKey,
+  reporterName,
 }: {
   rooms: Room[];
   devices: Device[];
   initialRoomId?: string;
-  turnstileSiteKey: string;
+  reporterName: string;
 }) {
   const [roomId, setRoomId] = useState(rooms.some((r) => r.id === initialRoomId) ? initialRoomId! : "");
   const [deviceId, setDeviceId] = useState("");
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [pending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [resetKey, setResetKey] = useState(0);
 
   const roomDevices = useMemo(() => devices.filter((d) => d.room_id === roomId), [devices, roomId]);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    if (token) fd.set("cf-turnstile-response", token);
     startTransition(async () => {
       let res: SubmitResult;
       try {
@@ -65,7 +60,6 @@ export default function ReportForm({
           const small = await shrinkPhoto(photo);
           if (small.size > MAX_UPLOAD_BYTES) {
             setResult({ ok: false, error: "A fénykép túl nagy. Válassz kisebb képet." });
-            setResetKey((k) => k + 1);
             return;
           }
           fd.set("photo", small);
@@ -75,8 +69,6 @@ export default function ReportForm({
         res = { ok: false, error: "A bejelentés elküldése nem sikerült (hálózati hiba). Próbáld újra." };
       }
       setResult(res);
-      // A Turnstile token egyszer használatos
-      if (!res.ok) setResetKey((k) => k + 1);
       if (res.ok) window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }
@@ -85,7 +77,7 @@ export default function ReportForm({
     return (
       <div className="card">
         <div className="alert success">Köszönjük, a bejelentésed megérkezett!</div>
-        <p>Ezzel a kóddal később megnézheted, hogy intézkedtek-e. <strong>Jegyezd fel vagy készíts róla képernyőképet</strong>, mert utólag nem kérhető le.</p>
+        <p>Ezzel a kóddal később megnézheted, hogy intézkedtek-e. A kódot a <Link href="/bejelentesim">Bejelentéseim</Link> oldalon később is megtalálod.</p>
         <div className="code-box">{result.code}</div>
         <div style={{ display: "grid", gap: 8 }}>
           <Link className="btn block" href={`/nyomon?kod=${encodeURIComponent(result.code)}`}>Állapot megtekintése</Link>
@@ -100,6 +92,7 @@ export default function ReportForm({
   return (
     <form ref={formRef} onSubmit={onSubmit} className="card">
       {result && !result.ok && <div className="alert error" role="alert">{result.error}</div>}
+      <p className="hint" style={{ marginTop: 0 }}>Bejelentő: <strong>{reporterName}</strong></p>
 
       <div className="field">
         <label htmlFor="room_id">Terem típusa</label>
@@ -165,17 +158,8 @@ export default function ReportForm({
         <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      {turnstileSiteKey && (
-        <>
-          <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" strategy="afterInteractive" />
-          <div className="field">
-            <Turnstile siteKey={turnstileSiteKey} onToken={setToken} resetKey={resetKey} />
-          </div>
-        </>
-      )}
-
-      <button className="btn block" type="submit" disabled={pending || (!!turnstileSiteKey && !token)}>
-        {pending ? "Küldés…" : turnstileSiteKey && !token ? "Spamvédelmi ellenőrzés…" : "Bejelentés elküldése"}
+      <button className="btn block" type="submit" disabled={pending}>
+        {pending ? "Küldés…" : "Bejelentés elküldése"}
       </button>
     </form>
   );

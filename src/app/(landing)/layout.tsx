@@ -15,7 +15,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
               Tech<span>ALARM</span>
             </span>
           </Link>
-          <TrackedLink href="/" place="fejlec" className="btn sm">Hibát jelentek</TrackedLink>
+          <TrackedLink href="/regisztracio" place="fejlec" className="btn sm">Regisztrálok</TrackedLink>
         </div>
       </header>
 
@@ -27,6 +27,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
           <span>TechALARM · Mátészalkai Gépészeti Technikum</span>
           <nav aria-label="Lábléc">
             <Link href="/">Bejelentés</Link>
+            <Link href="/belepes">Belépés</Link>
             <Link href="/nyomon">Állapot</Link>
             <Link href="/karbantartoknak">Karbantartóknak</Link>
           </nav>

@@ -15,6 +15,12 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
   const { data: r } = await supabase.from("reports").select("*").eq("id", id).maybeSingle();
   if (!r) notFound();
 
+  let reporterEmail: string | null = null;
+  if (r.reporter_id) {
+    const { data: prof } = await supabase.from("profiles").select("email").eq("id", r.reporter_id).maybeSingle();
+    reporterEmail = prof?.email ?? null;
+  }
+
   let photoUrl: string | null = null;
   if (r.photo_path) {
     const { data } = await supabase.storage.from("report-photos").createSignedUrl(r.photo_path, 3600);
@@ -32,6 +38,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
           <span className={`badge ${r.status}`}>{statusLabel(r.status)}</span>
         </div>
         <dl className="details">
+          <dt>Bejelentő</dt><dd>{r.reporter_name ? `${r.reporter_name}${reporterEmail ? ` (${reporterEmail})` : ""}` : "Névtelen (regisztráció előtti bejelentés)"}</dd>
           <dt>Terem</dt><dd>{roomLabel(r.room_name, r.room_number)}</dd>
           <dt>Eszköz</dt><dd>{r.device_name ?? "–"}</dd>
           <dt>Típus</dt><dd>{categoryLabel(r.category)}</dd>

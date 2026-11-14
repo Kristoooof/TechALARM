@@ -13,7 +13,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
 
   let query = supabase
     .from("reports")
-    .select("id, tracking_code, room_name, room_number, device_name, category, status, description, created_at")
+    .select("id, tracking_code, room_name, room_number, device_name, category, status, description, created_at, reporter_name")
     .order("created_at", { ascending: false })
     .limit(300);
   if (filter) query = query.eq("status", filter);
@@ -48,7 +48,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
                 <span className={`badge ${r.status}`}>{statusLabel(r.status)}</span>
               </div>
               <div className="meta">
-                {categoryLabel(r.category)} · {fmt(r.created_at)} · {r.tracking_code}
+                {categoryLabel(r.category)} · {fmt(r.created_at)} · {r.tracking_code}{r.reporter_name ? ` · ${r.reporter_name}` : ""}
               </div>
               <div>{r.description.length > 120 ? `${r.description.slice(0, 120)}…` : r.description}</div>
             </Link>

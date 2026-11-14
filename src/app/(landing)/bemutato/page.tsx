@@ -9,10 +9,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/bemutato" },
   title: "TechALARM | Elromlott valami? Szólj, és kövesd, mi lesz vele",
   description:
-    "Jelentsd be telefonról, bejelentkezés nélkül az iskolában elromlott eszközöket és a rongálásokat. A kapott kóddal bármikor megnézheted, hol tart az ügy.",
+    "Regisztrálj, és jelentsd be telefonról az iskolában elromlott eszközöket és a rongálásokat. A bejelentéseid állapotát bármikor megnézheted.",
   openGraph: {
     title: "TechALARM | Elromlott valami? Szólj, és kövesd, mi lesz vele",
-    description: "Hibabejelentő a Mátészalkai Gépészeti Technikumnak: telefonról, regisztráció nélkül, követőkóddal.",
+    description: "Hibabejelentő a Mátészalkai Gépészeti Technikumnak: regisztrációval, fényképpel, követhető állapottal.",
     locale: "hu_HU",
     type: "website",
   },
@@ -20,8 +20,16 @@ export const metadata: Metadata = {
 
 const faq = [
   {
-    q: "Kell hozzá regisztráció vagy bejelentkezés?",
-    a: "Nem. Megnyitod az oldalt, kitöltöd az űrlapot, és elküldöd. Nevet és e-mail-címet sem kérünk.",
+    q: "Kell hozzá regisztráció?",
+    a: "Igen. Megadod a neved, az e-mail címed és egy jelszót, az admin pedig jóváhagyja a regisztrációdat. Jóváhagyás után be tudsz lépni és bejelentést tenni.",
+  },
+  {
+    q: "Ki látja a nevemet?",
+    a: "A nevedet és az e-mail címedet az admin és a karbantartó látja a bejelentésnél. Más bejelentők nem látják, és a követőoldal sem mutatja a nevedet.",
+  },
+  {
+    q: "Mennyi idő alatt hagyják jóvá a regisztrációt?",
+    a: "Ezt az admin dönti el, és most nem küldünk e-mailt a jóváhagyásról. Ha a belépésnél azt látod, hogy a regisztrációd még vár, próbáld meg később újra.",
   },
   {
     q: "Muszáj fényképet csatolnom?",
@@ -33,15 +41,11 @@ const faq = [
   },
   {
     q: "Honnan tudom meg, mi lett a bejelentéssel?",
-    a: "A küldés után kapsz egy követőkódot. Az Állapot oldalon beírod, és látod, hogy új, folyamatban van, megjavították vagy elutasították. Ha a karbantartó üzenetet hagyott, azt is itt olvasod.",
-  },
-  {
-    q: "Elvesztettem a követőkódot. Mi lesz?",
-    a: "A kódot utólag nem tudjuk lekérni, mert a bejelentést nem kötjük a személyedhez. Ezért jegyezd fel, vagy készíts róla képernyőképet.",
+    a: "Belépve a Bejelentéseim oldalon látod az összes bejelentésedet, az állapotukat és a karbantartó üzenetét. A követőkóddal egy bejelentés állapotát belépés nélkül is megnézheted.",
   },
   {
     q: "Miért van korlát a bejelentések számán?",
-    a: "A spam ellen egy eszközről óránként legfeljebb 5 bejelentést lehet küldeni. Az oldalt emellett Cloudflare Turnstile védi a robotoktól.",
+    a: "A spam ellen egy felhasználó óránként legfeljebb 5 bejelentést küldhet. A regisztrációt emellett Cloudflare Turnstile védi a robotoktól.",
   },
 ];
 
@@ -58,17 +62,17 @@ export default function Landing() {
                 <em>Szólj, és kövesd, mi lesz vele.</em>
               </h1>
               <p className="lead">
-                Telefonról, bejelentkezés nélkül jelezheted az iskolában elromlott eszközöket és a rongálásokat. A kapott kóddal bármikor megnézheted, hol tart az ügy.
+                Regisztrálj, és telefonról jelezheted az iskolában elromlott eszközöket és a rongálásokat. A bejelentéseid állapotát bármikor megnézheted.
               </p>
               <div className="cta-row">
-                <TrackedLink href="/" place="hero" className="btn">Hibát jelentek</TrackedLink>
-                <Link href="/nyomon" className="textlink">Már jelentettél? Állapot megtekintése</Link>
+                <TrackedLink href="/regisztracio" place="hero" className="btn">Regisztrálok</TrackedLink>
+                <Link href="/belepes" className="textlink">Már van fiókod? Belépés</Link>
               </div>
               <ul className="chips" aria-label="Röviden">
-                <li className="chip">Nincs regisztráció</li>
-                <li className="chip">Nem kérünk nevet</li>
+                <li className="chip">Admin által jóváhagyott</li>
                 <li className="chip">Fényképpel</li>
-                <li className="chip">Követőkóddal</li>
+                <li className="chip">Követhető állapot</li>
+                <li className="chip">Bejelentéseid egy helyen</li>
               </ul>
             </div>
 
@@ -87,12 +91,13 @@ export default function Landing() {
                   </div>
                 ))}
               </div>
-              <div className="phone" role="img" aria-label="A bejelentő űrlap kitöltve: Informatika terem, 104, projektor, elromlott, fényképpel">
+              <div className="phone" role="img" aria-label="A bejelentő űrlap kitöltve: bejelentő, Informatika terem, 104, projektor, elromlott, fényképpel">
                 <div className="bar">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/brand/logo-mark.svg" alt="" width={18} height={20} />
                   <b>Tech<span>ALARM</span></b>
                 </div>
+                <div className="field"><small>Bejelentő</small><div>Minta Diák</div></div>
                 <div className="field"><small>Terem típusa</small><div>Informatika terem</div></div>
                 <div className="field"><small>Terem száma / jele</small><div>104</div></div>
                 <div className="field"><small>Eszköz</small><div>Projektor</div></div>
@@ -132,7 +137,7 @@ export default function Landing() {
                   <span className="bang" aria-hidden="true">!</span>
                   <div>
                     <h3>Nem akarok besúgó lenni</h3>
-                    <p>Rongálásnál különösen kényes szólni. A TechALARM nem kér nevet, és a bejelentést nem köti a személyedhez.</p>
+                    <p>Rongálásnál különösen kényes szólni. A nevedet csak az admin és a karbantartó látja, más bejelentők és a követőoldal nem.</p>
                   </div>
                 </li>
               </ul>
@@ -155,8 +160,8 @@ export default function Landing() {
               </article>
               <article className="card after">
                 <span className="ba-tag">TechALARM-mal</span>
-                <h3>Egy bejelentés, egy kód, és látod az állapotot</h3>
-                <p>A karbantartó megkapja a helyet, az eszközt és a képet. Te a kóddal látod, hogy új, folyamatban van vagy megjavították, és ha üzenetet hagyott, azt is.</p>
+                <h3>Egy bejelentés, és látod az állapotot</h3>
+                <p>A karbantartó megkapja a helyet, az eszközt, a képet és a nevedet. Te a Bejelentéseim oldalon látod, hogy új, folyamatban van vagy megjavították, és ha üzenetet hagyott, azt is.</p>
               </article>
             </div>
           </div>
@@ -166,8 +171,12 @@ export default function Landing() {
         <section className="sec dark" id="hogyan">
           <div className="wrap">
             <p className="kicker">Hogyan működik</p>
-            <h2>Három lépés, és <span className="hl">a karbantartó már látja</span>.</h2>
-            <ol className="steps">
+            <h2>Négy lépés, és <span className="hl">a karbantartó már látja</span>.</h2>
+            <ol className="steps four">
+              <li className="step">
+                <h3>Regisztrálj</h3>
+                <p>Add meg a neved és az e-mail címed. Az admin jóváhagyja a regisztrációdat, utána be tudsz lépni.</p>
+              </li>
               <li className="step">
                 <h3>Válaszd ki a helyet</h3>
                 <p>Add meg a terem típusát és számát, majd válaszd ki az eszközt, amelyik elromlott.</p>
@@ -177,8 +186,8 @@ export default function Landing() {
                 <p>Jelöld meg a probléma típusát, írj pár mondatot, és csatolj egy fényképet a hibáról.</p>
               </li>
               <li className="step">
-                <h3>Kapsz egy követőkódot</h3>
-                <p>A küldés után megkapod a kódodat. Vele bármikor megnézheted, mi történt a bejelentéseddel.</p>
+                <h3>Kövesd az állapotot</h3>
+                <p>A Bejelentéseim oldalon látod, mi történt a bejelentéseddel. Kapsz követőkódot is.</p>
               </li>
             </ol>
             <div className="tags">
@@ -200,7 +209,7 @@ export default function Landing() {
             <div className="split">
               <div>
                 <p className="sub" style={{ marginTop: 0 }}>
-                  A karbantartó minden bejelentéshez állapotot állít be, és üzenetet is írhat, például hogy mikor cserélik az alkatrészt. Ezt te is látod a követőkóddal.
+                  A karbantartó minden bejelentéshez állapotot állít be, és üzenetet is írhat, például hogy mikor cserélik az alkatrészt. Ezt belépve a Bejelentéseim oldalon, vagy a követőkóddal látod.
                 </p>
                 <div className="flow" aria-label="Lehetséges állapotok">
                   <span className="badge uj">Új</span>
@@ -233,23 +242,23 @@ export default function Landing() {
         <section className="sec" id="adatok">
           <div className="wrap">
             <p className="kicker">Adatkezelés</p>
-            <h2>Mit tárolunk, és mit nem.</h2>
+            <h2>Mit kérünk, és ki látja.</h2>
             <div className="two">
-              <div className="card no">
-                <h3>Nem kérünk</h3>
+              <div className="card info">
+                <h3>Mit kérünk</h3>
                 <ul>
-                  <li>nevet</li>
-                  <li>e-mail-címet</li>
-                  <li>regisztrációt vagy bejelentkezést</li>
+                  <li>a teljes nevedet</li>
+                  <li>az e-mail címedet</li>
+                  <li>egy jelszót a belépéshez</li>
                 </ul>
               </div>
               <div className="card yes">
-                <h3>Tárolunk</h3>
+                <h3>Hogyan kezeljük</h3>
                 <ul>
-                  <li>a bejelentés adatait: hely, eszköz, leírás, fénykép</li>
-                  <li>egy véletlen követőkódot, ami nem köthető hozzád</li>
-                  <li>az IP-címedet csak sózott hash formában, a spam elleni korláthoz</li>
-                  <li>névtelen látogatottsági statisztikát, sütik nélkül</li>
+                  <li>a nevedet és az e-mail címedet a bejelentéseidhez kapcsoljuk</li>
+                  <li>a nevedet az admin és a karbantartó látja, más bejelentő nem</li>
+                  <li>a jelszavadat nem olvasható formában tároljuk</li>
+                  <li>névtelen látogatottsági statisztikát gyűjtünk, sütik nélkül</li>
                 </ul>
               </div>
             </div>
@@ -275,9 +284,9 @@ export default function Landing() {
         {/* ---------- Záró CTA ---------- */}
         <section className="final" id="jelentes">
           <div className="wrap">
-            <h2>Látsz valamit, ami nem működik? Szólj most.</h2>
-            <p>Pár mező, egy fénykép, és a karbantartó már látja. A követőkóddal pedig te is.</p>
-            <TrackedLink href="/" place="zaro" className="btn light">Hibát jelentek</TrackedLink>
+            <h2>Látsz valamit, ami nem működik? Regisztrálj, és szólj.</h2>
+            <p>Regisztráció, jóváhagyás, és már jelenthetsz. Pár mező, egy fénykép, és a karbantartó látja.</p>
+            <TrackedLink href="/regisztracio" place="zaro" className="btn light">Regisztrálok</TrackedLink>
             <p className="survey">
               Segítenél a fejlesztésben?{" "}
               <a href={SURVEY_URL} target="_blank" rel="noopener noreferrer">Töltsd ki a rövid kérdőívet</a>.

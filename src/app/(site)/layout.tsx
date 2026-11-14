@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { getReporter } from "@/lib/reporter";
+import { logoutReporter } from "./auth-actions";
 import "../globals.css";
 import "../theme.css";
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const reporter = await getReporter();
   return (
     <>
       <header className="site-header">
@@ -16,14 +19,21 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           </Link>
           <nav>
             <Link href="/">Bejelentés</Link>
+            {reporter?.status === "approved" && <Link href="/bejelentesim">Bejelentéseim</Link>}
             <Link href="/nyomon">Állapot</Link>
-            <Link href="/bemutato">Bemutató</Link>
+            {reporter ? (
+              <form action={logoutReporter} style={{ display: "contents" }}>
+                <button type="submit" className="linklike" title={reporter.fullName}>Kilépés</button>
+              </form>
+            ) : (
+              <Link href="/belepes">Belépés</Link>
+            )}
           </nav>
         </div>
       </header>
       <main className="container">{children}</main>
       <footer className="container site-footer">
-        MSZC Gépészeti Technikum · <Link href="/admin">Admin</Link>
+        MSZC Gépészeti Technikum · <Link href="/bemutato">Bemutató</Link> · <Link href="/admin">Admin</Link>
       </footer>
     </>
   );

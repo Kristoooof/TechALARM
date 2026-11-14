@@ -281,8 +281,22 @@ button:focus-visible {
     color: #ffffff;
 }
 
-.site-header nav a {
+.site-header nav a,
+.site-header nav .linklike {
     color: #dbeafe;
+}
+
+.site-header nav .linklike {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.site-header nav .linklike:hover {
+    color: #93c5fd;
 }
 
 /* Lábléc: teljes szélességű sáv, olvasható link, és mindig az oldal alján */
@@ -312,3 +326,21 @@ main.container {
 .brand-mark { display: block; height: 1.9rem; width: auto; flex: none; }
 .brand-text { font-weight: inherit; }
 .brand-text span { color: #60a5fa; }
+
+/* Keskeny képernyő: a fejléc magassága igazodik, ha a menü több sorba törik */
+@media (max-width: 560px) {
+    .header-inner {
+        height: auto;
+        min-height: 56px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        gap: 4px 16px;
+        flex-wrap: wrap;
+    }
+
+    .site-header nav {
+        gap: 2px 14px;
+        font-size: 0.92rem;
+        justify-content: flex-end;
+    }
+}

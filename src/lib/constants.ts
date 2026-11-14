@@ -20,7 +20,7 @@ export const isStatus = (v: unknown): v is Status => typeof v === "string" && v 
 
 export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 export const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
-/** Ennyi bejelentést tehet egy IP-cím egy óra alatt. */
+/** Ennyi bejelentést tehet egy bejelentő egy óra alatt. */
 export const MAX_REPORTS_PER_HOUR = 5;
 
 export const statusLabel = (v: string): string => (isStatus(v) ? STATUSES[v] : v);
@@ -33,3 +33,21 @@ export const isRoomNumber = (v: string): boolean => v.length >= 1 && v.length <=
 
 /** A teremtípus és a terem száma együtt, pl. „Informatika terem – 104”. */
 export const roomLabel = (name: string, number?: string | null): string => (number ? `${name} – ${number}` : name);
+
+/** Bejelentői fiókok állapota: az admin hagyja jóvá a regisztrációt. */
+export const PROFILE_STATUSES = {
+  pending: "Jóváhagyásra vár",
+  approved: "Jóváhagyva",
+  rejected: "Elutasítva",
+} as const;
+export type ProfileStatus = keyof typeof PROFILE_STATUSES;
+export const isProfileStatus = (v: unknown): v is ProfileStatus => typeof v === "string" && v in PROFILE_STATUSES;
+export const profileStatusLabel = (v: string): string => (isProfileStatus(v) ? PROFILE_STATUSES[v] : v);
+
+export const NAME_MIN = 2;
+export const NAME_MAX = 100;
+/** Betűk, szóköz, pont, kötőjel, aposztróf: a teljes név ellenőrzéséhez. */
+export const NAME_RE = /^[\p{L}][\p{L} .'’-]*$/u;
+export const PASSWORD_MIN = 8;
+export const PASSWORD_MAX = 72;
+export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;

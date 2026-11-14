@@ -1,8 +1,8 @@
 "use server";
 
-import { createHash, randomUUID } from "node:crypto";
-import { headers } from "next/headers";
+import { randomUUID } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { generateTrackingCode } from "@/lib/tracking";
 import { MAX_PHOTO_BYTES, MAX_REPORTS_PER_HOUR, ROOM_NUMBER_MAX, isCategory, isRoomNumber } from "@/lib/constants";
 
@@ -14,25 +14,6 @@ const fail = (error: string): SubmitResult => ({ ok: false, error });
 function str(fd: FormData, key: string): string {
   const v = fd.get(key);
   return typeof v === "string" ? v.trim() : "";
-}
-
-async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) {
-    console.error("TURNSTILE_SECRET_KEY nincs beállítva – a bejelentések le vannak tiltva.");
-    return false;
-  }
-  if (!token) return false;
-  try {
-    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: new URLSearchParams({ secret, response: token, remoteip: ip }),
-    });
-    const data = (await res.json()) as { success?: boolean };
-    return data.success === true;
-  } catch {
-    return false;
-  }
 }
 
 /** A fájl első bájtjai alapján meghatározza a képtípust (a böngésző által küldött típusnak nem bízunk). */
@@ -70,23 +51,22 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
     return fail("Add meg az eszköz nevét (2–100 karakter).");
   }
 
-  const h = await headers();
-  const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "ismeretlen";
-
-  if (!(await verifyTurnstile(str(fd, "cf-turnstile-response"), ip))) {
-    return fail("A spamvédelmi ellenőrzés nem sikerült. Próbáld újra.");
-  }
+  // Csak belépett, az admin által jóváhagyott bejelentő küldhet be hibát.
+  const session = await createClient();
+  const {
+    data: { user },
+  } = await session.auth.getUser();
+  if (!user) return fail("A bejelentéshez be kell lépned.");
+  const { data: profile } = await session.from("profiles").select("full_name, status").eq("id", user.id).maybeSingle();
+  if (!profile || profile.status !== "approved") return fail("A fiókodat az admin még nem hagyta jóvá.");
 
   const db = createAdminClient();
-  const ipHash = createHash("sha256")
-    .update(`${process.env.IP_HASH_SALT ?? ""}${ip}`)
-    .digest("hex");
 
   const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const { count } = await db
     .from("reports")
     .select("id", { count: "exact", head: true })
-    .eq("ip_hash", ipHash)
+    .eq("reporter_id", user.id)
     .gte("created_at", since);
   if ((count ?? 0) >= MAX_REPORTS_PER_HOUR) {
     return fail("Egy órán belül túl sok bejelentést küldtél. Kérlek, próbáld később.");
@@ -141,7 +121,8 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
       category,
       description,
       photo_path: photoPath,
-      ip_hash: ipHash,
+      reporter_id: user.id,
+      reporter_name: profile.full_name,
     });
 
     if (!error) return { ok: true, code };

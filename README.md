@@ -6,11 +6,12 @@ Hibabejelentő weboldal a MSZC Gépészeti Technikum számára: elromlott eszkö
 
 ## Funkciók
 
-- **Bejelentés** (`/`) – terem típusa (Informatika terem / Gépész terem / Osztályterem), a terem száma (a bejelentő írja be, pl. 1, 104), eszköz, típus, leírás, kötelező fénykép. Bejelentkezés nélkül. Telefonra optimalizált. A `/?terem=<terem-id>` hivatkozás előre kiválasztja a termet (későbbi QR-kódokhoz).
+- **Bejelentés** (`/`) – csak belépett, az admin által jóváhagyott felhasználónak: terem típusa (Informatika terem / Gépész terem / Osztályterem), a terem száma (a bejelentő írja be, pl. 1, 104), eszköz, típus, leírás, kötelező fénykép. A bejelentés a bejelentő nevéhez kötődik. Telefonra optimalizált. A `/?terem=<terem-id>` hivatkozás előre kiválasztja a termet (QR-kódokhoz).
+- **Regisztráció és belépés** (`/regisztracio`, `/belepes`) – név, e-mail, jelszó; a regisztrációt az admin hagyja jóvá (`/admin/regisztraciok`), addig nem lehet belépni. Saját bejelentések: `/bejelentesim`. A követőkóddal az állapot belépés nélkül is lekérdezhető (`/nyomon`), a név ott nem jelenik meg.
 - **Állapotkövetés** (`/nyomon`) – a bejelentő a kapott `TA-XXXX-XXXX` kóddal nézheti meg az állapotot és az admin üzenetét.
 - **Bemutató / landing oldal** (`/bemutato`) – a projekt bemutatkozó oldala: ígéret, a probléma, három lépés, állapotkövetés, adatkezelés, GYIK, egy fő gomb (Hibát jelentek) és egy másodlagos link a kérdőívhez. A karbantartóknak és az iskolának külön oldal szól (`/karbantartoknak`). A „Hibát jelentek” gombok kattintását a Vercel Web Analytics névtelenül számolja (sütik nélkül; a Vercel projekt Analytics fülén be kell kapcsolni). Saját rajzolt tanterem-illusztráció (`RoomScene.tsx`), görgetésre beúszó elemek (`Reveal.tsx`, mozgáscsökkentésnél kikapcsol). Önálló elrendezés (`src/app/(landing)`), a belső oldalak a `src/app/(site)` csoportban vannak.
 - **Admin** (`/admin`) – belépés után: bejelentések listája és szűrése, státuszváltás (új / folyamatban / megjavítva / elutasítva), megjegyzés, törlés; termek és eszközök kezelése, CSV-import (`/admin/helyek`).
-- **Spamvédelem** – Turnstile, rejtett csalimező, IP-alapú korlát (óránként 5 bejelentés; az IP-t csak sózott hash-ként tároljuk).
+- **Spamvédelem** – Turnstile és rejtett csalimező a regisztrációnál, felhasználónkénti korlát (óránként 5 bejelentés). Új bejelentésnél IP-címet nem tárolunk.
 
 ## Üzembe helyezés (egyszeri beállítás)
 

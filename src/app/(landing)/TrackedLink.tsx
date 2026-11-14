@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { track } from "@vercel/analytics";
 
-/** A „Hibát jelentek” gomb: a kattintást névtelenül, személyes adat nélkül számolja (konverzió-mérés). */
+/** A „Regisztrálok” gombok: a kattintást személyes adat nélkül számolja (konverzió-mérés). */
 export default function TrackedLink({
   href,
   place,
@@ -16,7 +16,7 @@ export default function TrackedLink({
   children: React.ReactNode;
 }) {
   return (
-    <Link href={href} className={className} onClick={() => track("hibat_jelentek_gomb", { hely: place })}>
+    <Link href={href} className={className} onClick={() => track("regisztracio_gomb", { hely: place })}>
       {children}
     </Link>
   );

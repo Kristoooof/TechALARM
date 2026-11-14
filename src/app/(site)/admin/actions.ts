@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { isStatus } from "@/lib/constants";
+import { isProfileStatus, isStatus } from "@/lib/constants";
 
 export type FormState = { ok: boolean; message: string; email?: string } | null;
 
@@ -39,6 +39,21 @@ export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/admin/login");
+}
+
+// ---------- Regisztrációk ----------
+
+export async function setProfileStatus(fd: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = uuid(fd, "id");
+  const status = text(fd, "status");
+  if (!isProfileStatus(status)) throw new Error("Érvénytelen állapot.");
+  const { error } = await supabase
+    .from("profiles")
+    .update({ status, decided_at: status === "pending" ? null : new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/regisztraciok");
 }
 
 // ---------- Bejelentések ----------

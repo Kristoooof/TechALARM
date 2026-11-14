@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "TechALARM – Hibabejelentő",
   description: "Elromlott eszközök és rongálások bejelentése a Mátészalkai Gépészeti Technikumban.",
-  openGraph: { title: "TechALARM – Hibabejelentő", description: "Elromlott eszközök és rongálások bejelentése – névtelenül, követhetően.", locale: "hu_HU", type: "website" },
+  openGraph: { title: "TechALARM – Hibabejelentő", description: "Elromlott eszközök és rongálások bejelentése: regisztrációval, fényképpel, követhető állapottal.", locale: "hu_HU", type: "website" },
 };
 
 export const viewport: Viewport = {

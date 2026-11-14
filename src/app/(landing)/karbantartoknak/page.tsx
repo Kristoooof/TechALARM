@@ -21,7 +21,7 @@ const features = [
   },
   {
     h: "Pontos hely és eszköz",
-    p: "A bejelentés tartalmazza a terem típusát és számát, az eszközt, a probléma típusát és a leírást. Nem kell visszakérdezned, melyik gép romlott el.",
+    p: "A bejelentés tartalmazza a terem típusát és számát, az eszközt, a probléma típusát, a leírást és a bejelentő nevét. Nem kell visszakérdezned, melyik gép romlott el, és kitől jött a jelzés.",
   },
   {
     h: "Fénykép a hibáról",
@@ -30,6 +30,10 @@ const features = [
   {
     h: "Állapot és üzenet a bejelentőnek",
     p: "Átállíthatod az állapotot, és megjegyzést írhatsz, például hogy csütörtökön cseréled az alkatrészt. A bejelentő a követőkóddal látja ezt.",
+  },
+  {
+    h: "Regisztrációk jóváhagyása",
+    p: "Az új felhasználók regisztrációját te hagyod jóvá vagy utasítod el, és a jóváhagyást később vissza is vonhatod. Jóváhagyásig senki nem tud bejelentést küldeni.",
   },
   {
     h: "Termek és eszközök kezelése",
@@ -47,7 +51,7 @@ export default function Maintenance() {
             Egy helyen minden hiba, <em>pontos hellyel és képpel.</em>
           </h1>
           <p className="lead">
-            A diákok és a tanárok telefonról jelentenek, te pedig egy listában látod, mi romlott el, hol, és hogyan néz ki. A javítás állapotát a bejelentő is követheti.
+            A regisztrált diákok és tanárok telefonról jelentenek, te pedig egy listában látod, mi romlott el, hol, és hogyan néz ki. A javítás állapotát a bejelentő is követheti.
           </p>
           <div className="cta-row">
             <Link href="/admin" className="btn">Belépés az admin felületre</Link>
@@ -75,8 +79,8 @@ export default function Maintenance() {
       <section className="final">
         <div className="wrap">
           <h2>Szeretnéd, ha a diákok is ide jelentenének?</h2>
-          <p>A bejelentő űrlap telefonról, bejelentkezés nélkül használható. Érdemes plakáton vagy a teremben QR-kóddal kitenni.</p>
-          <TrackedLink href="/" place="karbantartok" className="btn light">Kipróbálom a bejelentést</TrackedLink>
+          <p>A bejelentő űrlap telefonról használható, regisztráció és jóváhagyás után. Érdemes plakáton vagy a teremben QR-kóddal kitenni.</p>
+          <TrackedLink href="/regisztracio" place="karbantartok" className="btn light">Regisztrálok</TrackedLink>
         </div>
       </section>
     </>
