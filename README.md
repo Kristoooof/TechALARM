@@ -8,7 +8,7 @@ Hibabejelentő weboldal a MSZC Gépészeti Technikum számára: elromlott eszkö
 
 - **Bejelentés** (`/`) – terem típusa (Informatika terem / Gépész terem / Osztályterem), a terem száma (a bejelentő írja be, pl. 1, 104), eszköz, típus, leírás, kötelező fénykép. Bejelentkezés nélkül. Telefonra optimalizált. A `/?terem=<terem-id>` hivatkozás előre kiválasztja a termet (későbbi QR-kódokhoz).
 - **Állapotkövetés** (`/nyomon`) – a bejelentő a kapott `TA-XXXX-XXXX` kóddal nézheti meg az állapotot és az admin üzenetét.
-- **Bemutató / landing oldal** (`/bemutato`) – a projekt bemutatkozó oldala: ígéret, a probléma, három lépés, állapotkövetés, adatkezelés, GYIK, egy fő gomb (Hibát jelentek) és egy másodlagos link a kérdőívhez. Önálló elrendezés (`src/app/(landing)`), a belső oldalak a `src/app/(site)` csoportban vannak.
+- **Bemutató / landing oldal** (`/bemutato`) – a projekt bemutatkozó oldala: ígéret, a probléma, három lépés, állapotkövetés, adatkezelés, GYIK, egy fő gomb (Hibát jelentek) és egy másodlagos link a kérdőívhez. A karbantartóknak és az iskolának külön oldal szól (`/karbantartoknak`). A „Hibát jelentek” gombok kattintását a Vercel Web Analytics névtelenül számolja (sütik nélkül; a Vercel projekt Analytics fülén be kell kapcsolni). Önálló elrendezés (`src/app/(landing)`), a belső oldalak a `src/app/(site)` csoportban vannak.
 - **Admin** (`/admin`) – belépés után: bejelentések listája és szűrése, státuszváltás (új / folyamatban / megjavítva / elutasítva), megjegyzés, törlés; termek és eszközök kezelése, CSV-import (`/admin/helyek`).
 - **Spamvédelem** – Turnstile, rejtett csalimező, IP-alapú korlát (óránként 5 bejelentés; az IP-t csak sózott hash-ként tároljuk).
 

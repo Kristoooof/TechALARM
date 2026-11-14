@@ -149,6 +149,25 @@
 .lp .ticks li { position: relative; padding-left: 38px; font-size: 1.08rem; }
 .lp .ticks li::before { content: ""; position: absolute; left: 0; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--blue-600) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 15px no-repeat; }
 
+/* Előtte / utána */
+.lp .cards.ba { grid-template-columns: 1fr; }
+.lp .ba .card { position: relative; padding-top: 52px; }
+.lp .ba-tag { position: absolute; top: 20px; left: 28px; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 4px 12px; }
+.lp .ba .before { background: #f8fafc; }
+.lp .ba .before .ba-tag { background: #e5e7eb; color: #374151; }
+.lp .ba .after { background: var(--navy-900); border-color: var(--navy-900); }
+.lp .ba .after h3 { color: #fff; }
+.lp .ba .after p { color: #c7d8ff; }
+.lp .ba .after .ba-tag { background: var(--blue-600); color: #fff; }
+
+/* Belső oldal: kisebb hero */
+.lp .page-hero { color: #fff; padding: 64px 0 72px; background: radial-gradient(ellipse 800px 420px at 8% 0%, rgba(37, 99, 235, 0.5), transparent 62%), linear-gradient(165deg, var(--navy-950), var(--navy-900)); }
+.lp .page-hero h1 { font-size: clamp(2rem, 6vw, 3.4rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.045em; color: #fff; max-width: 16em; }
+.lp .page-hero h1 em { font-style: normal; color: var(--blue-400); }
+.lp .page-hero .lead { margin-top: 20px; max-width: 36em; font-size: 1.2rem; color: #dbeafe; }
+.lp .page-hero .cta-row { margin-top: 28px; }
+.lp .page-hero .textlink { color: var(--blue-200); }
+
 /* Adatkezelés */
 .lp .two { margin-top: 40px; display: grid; gap: 18px; }
 .lp .two .card h3 { display: flex; align-items: center; gap: 10px; }
@@ -181,6 +200,7 @@
 .lp footer.foot a { text-underline-offset: 3px; }
 
 @media (min-width: 760px) {
+  .lp .cards.ba { grid-template-columns: repeat(2, 1fr); }
   .lp .cards.three, .lp .two { grid-template-columns: repeat(3, 1fr); }
   .lp .two { grid-template-columns: repeat(2, 1fr); }
   .lp .steps { grid-template-columns: repeat(3, 1fr); }

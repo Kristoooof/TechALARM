@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import TrackedLink from "../TrackedLink";
 
 const SURVEY_URL = "https://forms.gle/YcREVdZa2MUa7WGT9";
 
@@ -45,20 +46,6 @@ const faq = [
 export default function Landing() {
   return (
     <>
-      <header className="top">
-        <div className="wrap">
-          <Link href="/bemutato" className="logo" aria-label="TechALARM">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/logo-mark.svg" alt="" width={26} height={29} />
-            <span style={{ color: "#fff" }}>
-              Tech<span>ALARM</span>
-            </span>
-          </Link>
-          <Link href="/" className="btn sm">Hibát jelentek</Link>
-        </div>
-      </header>
-
-      <main>
         {/* ---------- Hero ---------- */}
         <section className="hero">
           <div className="wrap hero-grid">
@@ -72,7 +59,7 @@ export default function Landing() {
                 Telefonról, bejelentkezés nélkül jelezheted az iskolában elromlott eszközöket és a rongálásokat. A kapott kóddal bármikor megnézheted, hol tart az ügy.
               </p>
               <div className="cta-row">
-                <Link href="/" className="btn">Hibát jelentek</Link>
+                <TrackedLink href="/" place="hero" className="btn">Hibát jelentek</TrackedLink>
                 <Link href="/nyomon" className="textlink">Már jelentettél? Állapot megtekintése</Link>
               </div>
               <ul className="chips" aria-label="Röviden">
@@ -133,6 +120,26 @@ export default function Landing() {
               <article className="card">
                 <h3>Nem akarok besúgó lenni</h3>
                 <p>Rongálásnál különösen kényes szólni. A TechALARM nem kér nevet, és a bejelentést nem köti a személyedhez.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Vágyott eredmény ---------- */}
+        <section className="sec" id="eredmeny">
+          <div className="wrap">
+            <p className="kicker">A különbség</p>
+            <h2>Ne kelljen azon gondolkodnod, hogy elintézték-e.</h2>
+            <div className="cards ba">
+              <article className="card before">
+                <span className="ba-tag">Eddig</span>
+                <h3>Szólsz valakinek, és marad a bizonytalanság</h3>
+                <p>Elmondod a tanárnak vagy a portásnak, aztán nem tudod, eljutott-e az üzenet oda, ahol javítani tudják. A hiba ott marad, és nem tudod, érdemes-e újra szólnod.</p>
+              </article>
+              <article className="card after">
+                <span className="ba-tag">TechALARM-mal</span>
+                <h3>Egy bejelentés, egy kód, és látod az állapotot</h3>
+                <p>A karbantartó megkapja a helyet, az eszközt és a képet. Te a kóddal látod, hogy új, folyamatban van vagy megjavították, és ha üzenetet hagyott, azt is.</p>
               </article>
             </div>
           </div>
@@ -205,20 +212,6 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ---------- Karbantartó ---------- */}
-        <section className="sec tint" id="karbantarto">
-          <div className="wrap">
-            <p className="kicker">A karbantartóknak és az iskolának</p>
-            <h2>Egy helyen minden hiba, pontos hellyel és képpel.</h2>
-            <ul className="ticks">
-              <li>Az összes bejelentés egy listában, állapot szerint szűrhetően.</li>
-              <li>Minden bejelentésnél ott a pontos terem, az eszköz és a fénykép, így előre kiderül, mit kell vinni.</li>
-              <li>Állapotot lehet váltani, megjegyzést írni, és a bejelentő látja a választ.</li>
-              <li>A termek és az eszközök kezelhetők, a listát CSV-fájlból is be lehet tölteni.</li>
-            </ul>
-          </div>
-        </section>
-
         {/* ---------- Adatkezelés ---------- */}
         <section className="sec" id="adatok">
           <div className="wrap">
@@ -239,6 +232,7 @@ export default function Landing() {
                   <li>a bejelentés adatait: hely, eszköz, leírás, fénykép</li>
                   <li>egy véletlen követőkódot, ami nem köthető hozzád</li>
                   <li>az IP-címedet csak sózott hash formában, a spam elleni korláthoz</li>
+                  <li>névtelen látogatottsági statisztikát, sütik nélkül</li>
                 </ul>
               </div>
             </div>
@@ -266,24 +260,14 @@ export default function Landing() {
           <div className="wrap">
             <h2>Látsz valamit, ami nem működik? Szólj most.</h2>
             <p>Pár mező, egy fénykép, és a karbantartó már látja. A követőkóddal pedig te is.</p>
-            <Link href="/" className="btn light">Hibát jelentek</Link>
+            <TrackedLink href="/" place="zaro" className="btn light">Hibát jelentek</TrackedLink>
             <p className="survey">
               Segítenél a fejlesztésben?{" "}
               <a href={SURVEY_URL} target="_blank" rel="noopener noreferrer">Töltsd ki a rövid kérdőívet</a>.
             </p>
           </div>
         </section>
-      </main>
 
-      <footer className="foot">
-        <div className="wrap">
-          <span>TechALARM · Mátészalkai Gépészeti Technikum</span>
-          <nav aria-label="Lábléc">
-            <Link href="/">Bejelentés</Link>
-            <Link href="/nyomon">Állapot</Link>
-          </nav>
-        </div>
-      </footer>
     </>
   );
 }
