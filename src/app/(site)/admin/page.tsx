@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { getRoles } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { STATUSES, categoryLabel, isStatus, roomLabel, statusLabel, type Status } from "@/lib/constants";
 import AdminNav from "./AdminNav";
 
@@ -7,7 +9,9 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Bejelentések – TechALARM Admin" };
 
 export default async function AdminHome({ searchParams }: { searchParams: Promise<{ statusz?: string }> }) {
-  const { supabase } = await requireAdmin();
+  const roles = await getRoles();
+  if (!roles.includes("maintainer")) redirect(roles.length ? "/admin/regisztraciok" : "/admin/login");
+  const supabase = await createClient();
   const { statusz } = await searchParams;
   const filter = isStatus(statusz) ? statusz : null;
 

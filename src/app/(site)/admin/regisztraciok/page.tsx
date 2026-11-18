@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { PROFILE_STATUSES, isProfileStatus, profileStatusLabel, type ProfileStatus } from "@/lib/constants";
 import { setProfileStatus } from "../actions";
+import { eraseAccount, renameProfile } from "../privacy-actions";
+import ConfirmButton from "../ConfirmButton";
 import AdminNav from "../AdminNav";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Regisztrációk – TechALARM Admin" };
 
 export default async function Registrations({ searchParams }: { searchParams: Promise<{ statusz?: string }> }) {
-  const { supabase } = await requireAdmin();
+  const { supabase, roles } = await requireRole("approver");
   const { statusz } = await searchParams;
   const filter: ProfileStatus = isProfileStatus(statusz) ? statusz : "pending";
 
@@ -67,6 +69,18 @@ export default async function Registrations({ searchParams }: { searchParams: Pr
                 </form>
               )}
             </div>
+            <form action={renameProfile} style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap", alignItems: "center" }}>
+              <input type="hidden" name="id" value={p.id} />
+              <label htmlFor={`name-${p.id}`} className="hint" style={{ margin: 0 }}>Név javítása</label>
+              <input id={`name-${p.id}`} name="name" type="text" defaultValue={p.full_name} maxLength={100} style={{ flex: "1 1 180px", padding: 6 }} />
+              <button className="btn secondary small" type="submit">Mentés</button>
+            </form>
+            {roles.includes("operator") && (
+              <form action={eraseAccount} style={{ marginTop: 8 }}>
+                <input type="hidden" name="id" value={p.id} />
+                <ConfirmButton className="btn danger small" message="Biztosan törlöd a fiókot? A bejelentései névtelenné válnak. Ez nem vonható vissza.">Fiók törlése és anonimizálás</ConfirmButton>
+              </form>
+            )}
           </li>
         ))}
       </ul>

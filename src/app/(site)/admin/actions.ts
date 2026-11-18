@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { isProfileStatus, isStatus } from "@/lib/constants";
 
@@ -27,8 +27,8 @@ export async function login(_prev: FormState, fd: FormData): Promise<FormState> 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { ok: false, message: "Hibás e-mail cím vagy jelszó.", email };
-  const { data: isAdmin } = await supabase.rpc("am_i_admin");
-  if (!isAdmin) {
+  const { data: roles } = await supabase.rpc("my_roles");
+  if (!Array.isArray(roles) || roles.length === 0) {
     await supabase.auth.signOut();
     return { ok: false, message: "Ehhez a fiókhoz nincs admin jogosultság.", email };
   }
@@ -44,7 +44,7 @@ export async function logout() {
 // ---------- Regisztrációk ----------
 
 export async function setProfileStatus(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("approver");
   const id = uuid(fd, "id");
   const status = text(fd, "status");
   if (!isProfileStatus(status)) throw new Error("Érvénytelen állapot.");
@@ -59,7 +59,7 @@ export async function setProfileStatus(fd: FormData) {
 // ---------- Bejelentések ----------
 
 export async function updateReport(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const id = uuid(fd, "id");
   const status = text(fd, "status");
   if (!isStatus(status)) throw new Error("Érvénytelen státusz.");
@@ -71,7 +71,7 @@ export async function updateReport(fd: FormData) {
 }
 
 export async function deleteReport(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const id = uuid(fd, "id");
   const { data: report } = await supabase.from("reports").select("photo_path").eq("id", id).maybeSingle();
   if (report?.photo_path) await supabase.storage.from("report-photos").remove([report.photo_path]);
@@ -84,7 +84,7 @@ export async function deleteReport(fd: FormData) {
 // ---------- Termek és eszközök ----------
 
 export async function addRoom(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const name = text(fd, "name").slice(0, 100);
   if (!name) return;
   const { data: last } = await supabase.from("rooms").select("sort_order").order("sort_order", { ascending: false }).limit(1);
@@ -94,21 +94,21 @@ export async function addRoom(fd: FormData) {
 }
 
 export async function toggleRoom(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const { error } = await supabase.from("rooms").update({ active: text(fd, "active") === "true" }).eq("id", uuid(fd, "id"));
   if (error) throw new Error(error.message);
   revalidatePath("/admin/helyek");
 }
 
 export async function deleteRoom(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const { error } = await supabase.from("rooms").delete().eq("id", uuid(fd, "id"));
   if (error) throw new Error(error.message);
   revalidatePath("/admin/helyek");
 }
 
 export async function addDevice(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const name = text(fd, "name").slice(0, 100);
   if (!name) return;
   const code = text(fd, "inventory_code").slice(0, 50);
@@ -118,14 +118,14 @@ export async function addDevice(fd: FormData) {
 }
 
 export async function toggleDevice(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const { error } = await supabase.from("devices").update({ active: text(fd, "active") === "true" }).eq("id", uuid(fd, "id"));
   if (error) throw new Error(error.message);
   revalidatePath("/admin/helyek");
 }
 
 export async function deleteDevice(fd: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const { error } = await supabase.from("devices").delete().eq("id", uuid(fd, "id"));
   if (error) throw new Error(error.message);
   revalidatePath("/admin/helyek");
@@ -163,7 +163,7 @@ function parseCsv(input: string): string[][] {
 }
 
 export async function importCsv(_prev: FormState, fd: FormData): Promise<FormState> {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const file = fd.get("file");
   if (!(file instanceof File) || file.size === 0) return { ok: false, message: "Válassz ki egy CSV fájlt." };
   if (file.size > 1024 * 1024) return { ok: false, message: "A fájl túl nagy (max. 1 MB)." };

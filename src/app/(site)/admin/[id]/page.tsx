@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireAdmin } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { STATUSES, categoryLabel, roomLabel, statusLabel, type Status } from "@/lib/constants";
 import { deleteReport, updateReport } from "../actions";
 import ConfirmButton from "../ConfirmButton";
@@ -8,7 +8,7 @@ import ConfirmButton from "../ConfirmButton";
 export const dynamic = "force-dynamic";
 
 export default async function ReportDetail({ params }: { params: Promise<{ id: string }> }) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
@@ -26,6 +26,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
   return (
     <>
       <p><Link href="/admin">← Vissza a listához</Link></p>
+      <p className="hint">A bejelentés adatai csak a hibák kezelésére használhatók, fegyelmi vagy felelősségre vonási célra nem (adatkezelési tájékoztató).</p>
       <div className="card">
         <div className="topbar">
           <h1 style={{ margin: 0 }}>{r.tracking_code}</h1>

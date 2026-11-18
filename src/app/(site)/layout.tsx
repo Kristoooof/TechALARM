@@ -20,6 +20,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           <nav>
             <Link href="/">Bejelentés</Link>
             {reporter?.status === "approved" && <Link href="/bejelentesim">Bejelentéseim</Link>}
+            {reporter?.status === "approved" && <Link href="/fiokom">Fiókom</Link>}
             <Link href="/nyomon">Állapot</Link>
             {reporter ? (
               <form action={logoutReporter} style={{ display: "contents" }}>
@@ -33,7 +34,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       </header>
       <main className="container">{children}</main>
       <footer className="container site-footer">
-        MSZC Gépészeti Technikum · <Link href="/bemutato">Bemutató</Link> · <Link href="/admin">Admin</Link>
+        MSZC Gépészeti Technikum · <Link href="/adatkezeles">Adatkezelés</Link> · <Link href="/bemutato">Bemutató</Link> · <Link href="/admin">Admin</Link>
       </footer>
     </>
   );

@@ -49,10 +49,10 @@ export default function RegisterForm({ turnstileSiteKey }: { turnstileSiteKey: s
 
       <div className="field">
         <label style={{ display: "flex", gap: 10, alignItems: "flex-start", fontWeight: 400 }}>
-          <input type="checkbox" name="consent" required style={{ marginTop: 4 }} />
+          <input type="checkbox" name="notice" required style={{ marginTop: 4 }} />
           <span>
-            Elfogadom, hogy a nevemet a TechALARM tárolja, a bejelentéseimet pedig hozzám kapcsolja.
-            A nevemet az admin és a karbantartó látja.
+            Elolvastam és tudomásul vettem az <Link href="/adatkezeles" target="_blank">adatkezelési tájékoztatót</Link>: a nevemet a bejelentéseimhez
+            kapcsolva tárolják, és azt az admin és a karbantartó látja.
           </span>
         </label>
       </div>

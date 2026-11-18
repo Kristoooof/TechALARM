@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { NAME_MAX, NAME_MIN, NAME_RE, PASSWORD_MAX, PASSWORD_MIN, nameKey } from "@/lib/constants";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { NOTICE_VERSION } from "@/lib/org";
 import { verifyTurnstile } from "@/lib/turnstile";
 
 export type AuthState = { ok: boolean; message: string; name?: string } | null;
@@ -32,7 +33,7 @@ export async function register(_prev: AuthState, fd: FormData): Promise<AuthStat
   if (password.length < PASSWORD_MIN) return fail(`A jelszó legalább ${PASSWORD_MIN} karakter legyen.`);
   if (password.length > PASSWORD_MAX) return fail(`A jelszó legfeljebb ${PASSWORD_MAX} karakter lehet.`);
   if (password !== password2) return fail("A két jelszó nem egyezik.");
-  if (fd.get("consent") !== "on") return fail("A regisztrációhoz el kell fogadnod az adatkezelést.");
+  if (fd.get("notice") !== "on") return fail("A regisztrációhoz el kell olvasnod és tudomásul kell venned az adatkezelési tájékoztatót.");
 
   const h = await headers();
   const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "ismeretlen";
@@ -61,7 +62,14 @@ export async function register(_prev: AuthState, fd: FormData): Promise<AuthStat
 
   const { error: profileError } = await db
     .from("profiles")
-    .insert({ id: data.user.id, full_name: name, name_key: key, login_email: loginEmail });
+    .insert({
+      id: data.user.id,
+      full_name: name,
+      name_key: key,
+      login_email: loginEmail,
+      notice_version: NOTICE_VERSION,
+      notice_accepted_at: new Date().toISOString(),
+    });
   if (profileError) {
     await db.auth.admin.deleteUser(data.user.id);
     if (profileError.code === "23505") return fail(taken); // közben valaki ugyanezt a nevet regisztrálta

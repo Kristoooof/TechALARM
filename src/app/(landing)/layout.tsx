@@ -30,6 +30,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
             <Link href="/belepes">Belépés</Link>
             <Link href="/nyomon">Állapot</Link>
             <Link href="/karbantartoknak">Karbantartóknak</Link>
+            <Link href="/adatkezeles">Adatkezelés</Link>
           </nav>
         </div>
       </footer>

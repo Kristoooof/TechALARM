@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { addDevice, addRoom, deleteDevice, deleteRoom, toggleDevice, toggleRoom } from "../actions";
 import AdminNav from "../AdminNav";
 import ConfirmButton from "../ConfirmButton";
@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Termek és eszközök – TechALARM Admin" };
 
 export default async function Places() {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireRole("maintainer");
   const [{ data: rooms }, { data: devices }] = await Promise.all([
     supabase.from("rooms").select("id, name, active").order("sort_order").order("name"),
     supabase.from("devices").select("id, room_id, name, inventory_code, active").order("name"),

@@ -32,6 +32,14 @@ const faq = [
     a: "Ezt az admin dönti el, és most nem küldünk értesítést a jóváhagyásról. Ha a belépésnél azt látod, hogy a regisztrációd még vár, próbáld meg később újra.",
   },
   {
+    q: "Mire használjátok az adataimat, és meddig őrzitek?",
+    a: "Csak a hibák kezelésére. Fegyelmi vagy felelősségre vonási célra nem használjuk. A bejelentések a tanév végéig és még 1 évig maradnak meg, utána automatikusan törlődnek. A részleteket az adatkezelési tájékoztatóban olvashatod.",
+  },
+  {
+    q: "Kérhetem az adataim javítását vagy törlését?",
+    a: "Igen. Belépés után a Fiókom oldalon letöltheted az adataidat, és kérelmet adhatsz be a javításra, a törlésre vagy a tiltakozásra. Legfeljebb 1 hónapon belül válaszolunk.",
+  },
+  {
     q: "Muszáj fényképet csatolnom?",
     a: "Igen, a bejelentéshez egy kép is kell. Így a karbantartó előre látja a hibát, és tudja, milyen alkatrészt vagy szerszámot vigyen magával. JPG, PNG vagy WebP lehet, legfeljebb 5 MB, a telefonon pedig automatikusan lekicsinyítjük. Embert ne fotózz, csak a hibás eszközt.",
   },
@@ -257,10 +265,13 @@ export default function Landing() {
                   <li>a nevedet a bejelentéseidhez kapcsoljuk</li>
                   <li>a nevedet az admin és a karbantartó látja, más bejelentő nem</li>
                   <li>a jelszavadat nem olvasható formában tároljuk</li>
+                  <li>a bejelentéseket a tanév végéig és még 1 évig őrizzük, utána törlődnek</li>
+                  <li>az adataidat nem használjuk fegyelmi célra</li>
                   <li>névtelen látogatottsági statisztikát gyűjtünk, sütik nélkül</li>
                 </ul>
               </div>
             </div>
+            <p className="note">Részletek, jogok és kapcsolat: <Link href="/adatkezeles" style={{ fontWeight: 700 }}>adatkezelési tájékoztató</Link>.</p>
           </div>
         </section>
 
