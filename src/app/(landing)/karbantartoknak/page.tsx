@@ -21,7 +21,7 @@ const features = [
   },
   {
     h: "Pontos hely és eszköz",
-    p: "A bejelentés tartalmazza a terem típusát és számát, az eszközt, a probléma típusát, a leírást és a bejelentő nevét. Nem kell visszakérdezned, melyik gép romlott el, és kitől jött a jelzés.",
+    p: "A bejelentés tartalmazza a terem típusát és számát, az eszközt, a probléma típusát, a leírást és a bejelentő nevét. Az azonos nevűeket a felhasználónév különbözteti meg. Nem kell visszakérdezned, melyik gép romlott el, és kitől jött a jelzés.",
   },
   {
     h: "Fénykép a hibáról",
@@ -32,8 +32,8 @@ const features = [
     p: "Átállíthatod az állapotot, és megjegyzést írhatsz, például hogy csütörtökön cseréled az alkatrészt. A bejelentő a követőkóddal látja ezt.",
   },
   {
-    h: "Hitelesítetlen bejelentők jelzése",
-    p: "A frissen regisztrált felhasználó rögtön bejelenthet, de a bejelentése hitelesítetlenként jelenik meg, és szűrhető. A regisztrációt a jóváhagyó vagy az üzemeltető hagyja jóvá vagy utasítja el, ettől a bejelentések hitelesítetté válnak.",
+    h: "Szerepkörök és jóváhagyás",
+    p: "A diák bejelent, és a követőkóddal nézi az állapotot. A tanár bejelent és jóváhagyja a regisztrációkat. A karbantartó jóváhagy és a bejelentéseket kezeli. Az igazgató és az admin mindent lát és kezel. A jóváhagyásig a bejelentés hitelesítetlenként jelenik meg, és szűrhető.",
   },
   {
     h: "Termek és eszközök kezelése",

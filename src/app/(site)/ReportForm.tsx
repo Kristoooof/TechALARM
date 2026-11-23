@@ -77,7 +77,7 @@ export default function ReportForm({
     return (
       <div className="card">
         <div className="alert success">Köszönjük, a bejelentésed megérkezett!</div>
-        <p>Ezzel a kóddal később megnézheted, hogy intézkedtek-e. A kódot a <Link href="/bejelentesim">Bejelentéseim</Link> oldalon később is megtalálod.</p>
+        <p>Ezzel a kóddal később megnézheted, hogy intézkedtek-e. Jegyezd fel, vagy készíts róla képernyőképet: az <Link href="/nyomon">Állapot</Link> oldalon ezzel a kóddal nézheted meg, hogyan áll a bejelentésed. Ha elvesztenéd, az admin a neved alapján megkeresi.</p>
         <div className="code-box">{result.code}</div>
         <div style={{ display: "grid", gap: 8 }}>
           <Link className="btn block" href={`/nyomon?kod=${encodeURIComponent(result.code)}`}>Állapot megtekintése</Link>

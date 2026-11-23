@@ -24,8 +24,8 @@ export default function Notice() {
         <table className="data-table">
           <thead><tr><th>Adat</th><th>Cél</th><th>Jogalap</th></tr></thead>
           <tbody>
-            <tr><td>Teljes név, jelszó (nem olvasható formában), regisztráció és jóváhagyás időpontja, a tájékoztató verziója</td><td>Azonosítás, a jogosultak körének ellenőrzése, a visszaélések megelőzése</td><td>Közfeladat (GDPR 6. cikk (1) e): az iskola létesítményeinek működtetése, vagyonvédelem)</td></tr>
-            <tr><td>Bejelentés: terem, eszköz, leírás, fénykép, állapot, megjegyzés, a nevedet tartalmazó pillanatkép, követőkód</td><td>A hibák kezelése és a visszajelzés</td><td>Közfeladat (GDPR 6. cikk (1) e))</td></tr>
+            <tr><td>Teljes név, egyedi felhasználónév (azonos nevűek megkülönböztetésére), jelszó (nem olvasható formában), regisztráció és jóváhagyás időpontja, a tájékoztató verziója</td><td>Azonosítás, a jogosultak körének ellenőrzése, a visszaélések megelőzése</td><td>Közfeladat (GDPR 6. cikk (1) e): az iskola létesítményeinek működtetése, vagyonvédelem)</td></tr>
+            <tr><td>Bejelentés: terem, eszköz, leírás, fénykép, állapot, megjegyzés, a nevedet és felhasználónevedet tartalmazó pillanatkép, követőkód</td><td>A hibák kezelése és a visszajelzés</td><td>Közfeladat (GDPR 6. cikk (1) e))</td></tr>
             <tr><td>Adatkezelési kérelmeid</td><td>A jogaid gyakorlásának kezelése</td><td>Jogi kötelezettség (GDPR 6. cikk (1) c))</td></tr>
             <tr><td>Technikai adatok (IP-cím, böngésző) a szerver- és spamvédelmi naplókban</td><td>A rendszer biztonsága és működése</td><td>Közfeladat, biztonság (GDPR 32. cikk)</td></tr>
           </tbody>
@@ -37,9 +37,10 @@ export default function Notice() {
       <div className="card">
         <h2>3. Ki látja az adataidat?</h2>
         <ul>
-          <li><strong>Karbantartó:</strong> a bejelentéseket (a bejelentő nevével és a fényképpel együtt).</li>
-          <li><strong>Jóváhagyó tanár:</strong> a regisztrációkat (a nevedet).</li>
-          <li><strong>Rendszerüzemeltető (igazgató):</strong> minden adatot.</li>
+          <li><strong>Diák:</strong> csak a saját adatait látja. Bejelent, és a követőkóddal nézi az állapotot.</li>
+          <li><strong>Tanár:</strong> bejelent, és jóváhagyja a regisztrációkat (látja a nevet és a felhasználónevet).</li>
+          <li><strong>Karbantartó:</strong> jóváhagyja a regisztrációkat, és kezeli a bejelentéseket (a bejelentő nevével és a fényképpel együtt).</li>
+          <li><strong>Igazgató és admin:</strong> minden adatot látnak és kezelnek.</li>
           <li><strong>Más bejelentők nem látják</strong> a nevedet, és a követőoldal sem mutatja.</li>
         </ul>
         <p>Adatfeldolgozók: <strong>Supabase</strong> (adatbázis és fájltároló, EU: Írország), <strong>Vercel</strong> (üzemeltetés, EU-régió), <strong>Cloudflare</strong> (spamvédelem a regisztrációnál, az IP-cím és a böngészőadatok kerülnek hozzá). A Vercel és a Cloudflare amerikai cég: az adattovábbítás az EU–USA adatvédelmi keretrendszer és/vagy a szokásos szerződési feltételek (SCC) alapján történik (GDPR 44–46. cikk).</p>

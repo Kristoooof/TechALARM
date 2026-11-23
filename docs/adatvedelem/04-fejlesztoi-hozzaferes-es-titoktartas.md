@@ -7,7 +7,7 @@ Az iskola döntése szerint a fejlesztő diákok **titoktartási nyilatkozattal 
 ## Szabályok
 
 1. **Minimális jogosultság.** Mindenki csak annyit kap, amennyi a feladatához kell. Alapértelmezett: csak kód és tesztadat.
-2. **Írásbeli engedély.** Éles adathoz az üzemeltető (igazgató) adhat hozzáférést, névre szólóan, indoklással, időkorláttal. A hozzáférést a Munkatársak oldalon és az alábbi nyilvántartásban rögzítjük.
+2. **Írásbeli engedély.** Éles adathoz az igazgató adhat hozzáférést, névre szólóan, indoklással, időkorláttal. A hozzáférést a Munkatársak oldalon és az alábbi nyilvántartásban rögzítjük.
 3. **Titoktartási nyilatkozat.** Az engedély feltétele az aláírt nyilatkozat. Kiskorú esetén a törvényes képviselő is aláírja.
 4. **Fejlesztés és tesztelés tesztadattal.** A helyi fejlesztés a `supabase/seed.sql` tesztadataival megy. Éles adatot nem másolunk fejlesztői gépre, nem küldünk el, nem töltünk fel külső szolgáltatásba.
 5. **Szerverkulcsok.** A `SUPABASE_SERVICE_ROLE_KEY` és a `CRON_SECRET` csak az üzemeltető és a kijelölt fejlesztő birtokában van, kódba, chatbe vagy képernyőképre nem kerülhet.

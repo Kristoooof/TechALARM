@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { NAME_MAX, NAME_MIN, NAME_RE, PASSWORD_MAX, PASSWORD_MIN, nameKey } from "@/lib/constants";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { nextUsername } from "@/lib/username";
 import { NOTICE_VERSION } from "@/lib/org";
 import { verifyTurnstile } from "@/lib/turnstile";
 
@@ -43,9 +44,6 @@ export async function register(_prev: AuthState, fd: FormData): Promise<AuthStat
 
   const db = createAdminClient();
   const key = nameKey(name);
-  const taken = "Ezzel a névvel már van regisztráció. Ha te vagy, lépj be. Ha másik személy, adj meg pontosabb nevet (például a második keresztneveddel vagy az osztályoddal).";
-  const { data: existing } = await db.from("profiles").select("id").eq("name_key", key).maybeSingle();
-  if (existing) return fail(taken);
 
   // A Supabase Auth belső azonosítót kap, a felhasználó e-mail címet nem ad meg.
   const loginEmail = `${randomUUID()}@felhasznalo.techalarm.invalid`;
@@ -60,19 +58,24 @@ export async function register(_prev: AuthState, fd: FormData): Promise<AuthStat
     return fail("A regisztrációt nem sikerült elmenteni. Próbáld újra később.");
   }
 
-  const { error: profileError } = await db
-    .from("profiles")
-    .insert({
+  // Azonos nevű felhasználó is lehet: a megkülönböztetéshez egyedi felhasználónevet kap (kovacs.sandor, kovacs.sandor2, ...).
+  let profileError: { code?: string; message: string } | null = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const username = await nextUsername(db, name);
+    const { error } = await db.from("profiles").insert({
       id: data.user.id,
       full_name: name,
       name_key: key,
+      username,
       login_email: loginEmail,
       notice_version: NOTICE_VERSION,
       notice_accepted_at: new Date().toISOString(),
     });
+    profileError = error;
+    if (!error || error.code !== "23505") break; // csak a közben lefoglalt felhasználónévnél próbáljuk újra
+  }
   if (profileError) {
     await db.auth.admin.deleteUser(data.user.id);
-    if (profileError.code === "23505") return fail(taken); // közben valaki ugyanezt a nevet regisztrálta
     console.error("Profil mentési hiba:", profileError.message);
     return fail("A regisztrációt nem sikerült elmenteni. Próbáld újra később.");
   }
@@ -87,21 +90,30 @@ export async function register(_prev: AuthState, fd: FormData): Promise<AuthStat
 // ---------- Belépés / kilépés ----------
 
 export async function loginReporter(_prev: AuthState, fd: FormData): Promise<AuthState> {
-  const name = cleanName(field(fd, "name"));
+  const typed = cleanName(field(fd, "name"));
   const password = String(fd.get("password") ?? "");
-  const fail = (message: string): AuthState => ({ ok: false, message, name });
+  const fail = (message: string): AuthState => ({ ok: false, message, name: typed });
   const wrong = "Hibás név vagy jelszó.";
 
-  if (!name || !password) return fail(wrong);
-  const { data: found } = await createAdminClient()
-    .from("profiles")
-    .select("login_email")
-    .eq("name_key", nameKey(name))
-    .maybeSingle();
-  if (!found) return fail(wrong);
+  if (!typed || !password) return fail(wrong);
+  const db = createAdminClient();
+
+  // Előbb felhasználónévként keressük, utána teljes névként. Azonos nevű felhasználóknál a felhasználónév kell.
+  let loginEmail: string | null = null;
+  const { data: byUsername } = await db.from("profiles").select("login_email").ilike("username", typed.replace(/[%_]/g, "")).maybeSingle();
+  if (byUsername) {
+    loginEmail = byUsername.login_email;
+  } else {
+    const { data: byName } = await db.from("profiles").select("login_email").eq("name_key", nameKey(typed)).limit(2);
+    if (byName && byName.length > 1) {
+      return fail("Több ilyen nevű felhasználó van. Add meg a felhasználónevedet (például kovacs.sandor2) a neved helyett. A regisztráció után láttad, és a Fiókom oldalon is megtalálod.");
+    }
+    loginEmail = byName?.[0]?.login_email ?? null;
+  }
+  if (!loginEmail) return fail(wrong);
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword({ email: found.login_email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email: loginEmail, password });
   if (error || !data.user) return fail(wrong);
 
   const { data: profile } = await supabase.from("profiles").select("status").eq("id", data.user.id).maybeSingle();

@@ -20,7 +20,7 @@
 
 | Kockázat | Intézkedés |
 |---|---|
-| A bejelentő neve kiderül más diákok előtt, megtorlás | A nevet csak karbantartó, jóváhagyó és üzemeltető látja; a követőoldal nem mutatja; fegyelmi felhasználás tiltott (tájékoztató) |
+| A bejelentő neve kiderül más diákok előtt, megtorlás | A nevet bejelentéseknél csak a karbantartó, az igazgató és az admin látja, a tanár a regisztrációknál; a követőoldal nem mutatja; fegyelmi felhasználás tiltott (tájékoztató) |
 | Bejelentés fegyelmi célú felhasználása | Kimondott tilalom a tájékoztatóban és az admin felületen; az üzemeltető felel érte |
 | Fénykép embert ábrázol | A tájékoztató és az űrlap kéri, hogy csak a hibás eszközt fotózzák; a karbantartó törölheti a bejelentést |
 | Jogosulatlan hozzáférés | Szerepkörök, titoktartási nyilatkozat, hozzáférések listája a Munkatársak oldalon |

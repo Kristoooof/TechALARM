@@ -44,10 +44,11 @@ export default async function Account() {
         <h2>Tárolt adataim</h2>
         <dl className="details">
           <dt>Név</dt><dd>{reporter.fullName}</dd>
+          <dt>Felhasználónév</dt><dd>{reporter.username}</dd>
           <dt>Állapot</dt><dd>{profileStatusLabel(reporter.status)}</dd>
           <dt>Regisztráció</dt><dd>{profile ? fmt(profile.created_at) : "–"}</dd>
           <dt>Tájékoztató</dt><dd>{profile?.notice_version ? `${profile.notice_version} (tudomásul véve: ${profile.notice_accepted_at ? fmt(profile.notice_accepted_at) : "–"})` : "–"}</dd>
-          <dt>Bejelentéseim</dt><dd>{count ?? 0} db</dd>
+          <dt>Beküldött bejelentések</dt><dd>{count ?? 0} db</dd>
         </dl>
         <p className="hint">A jelszavad nem olvasható formában tárolódik, ezért nem látszik. Részletek: <Link href="/adatkezeles">adatkezelési tájékoztató</Link>.</p>
         <a className="btn secondary block" href="/fiokom/export" download>Adataim letöltése (JSON)</a>

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
-import { NAME_MAX, NAME_MIN, NAME_RE, PASSWORD_MAX, PASSWORD_MIN, nameKey } from "@/lib/constants";
+import { NAME_MAX, NAME_MIN, NAME_RE, nameKey } from "@/lib/constants";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -27,10 +27,7 @@ export async function renameProfile(fd: FormData) {
     throw new Error(`A név ${NAME_MIN}–${NAME_MAX} karakter lehet, csak betűk, szóköz, pont és kötőjel.`);
   }
   const db = createAdminClient();
-  const key = nameKey(name);
-  const { data: clash } = await db.from("profiles").select("id").eq("name_key", key).neq("id", id).maybeSingle();
-  if (clash) throw new Error("Ezzel a névvel már van regisztráció.");
-  const { error } = await db.from("profiles").update({ full_name: name, name_key: key }).eq("id", id);
+  const { error } = await db.from("profiles").update({ full_name: name, name_key: nameKey(name) }).eq("id", id);
   if (error) throw new Error(error.message);
   await db.from("reports").update({ reporter_name: name }).eq("reporter_id", id);
   revalidatePath("/admin/regisztraciok");
@@ -41,7 +38,7 @@ export async function eraseAccount(fd: FormData) {
   await requireRole("operator");
   const id = uuid(fd, "id");
   const db = createAdminClient();
-  await db.from("reports").update({ reporter_id: null, reporter_name: null }).eq("reporter_id", id);
+  await db.from("reports").update({ reporter_id: null, reporter_name: null, reporter_username: null }).eq("reporter_id", id);
   await db.from("data_requests").update({ requester_name: "törölt felhasználó" }).eq("profile_id", id);
   const { error } = await db.from("profiles").delete().eq("id", id);
   if (error) throw new Error(error.message);
@@ -71,28 +68,26 @@ export async function handleRequest(fd: FormData) {
 
 const ROLES = ["operator", "maintainer", "approver"] as const;
 
-export async function createStaff(_prev: StaffState, fd: FormData): Promise<StaffState> {
+/** Szerepkör megadása egy regisztrált felhasználónak a felhasználóneve alapján (tanár, karbantartó, igazgató / admin). Csak üzemeltető. */
+export async function assignRole(_prev: StaffState, fd: FormData): Promise<StaffState> {
   const { supabase } = await requireRole("operator");
-  const email = text(fd, "email").toLowerCase();
-  const password = String(fd.get("password") ?? "");
+  const username = text(fd, "username").toLowerCase();
   const role = text(fd, "role");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return { ok: false, message: "Adj meg érvényes e-mail címet." };
-  if (password.length < PASSWORD_MIN || password.length > PASSWORD_MAX) return { ok: false, message: `A jelszó ${PASSWORD_MIN}–${PASSWORD_MAX} karakter legyen.` };
+  if (!username) return { ok: false, message: "Add meg a felhasználónevet." };
   if (!(ROLES as readonly string[]).includes(role)) return { ok: false, message: "Válassz szerepkört." };
 
   const db = createAdminClient();
-  const { data, error } = await db.auth.admin.createUser({ email, password, email_confirm: true });
-  if (error || !data.user) {
-    const exists = error && /already|exists|registered/i.test(error.message);
-    return { ok: false, message: exists ? "Ezzel az e-mail címmel már van fiók. Szerepkört a listában adhatsz neki." : "A fiókot nem sikerült létrehozni." };
+  const { data: profile } = await db.from("profiles").select("id, full_name, status").ilike("username", username.replace(/[%_]/g, "")).maybeSingle();
+  if (!profile) return { ok: false, message: "Nincs ilyen felhasználónév. Kérd meg a személyt, hogy előbb regisztráljon." };
+  if (profile.status === "rejected") return { ok: false, message: "Elutasított regisztrációhoz nem adható szerepkör." };
+  if (profile.status === "pending") {
+    await db.from("profiles").update({ status: "approved", decided_at: new Date().toISOString() }).eq("id", profile.id);
   }
-  const { error: grantError } = await supabase.rpc("grant_role", { p_user: data.user.id, p_role: role });
-  if (grantError) {
-    await db.auth.admin.deleteUser(data.user.id);
-    return { ok: false, message: "A szerepkör megadása nem sikerült." };
-  }
+  const { error } = await supabase.rpc("grant_role", { p_user: profile.id, p_role: role });
+  if (error) return { ok: false, message: "A szerepkör megadása nem sikerült." };
   revalidatePath("/admin/munkatarsak");
-  return { ok: true, message: `A fiók létrejött: ${email}. A jelszót add át neki biztonságos módon.` };
+  revalidatePath("/admin/regisztraciok");
+  return { ok: true, message: `${profile.full_name} megkapta a szerepkört. Legközelebb belépve az Admin menüpont jelenik meg neki.` };
 }
 
 export async function removeStaffRole(fd: FormData) {

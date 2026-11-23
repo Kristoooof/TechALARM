@@ -8,32 +8,36 @@ import StaffForm from "./StaffForm";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Munkatársak – TechALARM Admin" };
 
-const ROLE_LABEL: Record<string, string> = { operator: "Üzemeltető", maintainer: "Karbantartó", approver: "Jóváhagyó tanár" };
+const ROLE_LABEL: Record<string, string> = { operator: "Igazgató / admin", maintainer: "Karbantartó", approver: "Tanár" };
 
 export default async function Staff() {
   const { supabase } = await requireRole("operator");
   const { data: rows } = await supabase.rpc("staff_list");
   const db = createAdminClient();
   const ids: string[] = [...new Set<string>((rows ?? []).map((r: { user_id: string }) => r.user_id))];
-  const emails = new Map<string, string>();
+  const labels = new Map<string, string>();
+  const { data: profiles } = await db.from("profiles").select("id, full_name, username").in("id", ids);
+  (profiles ?? []).forEach((p) => labels.set(p.id, `${p.full_name} (${p.username})`));
   await Promise.all(
-    ids.map(async (id) => {
-      const { data } = await db.auth.admin.getUserById(id);
-      emails.set(id, data.user?.email ?? id);
-    }),
+    ids
+      .filter((id) => !labels.has(id))
+      .map(async (id) => {
+        const { data } = await db.auth.admin.getUserById(id);
+        labels.set(id, data.user?.email ?? id); // a korábbi, e-mailes admin fiókok
+      }),
   );
 
   return (
     <>
       <AdminNav current="munkatarsak" />
       <h1>Munkatársak</h1>
-      <p className="lead">Ki mihez fér hozzá. Az üzemeltető minden szerepkört magában foglal. Éles adathoz csak az üzemeltető engedélyével szabad hozzáférést adni, titoktartási nyilatkozat birtokában.</p>
+      <p className="lead">Ki mihez fér hozzá. A diák csak bejelent és a követőkóddal nézi az állapotot. A tanár bejelent és jóváhagyja a regisztrációkat. A karbantartó jóváhagy és a bejelentéseket kezeli. Az igazgató és az admin mindent lát és tud. Éles adathoz csak az igazgató engedélyével szabad hozzáférést adni, titoktartási nyilatkozat birtokában.</p>
 
       <ul className="list">
         {(rows ?? []).map((r: { user_id: string; role: string }) => (
           <li key={`${r.user_id}-${r.role}`} className="list-item" style={{ cursor: "default" }}>
             <div className="row">
-              <strong>{emails.get(r.user_id)}</strong>
+              <strong>{labels.get(r.user_id)}</strong>
               <span className="badge">{ROLE_LABEL[r.role] ?? r.role}</span>
             </div>
             <form action={removeStaffRole} style={{ marginTop: 8 }}>

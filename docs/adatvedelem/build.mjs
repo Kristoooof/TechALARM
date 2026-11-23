@@ -45,7 +45,7 @@ const html = `<!doctype html><html lang="hu"><head><meta charset="utf-8"><title>
 <h2>0 · Szerepek <small>ki dönt, ki fér hozzá</small></h2>
 <ul>
 <li><b class="k">Adatkezelő:</b> az adott <b>iskola</b>. Minden iskola <b>saját aloldalt és saját adatbázist</b> kap, ezért külön adatkezelő, az adatok iskolák között nem keverednek. <span class="ref">GDPR 4. cikk 7.</span></li>
-<li><b class="k">Rendszerüzemeltető (igazgató):</b> minden. <b class="k">Karbantartó:</b> a bejelentések. <b class="k">Jóváhagyó tanár:</b> a regisztrációk. A három szerepkör a rendszerben külön van. <span class="ok">KÉSZ</span> <b class="k">Felhasználók:</b> diákok (14–19 év) és tanárok / dolgozók, csak a saját adataik.</li>
+<li><b class="k">Diák:</b> bejelent, követőkóddal nézi az állapotot. <b class="k">Tanár:</b> bejelent, jóváhagyja a regisztrációkat. <b class="k">Karbantartó:</b> jóváhagy és a bejelentéseket kezeli. <b class="k">Igazgató és admin:</b> minden. A szerepkörök a rendszerben külön vannak. <span class="ok">KÉSZ</span> <b class="k">Felhasználók:</b> diákok (14–19 év) és tanárok / dolgozók, csak a saját adataik.</li>
 <li><b class="k">Fejlesztő diákok:</b> ha éles adathoz hozzáférnek, az iskola <b>adatfeldolgozói</b> / megbízottai, <b>kiskorúként</b> is. Az iskola döntése: <b>titoktartási nyilatkozattal és az üzemeltető engedélyével</b> kaphatnak éles hozzáférést, alapból csak kód és tesztadat. <span class="ref">GDPR 28–29. cikk</span> <span class="ok">KÉSZ</span> (04, 05 dokumentum)</li>
 </ul>
 
@@ -112,17 +112,17 @@ const html = `<!doctype html><html lang="hu"><head><meta charset="utf-8"><title>
 <h2>5 · Adattárolás és hozzáférés a TechALARM-ban <small>konkrétan</small></h2>
 <table>
 <tr><th style="width:19%">Adat</th><th style="width:26%">Hol tároljuk</th><th style="width:20%">Meddig (javaslat)</th><th>Ki fér hozzá</th></tr>
-<tr><td><b class="k">Név</b>, belépési azonosító, állapot, időpontok</td><td>Supabase PostgreSQL, <b>EU (Írország, eu-west-1)</b>; táblák sorszintű védelemmel (RLS)</td><td>jogviszony végéig, tanév végi takarítás; váró / elutasított: 90 nap után automatikus törlés</td><td>üzemeltető, jóváhagyó tanár; a felhasználó a sajátját</td></tr>
+<tr><td><b class="k">Név</b>, belépési azonosító, állapot, időpontok</td><td>Supabase PostgreSQL, <b>EU (Írország, eu-west-1)</b>; táblák sorszintű védelemmel (RLS)</td><td>jogviszony végéig, tanév végi takarítás; váró / elutasított: 90 nap után automatikus törlés</td><td>tanár, karbantartó, igazgató, admin; a felhasználó a sajátját</td></tr>
 <tr><td><b class="k">Jelszó</b></td><td>Supabase Auth, nem visszafejthető <b>hash</b> (bcrypt)</td><td>a fiók megszűnéséig</td><td>senki (nem olvasható)</td></tr>
-<tr><td><b class="k">Bejelentés</b>: hely, eszköz, leírás, állapot, megjegyzés, <b>név pillanatkép</b>, követőkód</td><td>Supabase PostgreSQL (EU)</td><td>tanév végéig + 1 év, utána <b>automatikus törlés</b> (napi feladat)</td><td>karbantartó, üzemeltető; a bejelentő a sajátját</td></tr>
-<tr><td><b class="k">Fénykép</b> (kötelező)</td><td>Supabase Storage, <b>privát tároló</b>, megtekintés 1 órás aláírt hivatkozással</td><td>a bejelentéssel együtt</td><td>karbantartó, üzemeltető</td></tr>
+<tr><td><b class="k">Bejelentés</b>: hely, eszköz, leírás, állapot, megjegyzés, <b>név pillanatkép</b>, követőkód</td><td>Supabase PostgreSQL (EU)</td><td>tanév végéig + 1 év, utána <b>automatikus törlés</b> (napi feladat)</td><td>karbantartó, igazgató, admin</td></tr>
+<tr><td><b class="k">Fénykép</b> (kötelező)</td><td>Supabase Storage, <b>privát tároló</b>, megtekintés 1 órás aláírt hivatkozással</td><td>a bejelentéssel együtt</td><td>karbantartó, igazgató, admin</td></tr>
 <tr><td><b class="k">Munkamenet-süti</b></td><td>böngésző, Supabase Auth</td><td>a munkamenet / kijelentkezés</td><td>csak a felhasználó eszköze</td></tr>
 <tr><td><b class="k">Régi IP-hash</b> (a névtelen időszakból)</td><td>az oszlop <b>törölve</b>, az adat megszűnt</td><td>—</td><td>—</td></tr>
 <tr><td><b class="k">Kérésnaplók</b> (IP, böngésző)</td><td>Vercel és Supabase naplók, <b>Vercel függvények régiója: Dublin (dub1)</b>, a <code>vercel.json</code> szerint</td><td>szolgáltatói szabály szerint</td><td>üzemeltető, szolgáltató</td></tr>
 <tr><td><b class="k">Spamvédelem</b> (regisztrációnál)</td><td>Cloudflare Turnstile: az IP és a böngészőadatok a Cloudflarehez kerülnek</td><td>a szolgáltató szerint</td><td>Cloudflare (szolgáltató)</td></tr>
 <tr><td><b class="k">Látogatottság</b></td><td>Vercel Web Analytics: sütik nélkül, személy nélküli összesítés</td><td>szolgáltatói szabály</td><td>üzemeltető</td></tr>
 </table>
-<div class="box"><b class="k">Megvalósított védelem:</b> e-mail és felesleges adat nem kell · jelszó csak hash · bejelentés csak belépett felhasználótól, jóváhagyásig hitelesítetlen jelzéssel és szigorúbb korláttal · három szerepkör (üzemeltető, karbantartó, jóváhagyó) · privát fotótároló · titkos kulcsok csak a szerveren · EU-s adatbázis és függvényrégió · automatikus törlés a megőrzési idő után · adatexport, helyesbítés, törlés. <span class="ok">KÉSZ</span></div>
+<div class="box"><b class="k">Megvalósított védelem:</b> e-mail és felesleges adat nem kell · jelszó csak hash · bejelentés csak belépett felhasználótól, jóváhagyásig hitelesítetlen jelzéssel és szigorúbb korláttal · szerepkörök (tanár, karbantartó, igazgató / admin) · privát fotótároló · titkos kulcsok csak a szerveren · EU-s adatbázis és függvényrégió · automatikus törlés a megőrzési idő után · adatexport, helyesbítés, törlés. <span class="ok">KÉSZ</span></div>
 
 <h2>6 · Még nyitott <small>amit csak az iskola tud megadni vagy eldönteni</small></h2>
 <div class="cols">

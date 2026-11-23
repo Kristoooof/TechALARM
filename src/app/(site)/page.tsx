@@ -15,7 +15,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ t
         <h1>Hibabejelentés</h1>
         <p className="lead">Elromlott eszköz vagy rongálás? A bejelentéshez regisztráció és belépés kell.</p>
         <div className="card">
-          <p>Regisztráció után azonnal bejelenthetsz hibát. Az admin jóváhagyásáig a bejelentéseid hitelesítetlenként jelennek meg. A bejelentéseidet a neveddel együtt tároljuk, a nevedet az admin és a karbantartó látja.</p>
+          <p>Regisztráció után azonnal bejelenthetsz hibát. Az admin jóváhagyásáig a bejelentéseid hitelesítetlenként jelennek meg. A bejelentéseidet a neveddel együtt tároljuk, a nevedet a karbantartó, az igazgató és az admin látja.</p>
           <div style={{ display: "grid", gap: 8 }}>
             <Link className="btn block" href="/belepes">Belépés</Link>
             <Link className="btn secondary block" href="/regisztracio">Regisztráció</Link>
@@ -43,7 +43,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ t
   return (
     <>
       <h1>Hibabejelentés</h1>
-      {udv && <div className="alert success" role="status">Köszönjük a regisztrációt, már be is léptél. Az admin jóváhagyásáig a bejelentéseid <strong>hitelesítetlenként</strong> jelennek meg, jóváhagyás után hitelesítetté válnak.</div>}
+      {udv && <div className="alert success" role="status">Köszönjük a regisztrációt, már be is léptél. A felhasználóneved: <strong>{reporter.username}</strong> (ha több azonos nevű felhasználó van, ezzel tudsz belépni). Az admin jóváhagyásáig a bejelentéseid <strong>hitelesítetlenként</strong> jelennek meg, jóváhagyás után hitelesítetté válnak.</div>}
       <p className="lead">Elromlott eszköz vagy rongálás? Jelentsd be, hogy a karbantartók mielőbb intézkedhessenek.</p>
       {reporter.status === "pending" && !udv && (
         <p className="hint">A regisztrációdat az admin még nem hagyta jóvá, ezért a bejelentéseid hitelesítetlenként jelennek meg.</p>

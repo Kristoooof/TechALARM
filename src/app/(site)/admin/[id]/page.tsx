@@ -38,7 +38,7 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
           <span className={`badge ${r.status}`}>{statusLabel(r.status)}</span>
         </div>
         <dl className="details">
-          <dt>Bejelentő</dt><dd>{r.reporter_name ?? "Névtelen (regisztráció előtti bejelentés)"}{r.reporter_id && !r.reporter_verified && <> <span className="badge unverified">Hitelesítetlen</span></>}</dd>
+          <dt>Bejelentő</dt><dd>{r.reporter_name ? `${r.reporter_name}${r.reporter_username ? ` (${r.reporter_username})` : ""}` : "Névtelen (regisztráció előtti bejelentés)"}{r.reporter_id && !r.reporter_verified && <> <span className="badge unverified">Hitelesítetlen</span></>}</dd>
           <dt>Terem</dt><dd>{roomLabel(r.room_name, r.room_number)}</dd>
           <dt>Eszköz</dt><dd>{r.device_name ?? "–"}</dd>
           <dt>Típus</dt><dd>{categoryLabel(r.category)}</dd>

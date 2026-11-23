@@ -19,9 +19,9 @@
 | Cél | Az iskolai eszközök és termek hibáinak, rongálásainak bejelentése és javítása, visszajelzés a bejelentőnek |
 | Jogalap | GDPR 6. cikk (1) e) közfeladat (létesítmények működtetése, vagyonvédelem). **A DPO megerősítendő.** |
 | Érintettek | Az iskola diákjai (14–19 év) és tanárai, dolgozói |
-| Személyes adatok | Teljes név; jelszó (nem olvasható hash); regisztráció és jóváhagyás időpontja; a tájékoztató verziója és tudomásulvételének ideje; a bejelentés tartalma (terem, eszköz, leírás, fénykép, állapot, megjegyzés) a bejelentő nevével |
+| Személyes adatok | Teljes név; egyedi felhasználónév (azonos nevűek megkülönböztetésére); jelszó (nem olvasható hash); regisztráció és jóváhagyás időpontja; a tájékoztató verziója és tudomásulvételének ideje; a bejelentés tartalma (terem, eszköz, leírás, fénykép, állapot, megjegyzés) a bejelentő nevével és felhasználónevével |
 | Különleges adat | Nincs. A fényképen embert nem szabad ábrázolni (a tájékoztató kéri) |
-| Címzettek | Üzemeltető (igazgató): minden adat. Karbantartó: bejelentések. Jóváhagyó tanár: regisztrációk. Fejlesztők: csak üzemeltetői engedéllyel és titoktartási nyilatkozattal |
+| Címzettek | Igazgató és admin: minden adat. Karbantartó: bejelentések és regisztrációk. Tanár: regisztrációk. Diák: csak a saját adatai Fejlesztők: csak üzemeltetői engedéllyel és titoktartási nyilatkozattal |
 | Adattovábbítás harmadik országba | Vercel Inc. és Cloudflare Inc. (USA): EU–USA adatvédelmi keretrendszer és/vagy SCC. Az adatbázis és a fájltároló az EU-ban (Írország) van |
 | Megőrzés | Bejelentések és fényképek: a tanév végéig + 1 év (automatikus törlés). Regisztráció: a jogviszony végéig, a tanév végi takarításig. Jóváhagyásra váró vagy elutasított: 90 nap |
 | Biztonsági intézkedések | Lásd a 4. pontot |

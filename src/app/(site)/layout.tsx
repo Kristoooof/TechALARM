@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getRoles } from "@/lib/auth";
 import { getReporter } from "@/lib/reporter";
 import { logoutReporter } from "./auth-actions";
 import "../globals.css";
@@ -6,6 +7,7 @@ import "../theme.css";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const reporter = await getReporter();
+  const staff = reporter ? (await getRoles()).length > 0 : false;
   return (
     <>
       <header className="site-header">
@@ -19,7 +21,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           </Link>
           <nav>
             <Link href="/">Bejelentés</Link>
-            {reporter && reporter.status !== "rejected" && <Link href="/bejelentesim">Bejelentéseim</Link>}
+            {staff && <Link href="/admin">Admin</Link>}
             {reporter && reporter.status !== "rejected" && <Link href="/fiokom">Fiókom</Link>}
             <Link href="/nyomon">Állapot</Link>
             {reporter ? (

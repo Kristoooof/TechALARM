@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export async function buildUserExport(profileId: string) {
   const db = createAdminClient();
   const [{ data: profile }, { data: reports }, { data: requests }] = await Promise.all([
-    db.from("profiles").select("full_name, status, created_at, decided_at, notice_version, notice_accepted_at").eq("id", profileId).maybeSingle(),
+    db.from("profiles").select("full_name, username, status, created_at, decided_at, notice_version, notice_accepted_at").eq("id", profileId).maybeSingle(),
     db
       .from("reports")
       .select("tracking_code, room_name, room_number, device_name, category, description, status, admin_note, photo_path, created_at, updated_at")

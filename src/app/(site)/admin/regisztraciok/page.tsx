@@ -17,7 +17,7 @@ export default async function Registrations({ searchParams }: { searchParams: Pr
   const [{ data: profiles }, { data: all }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, full_name, status, created_at, decided_at")
+      .select("id, full_name, username, status, created_at, decided_at")
       .eq("status", filter)
       .order("created_at", { ascending: false })
       .limit(300),
@@ -32,7 +32,7 @@ export default async function Registrations({ searchParams }: { searchParams: Pr
     <>
       <AdminNav current="regisztraciok" />
       <h1>Regisztrációk</h1>
-      <p className="lead">Csak a jóváhagyott felhasználók tudnak bejelentést tenni. Jóváhagyás előtt ellenőrizd, hogy a név valódinak tűnik-e, és tényleg az iskolához tartozó személyé.</p>
+      <p className="lead">Jóváhagyásig a felhasználó bejelentései hitelesítetlenek. Ellenőrizd, hogy a név valódi, az iskolához tartozó személyé-e. Azonos nevű személyeket a felhasználónév különböztet meg.</p>
 
       <div className="tabs">
         {(Object.keys(PROFILE_STATUSES) as ProfileStatus[]).map((s) => (
@@ -47,7 +47,7 @@ export default async function Registrations({ searchParams }: { searchParams: Pr
         {(profiles ?? []).map((p) => (
           <li key={p.id} className="list-item" style={{ cursor: "default" }}>
             <div className="row">
-              <strong>{p.full_name}</strong>
+              <strong>{p.full_name} <span className="hint">({p.username})</span></strong>
               <span className="badge">{profileStatusLabel(p.status)}</span>
             </div>
             <div className="meta">

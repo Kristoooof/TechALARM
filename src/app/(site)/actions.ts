@@ -57,7 +57,7 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
     data: { user },
   } = await session.auth.getUser();
   if (!user) return fail("A bejelentéshez be kell lépned.");
-  const { data: profile } = await session.from("profiles").select("full_name, status").eq("id", user.id).maybeSingle();
+  const { data: profile } = await session.from("profiles").select("full_name, username, status").eq("id", user.id).maybeSingle();
   if (!profile || profile.status === "rejected") return fail("A fiókodat az admin elutasította, ezért nem küldhetsz be bejelentést.");
   const verified = profile.status === "approved";
 
@@ -124,6 +124,7 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
       photo_path: photoPath,
       reporter_id: user.id,
       reporter_name: profile.full_name,
+      reporter_username: profile.username,
       reporter_verified: verified,
     });
 

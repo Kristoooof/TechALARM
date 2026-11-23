@@ -14,7 +14,7 @@ export const ORG = {
 };
 
 /** A tájékoztató verziója: ezt mentjük el a regisztrációkor. Módosításkor növeld. */
-export const NOTICE_VERSION = "2026-11-23";
+export const NOTICE_VERSION = "2026-11-24";
 
 /** Megőrzési szabályok (a tájékoztató és a törlési feladat is ezt használja). */
 export const RETENTION = {

@@ -9,6 +9,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <h1>Admin belépés</h1>
       {hiba === "jogosultsag" && <div className="alert error">Ehhez a fiókhoz nincs admin jogosultság.</div>}
       <LoginForm />
+      <p className="hint">Névvel vagy felhasználónévvel regisztrált munkatársak a <a href="/belepes">Belépés</a> oldalon lépnek be, utána az Admin menüpont megjelenik.</p>
     </>
   );
 }

@@ -21,11 +21,15 @@ export const metadata: Metadata = {
 const faq = [
   {
     q: "Kell hozzá regisztráció?",
-    a: "Igen. Megadod a neved és egy jelszót, és rögtön bejelenthetsz. Az admin később jóváhagyja a regisztrációdat. Addig a bejelentésed hitelesítetlen bejelentőtől származóként jelenik meg a karbantartónál, jóváhagyás után hitelesítetté válik.",
+    a: "Igen. Megadod a neved és egy jelszót, és rögtön bejelenthetsz. Ha van más azonos nevű felhasználó, te is kapsz egy egyedi felhasználónevet (például kovacs.sandor2), azzal lépsz be. Az admin később jóváhagyja a regisztrációdat. Addig a bejelentésed hitelesítetlen bejelentőtől származóként jelenik meg a karbantartónál, jóváhagyás után hitelesítetté válik.",
+  },
+  {
+    q: "Mi van, ha más is ugyanezt a nevet viseli?",
+    a: "Semmi gond, két ugyanolyan nevű diák is regisztrálhat. Mindenki egyedi felhasználónevet kap (például kovacs.sandor és kovacs.sandor2). Ha egyedi a neved, a neveddel is beléphetsz, azonos nevűeknél a felhasználónévvel.",
   },
   {
     q: "Ki látja a nevemet?",
-    a: "A nevedet az admin és a karbantartó látja a bejelentésnél. Más bejelentők nem látják, és a követőoldal sem mutatja a nevedet.",
+    a: "A nevedet a karbantartó, az igazgató és az admin látja a bejelentésnél. A tanár a regisztrációknál látja. Más bejelentők nem látják, és a követőoldal sem mutatja a nevedet.",
   },
   {
     q: "Mit jelent, hogy a bejelentésem hitelesítetlen?",
@@ -49,7 +53,7 @@ const faq = [
   },
   {
     q: "Honnan tudom meg, mi lett a bejelentéssel?",
-    a: "Belépve a Bejelentéseim oldalon látod az összes bejelentésedet, az állapotukat és a karbantartó üzenetét. A követőkóddal egy bejelentés állapotát belépés nélkül is megnézheted.",
+    a: "A küldés után kapsz egy követőkódot. Az Állapot oldalon beírod, és látod, hogy új, folyamatban van, megjavították vagy elutasították, és a karbantartó üzenetét is. Jegyezd fel a kódot. Ha elvesztenéd, az admin a neved alapján megkeresi.",
   },
   {
     q: "Miért van korlát a bejelentések számán?",
@@ -80,7 +84,7 @@ export default function Landing() {
                 <li className="chip">Regisztráció után rögtön</li>
                 <li className="chip">Fényképpel</li>
                 <li className="chip">Követhető állapot</li>
-                <li className="chip">Bejelentéseid egy helyen</li>
+                <li className="chip">Követőkóddal</li>
               </ul>
             </div>
 
@@ -145,7 +149,7 @@ export default function Landing() {
                   <span className="bang" aria-hidden="true">!</span>
                   <div>
                     <h3>Nem akarok besúgó lenni</h3>
-                    <p>Rongálásnál különösen kényes szólni. A nevedet csak az admin és a karbantartó látja, más bejelentők és a követőoldal nem.</p>
+                    <p>Rongálásnál különösen kényes szólni. A nevedet csak a karbantartó, az igazgató és az admin látja, más bejelentők és a követőoldal nem.</p>
                   </div>
                 </li>
               </ul>
@@ -169,7 +173,7 @@ export default function Landing() {
               <article className="card after">
                 <span className="ba-tag">TechALARM-mal</span>
                 <h3>Egy bejelentés, és látod az állapotot</h3>
-                <p>A karbantartó megkapja a helyet, az eszközt, a képet és a nevedet. Te a Bejelentéseim oldalon látod, hogy új, folyamatban van vagy megjavították, és ha üzenetet hagyott, azt is.</p>
+                <p>A karbantartó megkapja a helyet, az eszközt, a képet és a nevedet. Te a követőkóddal látod, hogy új, folyamatban van vagy megjavították, és ha üzenetet hagyott, azt is.</p>
               </article>
             </div>
           </div>
@@ -194,8 +198,8 @@ export default function Landing() {
                 <p>Jelöld meg a probléma típusát, írj pár mondatot, és csatolj egy fényképet. Jóváhagyásig a bejelentésed hitelesítetlenként jelenik meg.</p>
               </li>
               <li className="step">
-                <h3>Kövesd az állapotot</h3>
-                <p>A Bejelentéseim oldalon látod, mi történt a bejelentéseddel. Kapsz követőkódot is.</p>
+                <h3>Kövesd a kóddal</h3>
+                <p>Kapsz egy követőkódot. Az Állapot oldalon ezzel bármikor megnézheted, mi történt a bejelentéseddel.</p>
               </li>
             </ol>
             <div className="tags">
@@ -217,7 +221,7 @@ export default function Landing() {
             <div className="split">
               <div>
                 <p className="sub" style={{ marginTop: 0 }}>
-                  A karbantartó minden bejelentéshez állapotot állít be, és üzenetet is írhat, például hogy mikor cserélik az alkatrészt. Ezt belépve a Bejelentéseim oldalon, vagy a követőkóddal látod.
+                  A karbantartó minden bejelentéshez állapotot állít be, és üzenetet is írhat, például hogy mikor cserélik az alkatrészt. Ezt a követőkóddal látod.
                 </p>
                 <div className="flow" aria-label="Lehetséges állapotok">
                   <span className="badge uj">Új</span>
@@ -263,7 +267,7 @@ export default function Landing() {
                 <h3>Hogyan kezeljük</h3>
                 <ul>
                   <li>a nevedet a bejelentéseidhez kapcsoljuk</li>
-                  <li>a nevedet az admin és a karbantartó látja, más bejelentő nem</li>
+                  <li>a nevedet a karbantartó, az igazgató és az admin látja, a tanár a regisztrációknál, más bejelentő nem</li>
                   <li>a jelszavadat nem olvasható formában tároljuk</li>
                   <li>a bejelentéseket a tanév végéig és még 1 évig őrizzük, utána törlődnek</li>
                   <li>az adataidat nem használjuk fegyelmi célra</li>

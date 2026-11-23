@@ -51,7 +51,7 @@ export default function RegisterForm({ turnstileSiteKey }: { turnstileSiteKey: s
           <input type="checkbox" name="notice" required style={{ marginTop: 4 }} />
           <span>
             Elolvastam és tudomásul vettem az <Link href="/adatkezeles" target="_blank">adatkezelési tájékoztatót</Link>: a nevemet a bejelentéseimhez
-            kapcsolva tárolják, és azt az admin és a karbantartó látja.
+            kapcsolva tárolják, és azt a karbantartó, az igazgató és az admin látja.
           </span>
         </label>
       </div>
