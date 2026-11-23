@@ -39,6 +39,7 @@ export async function GET(req: Request) {
   const { data: stale } = await db.from("profiles").select("id").neq("status", "approved").lt("created_at", profileCutoff).limit(500);
   let deletedProfiles = 0;
   for (const p of stale ?? []) {
+    await db.from("reports").update({ reporter_id: null, reporter_name: null }).eq("reporter_id", p.id);
     await db.from("data_requests").update({ requester_name: "törölt felhasználó" }).eq("profile_id", p.id);
     await db.from("profiles").delete().eq("id", p.id);
     await db.auth.admin.deleteUser(p.id);

@@ -22,6 +22,8 @@ export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 export const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 /** Ennyi bejelentést tehet egy bejelentő egy óra alatt. */
 export const MAX_REPORTS_PER_HOUR = 5;
+/** Jóváhagyásra váró (hitelesítetlen) felhasználó óránként ennyit küldhet be. */
+export const MAX_UNVERIFIED_REPORTS_PER_HOUR = 2;
 
 export const statusLabel = (v: string): string => (isStatus(v) ? STATUSES[v] : v);
 export const categoryLabel = (v: string): string => (isCategory(v) ? CATEGORIES[v] : v);

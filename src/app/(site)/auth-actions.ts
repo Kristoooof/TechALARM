@@ -77,7 +77,11 @@ export async function register(_prev: AuthState, fd: FormData): Promise<AuthStat
     return fail("A regisztrációt nem sikerült elmenteni. Próbáld újra később.");
   }
 
-  return { ok: true, message: "Köszönjük, a regisztrációd megérkezett.", name };
+  // Regisztráció után azonnal be is léptetjük, hogy rögtön lehessen bejelenteni (az admin felületen hitelesítetlenként jelenik meg).
+  const supabase = await createClient();
+  const { error: signInError } = await supabase.auth.signInWithPassword({ email: loginEmail, password });
+  if (signInError) return { ok: true, message: "Köszönjük, a regisztrációd megérkezett. Lépj be a neveddel és a jelszavaddal.", name };
+  redirect("/?udv=1");
 }
 
 // ---------- Belépés / kilépés ----------
@@ -104,10 +108,6 @@ export async function loginReporter(_prev: AuthState, fd: FormData): Promise<Aut
   if (!profile) {
     await supabase.auth.signOut();
     return fail(wrong);
-  }
-  if (profile.status === "pending") {
-    await supabase.auth.signOut();
-    return fail("A regisztrációd még jóváhagyásra vár. Amint az admin elfogadta, be tudsz lépni.");
   }
   if (profile.status === "rejected") {
     await supabase.auth.signOut();

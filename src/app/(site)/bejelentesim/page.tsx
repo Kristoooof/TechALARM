@@ -10,7 +10,7 @@ export const metadata = { title: "Bejelentéseim – TechALARM" };
 export default async function MyReports() {
   const reporter = await getReporter();
   if (!reporter) redirect("/belepes");
-  if (reporter.status !== "approved") redirect("/");
+  if (reporter.status === "rejected") redirect("/");
 
   const { data: reports } = await createAdminClient()
     .from("reports")

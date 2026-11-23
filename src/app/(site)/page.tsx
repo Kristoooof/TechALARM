@@ -5,8 +5,8 @@ import ReportForm from "./ReportForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ terem?: string }> }) {
-  const { terem } = await searchParams;
+export default async function Home({ searchParams }: { searchParams: Promise<{ terem?: string; udv?: string }> }) {
+  const { terem, udv } = await searchParams;
   const reporter = await getReporter();
 
   if (!reporter) {
@@ -15,7 +15,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ t
         <h1>Hibabejelentés</h1>
         <p className="lead">Elromlott eszköz vagy rongálás? A bejelentéshez regisztráció és belépés kell.</p>
         <div className="card">
-          <p>A regisztrációt az admin hagyja jóvá, utána be tudsz lépni és hibát tudsz bejelenteni. A bejelentéseidet a neveddel együtt tároljuk, a nevedet az admin és a karbantartó látja.</p>
+          <p>Regisztráció után azonnal bejelenthetsz hibát. Az admin jóváhagyásáig a bejelentéseid hitelesítetlenként jelennek meg. A bejelentéseidet a neveddel együtt tároljuk, a nevedet az admin és a karbantartó látja.</p>
           <div style={{ display: "grid", gap: 8 }}>
             <Link className="btn block" href="/belepes">Belépés</Link>
             <Link className="btn secondary block" href="/regisztracio">Regisztráció</Link>
@@ -25,15 +25,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ t
     );
   }
 
-  if (reporter.status !== "approved") {
+  if (reporter.status === "rejected") {
     return (
       <>
         <h1>Hibabejelentés</h1>
-        <div className="alert error" role="alert">
-          {reporter.status === "pending"
-            ? "A regisztrációd még jóváhagyásra vár. Amint az admin elfogadta, itt tudsz bejelentést tenni."
-            : "A regisztrációdat az admin elutasította, ezért nem küldhetsz be bejelentést."}
-        </div>
+        <div className="alert error" role="alert">A regisztrációdat az admin elutasította, ezért nem küldhetsz be bejelentést.</div>
       </>
     );
   }
@@ -47,7 +43,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ t
   return (
     <>
       <h1>Hibabejelentés</h1>
+      {udv && <div className="alert success" role="status">Köszönjük a regisztrációt, már be is léptél. Az admin jóváhagyásáig a bejelentéseid <strong>hitelesítetlenként</strong> jelennek meg, jóváhagyás után hitelesítetté válnak.</div>}
       <p className="lead">Elromlott eszköz vagy rongálás? Jelentsd be, hogy a karbantartók mielőbb intézkedhessenek.</p>
+      {reporter.status === "pending" && !udv && (
+        <p className="hint">A regisztrációdat az admin még nem hagyta jóvá, ezért a bejelentéseid hitelesítetlenként jelennek meg.</p>
+      )}
       {roomsError || devicesError ? (
         <div className="alert error" role="alert">
           A termek listáját most nem sikerült betölteni. Kérlek, frissítsd az oldalt, vagy próbáld meg később.

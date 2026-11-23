@@ -20,7 +20,7 @@ const STATUS_LABEL: Record<string, string> = { open: "Folyamatban", done: "Telje
 export default async function Account() {
   const reporter = await getReporter();
   if (!reporter) redirect("/belepes");
-  if (reporter.status !== "approved") redirect("/");
+  if (reporter.status === "rejected") redirect("/");
 
   const db = createAdminClient();
   const [{ data: profile }, { count }, { data: requests }] = await Promise.all([

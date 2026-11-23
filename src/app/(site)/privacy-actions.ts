@@ -12,7 +12,7 @@ const MAX_OPEN = 5;
 /** Adatkezelési kérelem (GDPR 15–21. cikk): a felhasználó a saját fiókjából nyújtja be, az üzemeltető kezeli. */
 export async function submitDataRequest(_prev: RequestState, fd: FormData): Promise<RequestState> {
   const reporter = await getReporter();
-  if (!reporter || reporter.status !== "approved") return { ok: false, message: "A kérelemhez be kell lépned." };
+  if (!reporter || reporter.status === "rejected") return { ok: false, message: "A kérelemhez be kell lépned." };
 
   const type = String(fd.get("type") ?? "");
   const message = String(fd.get("message") ?? "").trim();

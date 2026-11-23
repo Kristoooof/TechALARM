@@ -32,8 +32,8 @@ const features = [
     p: "Átállíthatod az állapotot, és megjegyzést írhatsz, például hogy csütörtökön cseréled az alkatrészt. A bejelentő a követőkóddal látja ezt.",
   },
   {
-    h: "Regisztrációk jóváhagyása",
-    p: "Az új felhasználók regisztrációját te hagyod jóvá vagy utasítod el, és a jóváhagyást később vissza is vonhatod. Jóváhagyásig senki nem tud bejelentést küldeni.",
+    h: "Hitelesítetlen bejelentők jelzése",
+    p: "A frissen regisztrált felhasználó rögtön bejelenthet, de a bejelentése hitelesítetlenként jelenik meg, és szűrhető. A regisztrációt a jóváhagyó vagy az üzemeltető hagyja jóvá vagy utasítja el, ettől a bejelentések hitelesítetté válnak.",
   },
   {
     h: "Termek és eszközök kezelése",
@@ -48,7 +48,8 @@ export default function Maintenance() {
         <div className="wrap">
           <p className="eyebrow">Karbantartóknak és az iskolának</p>
           <h1>
-            Egy helyen minden hiba, <em>pontos hellyel és képpel.</em>
+            Egy helyen minden hiba,<br />
+            <em>pontos hellyel és képpel.</em>
           </h1>
           <p className="lead">
             A regisztrált diákok és tanárok telefonról jelentenek, te pedig egy listában látod, mi romlott el, hol, és hogyan néz ki. A javítás állapotát a bejelentő is követheti.
@@ -79,7 +80,7 @@ export default function Maintenance() {
       <section className="final">
         <div className="wrap">
           <h2>Szeretnéd, ha a diákok is ide jelentenének?</h2>
-          <p>A bejelentő űrlap telefonról használható, regisztráció és jóváhagyás után. Érdemes plakáton vagy a teremben QR-kóddal kitenni.</p>
+          <p>A bejelentő űrlap telefonról használható, regisztráció után rögtön. Érdemes plakáton vagy a teremben QR-kóddal kitenni.</p>
           <TrackedLink href="/regisztracio" place="karbantartok" className="btn light">Regisztrálok</TrackedLink>
         </div>
       </section>

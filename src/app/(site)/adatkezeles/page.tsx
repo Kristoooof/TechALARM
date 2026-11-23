@@ -30,7 +30,7 @@ export default function Notice() {
             <tr><td>Technikai adatok (IP-cím, böngésző) a szerver- és spamvédelmi naplókban</td><td>A rendszer biztonsága és működése</td><td>Közfeladat, biztonság (GDPR 32. cikk)</td></tr>
           </tbody>
         </table>
-        <p className="hint">Hozzájárulást nem kérünk, mert a tanuló–iskola és munkavállaló–munkáltató viszonyban az nem lenne valóban önkéntes. A regisztráció a jogosultság ellenőrzése miatt jóváhagyáshoz kötött.</p>
+        <p className="hint">Hozzájárulást nem kérünk, mert a tanuló–iskola és munkavállaló–munkáltató viszonyban az nem lenne valóban önkéntes. A regisztráció után rögtön lehet bejelenteni, de a bejelentés hitelesítetlenként jelenik meg, amíg az admin a regisztrációt jóvá nem hagyja. A jóváhagyás a név ellenőrzése, a hitelesítetlen felhasználó óránként legfeljebb 2 bejelentést küldhet.</p>
         <p><strong>Nem használjuk</strong> az adataidat marketingre, profilozásra, harmadik félnek átadásra, és <strong>fegyelmi vagy felelősségre vonási célra sem</strong>. A bejelentések kizárólag a hibák kezelését szolgálják.</p>
       </div>
 

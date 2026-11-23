@@ -19,8 +19,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           </Link>
           <nav>
             <Link href="/">Bejelentés</Link>
-            {reporter?.status === "approved" && <Link href="/bejelentesim">Bejelentéseim</Link>}
-            {reporter?.status === "approved" && <Link href="/fiokom">Fiókom</Link>}
+            {reporter && reporter.status !== "rejected" && <Link href="/bejelentesim">Bejelentéseim</Link>}
+            {reporter && reporter.status !== "rejected" && <Link href="/fiokom">Fiókom</Link>}
             <Link href="/nyomon">Állapot</Link>
             {reporter ? (
               <form action={logoutReporter} style={{ display: "contents" }}>

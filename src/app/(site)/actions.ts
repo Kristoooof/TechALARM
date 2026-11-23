@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { generateTrackingCode } from "@/lib/tracking";
-import { MAX_PHOTO_BYTES, MAX_REPORTS_PER_HOUR, ROOM_NUMBER_MAX, isCategory, isRoomNumber } from "@/lib/constants";
+import { MAX_PHOTO_BYTES, MAX_REPORTS_PER_HOUR, MAX_UNVERIFIED_REPORTS_PER_HOUR, ROOM_NUMBER_MAX, isCategory, isRoomNumber } from "@/lib/constants";
 
 export type SubmitResult = { ok: true; code: string } | { ok: false; error: string };
 
@@ -58,7 +58,8 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
   } = await session.auth.getUser();
   if (!user) return fail("A bejelentéshez be kell lépned.");
   const { data: profile } = await session.from("profiles").select("full_name, status").eq("id", user.id).maybeSingle();
-  if (!profile || profile.status !== "approved") return fail("A fiókodat az admin még nem hagyta jóvá.");
+  if (!profile || profile.status === "rejected") return fail("A fiókodat az admin elutasította, ezért nem küldhetsz be bejelentést.");
+  const verified = profile.status === "approved";
 
   const db = createAdminClient();
 
@@ -68,7 +69,7 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
     .select("id", { count: "exact", head: true })
     .eq("reporter_id", user.id)
     .gte("created_at", since);
-  if ((count ?? 0) >= MAX_REPORTS_PER_HOUR) {
+  if ((count ?? 0) >= (verified ? MAX_REPORTS_PER_HOUR : MAX_UNVERIFIED_REPORTS_PER_HOUR)) {
     return fail("Egy órán belül túl sok bejelentést küldtél. Kérlek, próbáld később.");
   }
 
@@ -123,6 +124,7 @@ export async function submitReport(fd: FormData): Promise<SubmitResult> {
       photo_path: photoPath,
       reporter_id: user.id,
       reporter_name: profile.full_name,
+      reporter_verified: verified,
     });
 
     if (!error) return { ok: true, code };

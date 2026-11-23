@@ -22,8 +22,7 @@ export default function RegisterForm({ turnstileSiteKey }: { turnstileSiteKey: s
       <div className="card">
         <div className="alert success">{state.message}</div>
         <p>
-          Az admin jóváhagyása után be tudsz lépni a neveddel ({state.name}) és a jelszavaddal, és bejelentést tudsz tenni.
-          A jóváhagyásról most nem küldünk értesítést, ezért később próbálj meg belépni.
+          Lépj be a neveddel ({state.name}) és a jelszavaddal. Az admin jóváhagyásáig a bejelentéseid hitelesítetlenként jelennek meg.
         </p>
         <Link className="btn block" href="/belepes">Tovább a belépéshez</Link>
       </div>
@@ -77,7 +76,7 @@ export default function RegisterForm({ turnstileSiteKey }: { turnstileSiteKey: s
         {pending ? "Küldés…" : turnstileSiteKey && !token ? "Spamvédelmi ellenőrzés…" : "Regisztráció elküldése"}
       </button>
       <p className="hint" style={{ marginTop: 12 }}>
-        A regisztrációt az admin hagyja jóvá. Van már fiókod? <Link href="/belepes">Belépés</Link>
+        A regisztráció után azonnal bejelenthetsz, az admin később hagyja jóvá. Van már fiókod? <Link href="/belepes">Belépés</Link>
       </p>
     </form>
   );

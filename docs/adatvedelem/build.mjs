@@ -122,7 +122,7 @@ const html = `<!doctype html><html lang="hu"><head><meta charset="utf-8"><title>
 <tr><td><b class="k">Spamvédelem</b> (regisztrációnál)</td><td>Cloudflare Turnstile: az IP és a böngészőadatok a Cloudflarehez kerülnek</td><td>a szolgáltató szerint</td><td>Cloudflare (szolgáltató)</td></tr>
 <tr><td><b class="k">Látogatottság</b></td><td>Vercel Web Analytics: sütik nélkül, személy nélküli összesítés</td><td>szolgáltatói szabály</td><td>üzemeltető</td></tr>
 </table>
-<div class="box"><b class="k">Megvalósított védelem:</b> e-mail és felesleges adat nem kell · jelszó csak hash · bejelentés csak jóváhagyott, belépett felhasználótól · három szerepkör (üzemeltető, karbantartó, jóváhagyó) · privát fotótároló · titkos kulcsok csak a szerveren · EU-s adatbázis és függvényrégió · automatikus törlés a megőrzési idő után · adatexport, helyesbítés, törlés. <span class="ok">KÉSZ</span></div>
+<div class="box"><b class="k">Megvalósított védelem:</b> e-mail és felesleges adat nem kell · jelszó csak hash · bejelentés csak belépett felhasználótól, jóváhagyásig hitelesítetlen jelzéssel és szigorúbb korláttal · három szerepkör (üzemeltető, karbantartó, jóváhagyó) · privát fotótároló · titkos kulcsok csak a szerveren · EU-s adatbázis és függvényrégió · automatikus törlés a megőrzési idő után · adatexport, helyesbítés, törlés. <span class="ok">KÉSZ</span></div>
 
 <h2>6 · Még nyitott <small>amit csak az iskola tud megadni vagy eldönteni</small></h2>
 <div class="cols">

@@ -27,13 +27,18 @@ export default async function ReportDetail({ params }: { params: Promise<{ id: s
     <>
       <p><Link href="/admin">← Vissza a listához</Link></p>
       <p className="hint">A bejelentés adatai csak a hibák kezelésére használhatók, fegyelmi vagy felelősségre vonási célra nem (adatkezelési tájékoztató).</p>
+      {r.reporter_id && !r.reporter_verified && (
+        <div className="alert unverified-note" role="status">
+          <strong>Hitelesítetlen felhasználói bejelentés.</strong> A bejelentő regisztrációját az admin még nem hagyta jóvá, a név ellenőrizetlen. Jóváhagyás után a bejelentés automatikusan hitelesítetté válik (Regisztrációk oldal).
+        </div>
+      )}
       <div className="card">
         <div className="topbar">
           <h1 style={{ margin: 0 }}>{r.tracking_code}</h1>
           <span className={`badge ${r.status}`}>{statusLabel(r.status)}</span>
         </div>
         <dl className="details">
-          <dt>Bejelentő</dt><dd>{r.reporter_name ?? "Névtelen (regisztráció előtti bejelentés)"}</dd>
+          <dt>Bejelentő</dt><dd>{r.reporter_name ?? "Névtelen (regisztráció előtti bejelentés)"}{r.reporter_id && !r.reporter_verified && <> <span className="badge unverified">Hitelesítetlen</span></>}</dd>
           <dt>Terem</dt><dd>{roomLabel(r.room_name, r.room_number)}</dd>
           <dt>Eszköz</dt><dd>{r.device_name ?? "–"}</dd>
           <dt>Típus</dt><dd>{categoryLabel(r.category)}</dd>

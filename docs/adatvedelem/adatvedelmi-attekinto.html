@@ -28,7 +28,7 @@ tr{break-inside:avoid}
 </style></head><body>
 
 <h1>Tech<span>ALARM</span> · adatvédelmi és adatkezelési áttekintő</h1>
-<div class="meta">Iskolai hibabejelentő rendszer · vázlat, A4 · 2026-11-18 · a leírás a jelenlegi szoftver működését mutatja</div>
+<div class="meta">Iskolai hibabejelentő rendszer · vázlat, A4 · 2026-11-23 · a leírás a jelenlegi szoftver működését mutatja</div>
 <div class="warn"><b>Nem jogi tanácsadás.</b> Munkaanyag, amelyet az iskola <b>adatvédelmi tisztviselőjével (DPO)</b> vagy jogásszal kell egyeztetni, mielőtt éles használatba kerül. A <span class="todo">TEENDŐ</span> jelölés a hiányzót, a <span class="ok">KÉSZ</span> a már megvalósítottat jelzi.</div>
 
 <h2>0 · Szerepek <small>ki dönt, ki fér hozzá</small></h2>
@@ -111,7 +111,7 @@ tr{break-inside:avoid}
 <tr><td><b class="k">Spamvédelem</b> (regisztrációnál)</td><td>Cloudflare Turnstile: az IP és a böngészőadatok a Cloudflarehez kerülnek</td><td>a szolgáltató szerint</td><td>Cloudflare (szolgáltató)</td></tr>
 <tr><td><b class="k">Látogatottság</b></td><td>Vercel Web Analytics: sütik nélkül, személy nélküli összesítés</td><td>szolgáltatói szabály</td><td>üzemeltető</td></tr>
 </table>
-<div class="box"><b class="k">Megvalósított védelem:</b> e-mail és felesleges adat nem kell · jelszó csak hash · bejelentés csak jóváhagyott, belépett felhasználótól · három szerepkör (üzemeltető, karbantartó, jóváhagyó) · privát fotótároló · titkos kulcsok csak a szerveren · EU-s adatbázis és függvényrégió · automatikus törlés a megőrzési idő után · adatexport, helyesbítés, törlés. <span class="ok">KÉSZ</span></div>
+<div class="box"><b class="k">Megvalósított védelem:</b> e-mail és felesleges adat nem kell · jelszó csak hash · bejelentés csak belépett felhasználótól, jóváhagyásig hitelesítetlen jelzéssel és szigorúbb korláttal · három szerepkör (üzemeltető, karbantartó, jóváhagyó) · privát fotótároló · titkos kulcsok csak a szerveren · EU-s adatbázis és függvényrégió · automatikus törlés a megőrzési idő után · adatexport, helyesbítés, törlés. <span class="ok">KÉSZ</span></div>
 
 <h2>6 · Még nyitott <small>amit csak az iskola tud megadni vagy eldönteni</small></h2>
 <div class="cols">

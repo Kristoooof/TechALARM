@@ -6,7 +6,8 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Belépés – TechALARM" };
 
 export default async function LoginPage() {
-  if ((await getReporter())?.status === "approved") redirect("/");
+  const current = await getReporter();
+  if (current && current.status !== "rejected") redirect("/");
   return (
     <>
       <h1>Belépés</h1>

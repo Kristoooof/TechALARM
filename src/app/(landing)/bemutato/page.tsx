@@ -7,11 +7,11 @@ const SURVEY_URL = "https://forms.gle/YcREVdZa2MUa7WGT9";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/bemutato" },
-  title: "TechALARM | Elromlott valami? Szólj, és kövesd, mi lesz vele",
+  title: "TechALARM | Elromlott valami? Segíts! Szólj, és gyorsabban megjavul",
   description:
-    "Regisztrálj, és jelentsd be telefonról az iskolában elromlott eszközöket és a rongálásokat. A bejelentéseid állapotát bármikor megnézheted.",
+    "Regisztrálj, és rögtön bejelentheted telefonról az iskolában elromlott eszközöket és a rongálásokat. A bejelentéseid állapotát bármikor megnézheted.",
   openGraph: {
-    title: "TechALARM | Elromlott valami? Szólj, és kövesd, mi lesz vele",
+    title: "TechALARM | Elromlott valami? Segíts! Szólj, és gyorsabban megjavul",
     description: "Hibabejelentő a Mátészalkai Gépészeti Technikumnak: regisztrációval, fényképpel, követhető állapottal.",
     locale: "hu_HU",
     type: "website",
@@ -21,15 +21,15 @@ export const metadata: Metadata = {
 const faq = [
   {
     q: "Kell hozzá regisztráció?",
-    a: "Igen. Megadod a neved és egy jelszót, az admin pedig jóváhagyja a regisztrációdat. Jóváhagyás után be tudsz lépni és bejelentést tenni.",
+    a: "Igen. Megadod a neved és egy jelszót, és rögtön bejelenthetsz. Az admin később jóváhagyja a regisztrációdat. Addig a bejelentésed hitelesítetlen bejelentőtől származóként jelenik meg a karbantartónál, jóváhagyás után hitelesítetté válik.",
   },
   {
     q: "Ki látja a nevemet?",
     a: "A nevedet az admin és a karbantartó látja a bejelentésnél. Más bejelentők nem látják, és a követőoldal sem mutatja a nevedet.",
   },
   {
-    q: "Mennyi idő alatt hagyják jóvá a regisztrációt?",
-    a: "Ezt az admin dönti el, és most nem küldünk értesítést a jóváhagyásról. Ha a belépésnél azt látod, hogy a regisztrációd még vár, próbáld meg később újra.",
+    q: "Mit jelent, hogy a bejelentésem hitelesítetlen?",
+    a: "A karbantartó látja, hogy a bejelentő regisztrációját az admin még nem hagyta jóvá, ezért a név ellenőrizetlen. Jóváhagyásig óránként legfeljebb 2 bejelentést küldhetsz. A jóváhagyásról nem küldünk értesítést, a bejelentésed automatikusan hitelesítetté válik.",
   },
   {
     q: "Mire használjátok az adataimat, és meddig őrzitek?",
@@ -67,17 +67,17 @@ export default function Landing() {
               <span className="eyebrow">Mátészalkai Gépészeti Technikum · hibabejelentő</span>
               <h1>
                 Elromlott valami?
-                <em>Szólj, és kövesd, mi lesz vele.</em>
+                <em>Segíts! Szólj, és gyorsabban megjavul.</em>
               </h1>
               <p className="lead">
-                Regisztrálj, és telefonról jelezheted az iskolában elromlott eszközöket és a rongálásokat. A bejelentéseid állapotát bármikor megnézheted.
+                Regisztrálj, és rögtön jelezheted telefonról az iskolában elromlott eszközöket és a rongálásokat. A bejelentéseid állapotát bármikor megnézheted.
               </p>
               <div className="cta-row">
                 <TrackedLink href="/regisztracio" place="hero" className="btn">Regisztrálok</TrackedLink>
                 <Link href="/belepes" className="textlink">Már van fiókod? Belépés</Link>
               </div>
               <ul className="chips" aria-label="Röviden">
-                <li className="chip">Admin által jóváhagyott</li>
+                <li className="chip">Regisztráció után rögtön</li>
                 <li className="chip">Fényképpel</li>
                 <li className="chip">Követhető állapot</li>
                 <li className="chip">Bejelentéseid egy helyen</li>
@@ -183,7 +183,7 @@ export default function Landing() {
             <ol className="steps four">
               <li className="step">
                 <h3>Regisztrálj</h3>
-                <p>Add meg a neved és egy jelszót. Az admin jóváhagyja a regisztrációdat, utána be tudsz lépni.</p>
+                <p>Add meg a neved és egy jelszót, és már be is léptél. Az admin később hagyja jóvá a regisztrációdat.</p>
               </li>
               <li className="step">
                 <h3>Válaszd ki a helyet</h3>
@@ -191,7 +191,7 @@ export default function Landing() {
               </li>
               <li className="step">
                 <h3>Írd le, mi a baj</h3>
-                <p>Jelöld meg a probléma típusát, írj pár mondatot, és csatolj egy fényképet a hibáról.</p>
+                <p>Jelöld meg a probléma típusát, írj pár mondatot, és csatolj egy fényképet. Jóváhagyásig a bejelentésed hitelesítetlenként jelenik meg.</p>
               </li>
               <li className="step">
                 <h3>Kövesd az állapotot</h3>
@@ -295,7 +295,7 @@ export default function Landing() {
         <section className="final" id="jelentes">
           <div className="wrap">
             <h2>Látsz valamit, ami nem működik? Regisztrálj, és szólj.</h2>
-            <p>Regisztráció, jóváhagyás, és már jelenthetsz. Pár mező, egy fénykép, és a karbantartó látja.</p>
+            <p>Regisztráció, és már jelenthetsz. Pár mező, egy fénykép, és a karbantartó látja.</p>
             <TrackedLink href="/regisztracio" place="zaro" className="btn light">Regisztrálok</TrackedLink>
             <p className="survey">
               Segítenél a fejlesztésben?{" "}

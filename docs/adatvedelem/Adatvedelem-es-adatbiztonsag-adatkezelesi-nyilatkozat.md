@@ -3,7 +3,7 @@ title: "ADATVÉDELEM ÉS ADATBIZTONSÁG – ADATKEZELÉSI NYILATKOZAT"
 subtitle: "TechALARM iskolai hibabejelentő rendszer"
 ---
 
-**Verzió:** 2026-11-18 (megegyezik a rendszer /adatkezeles oldalán közzétett tájékoztatóval) · **Készült:** 2026-11-23
+**Verzió:** 2026-11-23 (megegyezik a rendszer /adatkezeles oldalán közzétett tájékoztatóval) · **Készült:** 2026-11-23
 
 > Ez a nyilatkozat a TechALARM jelenlegi működését írja le. A [szögletes zárójeles] mezőket az iskola tölti ki. A dokumentumot az iskola adatvédelmi tisztviselőjével (DPO) vagy jogásszal kell egyeztetni, mielőtt éles használatba kerül.
 
@@ -29,7 +29,7 @@ Minden iskola a saját aloldalát és a saját adatbázisát használja, ezért 
 
 **E-mail címet, telefonszámot, osztályt és más felesleges adatot nem kérünk.** A fényképen embert ne ábrázolj, csak a hibás eszközt.
 
-**Hozzájárulást nem kérünk,** mert a tanuló és az iskola, illetve a munkavállaló és a munkáltató viszonyában a hozzájárulás általában nem tekinthető önkéntesnek (GDPR (43) preambulumbekezdés). A regisztráció a jogosultság ellenőrzése miatt az admin jóváhagyásához kötött. Regisztrációkor a felhasználó a tájékoztatót tudomásul veszi, ennek időpontját és a tájékoztató verzióját elmentjük.
+**Hozzájárulást nem kérünk,** mert a tanuló és az iskola, illetve a munkavállaló és a munkáltató viszonyában a hozzájárulás általában nem tekinthető önkéntesnek (GDPR (43) preambulumbekezdés). A regisztráció után rögtön lehet bejelenteni, de a bejelentés **hitelesítetlenként** jelenik meg az admin felületen, amíg az admin a regisztrációt jóvá nem hagyja. A jóváhagyás a név ellenőrzése, ettől a bejelentések hitelesítetté válnak. Regisztrációkor a felhasználó a tájékoztatót tudomásul veszi, ennek időpontját és a tájékoztató verzióját elmentjük.
 
 # 3. Az adatkezelés alapelvei és korlátai
 
@@ -44,7 +44,7 @@ Minden iskola a saját aloldalát és a saját adatbázisát használja, ezért 
 | Szerepkör | Mit lát |
 |---|---|
 | **Felhasználó** (diák, tanár, dolgozó) | Csak a saját adatait és bejelentéseit |
-| **Karbantartó** | A bejelentéseket (a bejelentő nevével és a fényképpel), termek és eszközök |
+| **Karbantartó** | A bejelentéseket (a bejelentő nevével, a hitelesítetlen bejelentők jelölésével és a fényképpel), termek és eszközök |
 | **Jóváhagyó tanár** | A regisztrációkat (a nevet, a jóváhagyás állapotát) |
 | **Rendszerüzemeltető (igazgató)** | Minden adatot, a munkatársakat és az adatkezelési kérelmeket |
 | **Fejlesztők** | Csak üzemeltetői engedéllyel és aláírt titoktartási nyilatkozattal |
@@ -64,7 +64,7 @@ Minden iskola a saját aloldalát és a saját adatbázisát használja, ezért 
 - **Jogosultságkezelés:** három szerepkör (üzemeltető, karbantartó, jóváhagyó tanár), az adatbázisban sorszintű védelemmel (RLS). A jogosultságot a szerver ellenőrzi, nem a böngésző.
 - **Privát fájltároló:** a fényképek nem nyilvánosak, megtekintésük csak jogosultaknak, 1 órás aláírt hivatkozással lehetséges.
 - **Titkos kulcsok:** a szerverkulcsok környezeti változóban vannak, a böngészőbe nem kerülnek, kódban nem szerepelnek.
-- **Spam és visszaélés elleni védelem:** a regisztrációnál Cloudflare Turnstile és rejtett csalimező, a bejelentéseknél felhasználónkénti óránkénti korlát. Bejelentést csak belépett, jóváhagyott felhasználó küldhet.
+- **Spam és visszaélés elleni védelem:** a regisztrációnál Cloudflare Turnstile és rejtett csalimező, a bejelentéseknél felhasználónkénti óránkénti korlát. Bejelentést csak belépett (regisztrált) felhasználó küldhet. A jóváhagyásra váró, hitelesítetlen felhasználó óránként legfeljebb 2, a jóváhagyott legfeljebb 5 bejelentést küldhet.
 - **Adatok helye:** az adatbázis és a fájltároló az EU-ban (Írország), a függvények Dublinban futnak.
 - **Automatikus törlés:** napi feladat törli a lejárt bejelentéseket (fényképpel együtt) és a 90 napnál régebbi, jóváhagyásra váró vagy elutasított regisztrációkat.
 - **Mentés:** az üzemeltető a felületről teljes mentést tölt le (havonta és nagyobb módosítás előtt). A mentés személyes adatot tartalmaz, zárt helyen kell tárolni, és a megőrzési szabályokat követnie kell.
